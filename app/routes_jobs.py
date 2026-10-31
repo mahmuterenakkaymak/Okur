@@ -13,6 +13,7 @@ from __future__ import annotations
 import io
 import json
 import sqlite3
+import uuid
 from datetime import datetime
 from typing import Literal
 
@@ -53,30 +54,37 @@ def create_job(
         if existing is not None:
             request.state.job_id = existing["id"]
             return JSONResponse(status_code=200, content=_envelope(existing))
+        # T67: bytes before the row. A queued row a worker can claim always
+        # has its image on disk, so a crash between the two cannot exist.
+        job_id = str(uuid.uuid4())
+        path = config.images_dir() / f"{job_id}.jpg"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(_strip_exif(data))
         try:
             job = db.create_job(
                 conn,
+                job_id=job_id,
                 key_id=key["id"],
                 worker=key["worker"],
                 client_ref=client_ref,
+                image_path=str(path),
                 mode=mode,
             )
         except sqlite3.IntegrityError:
+            path.unlink(missing_ok=True)
             raced = db.find_job_by_client_ref(conn, key["id"], client_ref)
             if raced is None:
                 raise
             request.state.job_id = raced["id"]
             return JSONResponse(status_code=200, content=_envelope(raced))
         request.state.job_id = job["id"]
-        path = config.images_dir() / f"{job['id']}.jpg"
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_bytes(_strip_exif(data))
-        updates = {"image_path": str(path)}
-        if captured_at:
-            # ASSUMPTION: captured_at is not a queue column, so it rides in
-            # meta_json, which the worker merges with when it completes.
-            updates["meta_json"] = {"captured_at": captured_at}
-        return _envelope(db.update_job(conn, job["id"], **updates))
+        if not captured_at:
+            return _envelope(job)
+        # ASSUMPTION: captured_at is not a queue column, so it rides in
+        # meta_json, which the worker merges with when it completes.
+        return _envelope(
+            db.update_job(conn, job["id"], meta_json={"captured_at": captured_at})
+        )
     finally:
         conn.close()
 

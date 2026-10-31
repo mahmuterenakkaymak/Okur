@@ -151,14 +151,20 @@ def list_keys(conn: sqlite3.Connection) -> list[dict]:
 def create_job(
     conn: sqlite3.Connection,
     *,
+    job_id: str | None = None,
     key_id: int | None = None,
     worker: str = "",
     client_ref: str | None = None,
     image_path: str = "",
     mode: str = DEFAULT_MODE,
 ) -> dict:
-    """New queued job; created_at stamped, started/finished stay NULL."""
-    job_id = str(uuid.uuid4())
+    """New queued job; created_at stamped, started/finished stay NULL.
+
+    job_id lets the route name the row before it exists, so it can write
+    data/images/<job_id>.jpg first and insert a row that already points at
+    bytes a worker could claim.
+    """
+    job_id = job_id or str(uuid.uuid4())
     conn.execute(
         "INSERT INTO jobs (id, key_id, worker, client_ref, image_path, mode, created_at)"
         " VALUES (?, ?, ?, ?, ?, ?, ?)",
