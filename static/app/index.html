@@ -76,6 +76,10 @@
       background: rgba(251,191,36,.08); border: 1px solid rgba(251,191,36,.25);
     }
     .hata { margin: .8rem 0 0; font-size: .86rem; line-height: 1.5; color: #fbbf24; }
+    .bant {
+      padding: .55rem 1.1rem; font-size: .84rem; line-height: 1.45; text-align: center;
+      color: #fbbf24; background: rgba(251,191,36,.12); border-bottom: 1px solid rgba(251,191,36,.25);
+    }
     .hint:empty { display: none; }
     .sonuc-bas { display: flex; align-items: center; gap: .7rem; margin: 0 0 .6rem; }
     .sonuc-bas h2 { margin: 0; flex: 1; }
@@ -151,6 +155,7 @@
     <h1>Fiş Çek</h1>
     <span id="net-durumu" class="chip chip-on" role="status">Çevrimiçi</span>
   </header>
+  <div class="bant" id="net-bant" role="status" hidden></div>
   <main>
     <section class="card">
       <h2>Hoş geldin</h2>
@@ -169,6 +174,7 @@
     <section class="card" id="adim-cekim">
       <h2>Fişi çek</h2>
       <div id="cekim-alani"></div>
+      <p class="hint" id="kamera-ipucu"></p>
     </section>
 
     <section class="card" id="adim-kirp" hidden>
@@ -177,6 +183,7 @@
       <p class="hata" id="hata-mesaji" hidden></p>
       <div class="butonlar">
         <button type="button" class="btn" id="cekime-don">Vazgeç</button>
+        <button type="button" class="btn btn-birincil" id="tekrar-dene" hidden>Tekrar dene</button>
       </div>
     </section>
 
@@ -187,6 +194,18 @@
       </div>
       <div class="ilerleme"><div id="durum-ilerleme"></div></div>
       <p class="hint" id="durum-ipucu"></p>
+      <div class="butonlar">
+        <button type="button" class="btn" id="yeniden-cek" hidden>Fişi yeniden çek</button>
+      </div>
+    </section>
+
+    <section class="card" id="adim-anahtar" hidden>
+      <h2>API anahtarı çalışmıyor</h2>
+      <p>Fiş sunucuya ulaşmadı: yöneticinin verdiği anahtar geçersiz görünüyor ya da iptal edilmiş.</p>
+      <p class="hint">Yeni anahtarını yukarıdaki kutuya yapıştır, sonra kaldığın yerden devam et.</p>
+      <div class="butonlar">
+        <button type="button" class="btn btn-birincil" id="anahtar-tamam">Anahtarımı girdim, devam et</button>
+      </div>
     </section>
 
     <section class="card" id="adim-sonuc" hidden>

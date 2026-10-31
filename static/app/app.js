@@ -7,8 +7,9 @@
 
 import { createCapture } from "./capture.js";
 import { createCropper } from "./crop.js";
-import { getApiKey, getJob, pollJob, setApiKey, submitJob } from "./api.js";
+import { getApiKey, getJob, isOnline, pollJob, setApiKey, submitJob } from "./api.js";
 import { createHistory } from "./history.js";
+import { cameraNotice, offlineNotice, recoveryFor, withTimeout } from "./recovery.js";
 import { statusOf } from "./status.js";
 
 const ADIMLAR = {
@@ -16,6 +17,7 @@ const ADIMLAR = {
   kirp: document.getElementById("adim-kirp"),
   durum: document.getElementById("adim-durum"),
   sonuc: document.getElementById("adim-sonuc"),
+  anahtar: document.getElementById("adim-anahtar"),
 };
 
 const durumEtiket = document.getElementById("durum-etiket");
@@ -40,6 +42,11 @@ const yeniFis = document.getElementById("yeni-fis");
 const cekimeDon = document.getElementById("cekime-don");
 const anahtarGirisi = document.getElementById("api-anahtari");
 const anahtarIpucu = document.getElementById("anahtar-ipucu");
+const netBant = document.getElementById("net-bant");
+const kameraIpucu = document.getElementById("kamera-ipucu");
+const tekrarDugme = document.getElementById("tekrar-dene");
+const yenidenCek = document.getElementById("yeniden-cek");
+const anahtarTamam = document.getElementById("anahtar-tamam");
 
 const TASI_CLASS = {
   ok: "chip-on",
@@ -70,16 +77,28 @@ let startedAt = 0;
 let tickTimer = null;
 let clientRef = null;
 let capturedAt = null;
+let sonCrop = null;
+let akis = 0;
 
 function show(step) {
   for (const [name, card] of Object.entries(ADIMLAR)) card.hidden = name !== step;
   if (step === "cekim") capture.start();
   else capture.stop();
+  cizNet();
+}
+
+// Abandoning the live flow: the in-flight send may still land, but its
+// result must never paint over what the worker chose to do instead.
+function birak() {
+  akis += 1;
+  clearInterval(tickTimer);
+  tickTimer = null;
 }
 
 function hideError() {
   hataMesaji.hidden = true;
   hataMesaji.textContent = "";
+  tekrarDugme.hidden = true;
 }
 
 function showError(message) {
@@ -91,6 +110,9 @@ function showError(message) {
 const capture = createCapture({
   container: document.getElementById("cekim-alani"),
   mediaDevices: (globalThis.navigator && globalThis.navigator.mediaDevices) || null,
+  onState: (state) => {
+    kameraIpucu.textContent = cameraNotice(state);
+  },
   onShot: async (shot) => {
     clientRef = globalThis.crypto?.randomUUID?.() || `fis-${Date.now()}`;
     capturedAt = new Date().toISOString();
@@ -111,9 +133,37 @@ function cizDurum() {
   durumIpucu.textContent = v.hint;
   durumIlerleme.style.width = `${Math.round(v.progress * 100)}%`;
   gecenSure.textContent = `${v.seconds} sn`;
+  yenidenCek.hidden = !v.stale;
+}
+
+// One failure, one way out: the key screen for a dead key, the crop card
+// with a retry (the crop is still loaded) for a failed upload, and for a
+// history read the status card turned into the error note with re-shoot.
+function hataGoster(err, { onCrop = false } = {}) {
+  const r = recoveryFor(err);
+  if (r.action === "key") {
+    show("anahtar");
+    ADIMLAR.anahtar.scrollIntoView({ block: "start", behavior: "smooth" });
+    return;
+  }
+  if (onCrop && sonCrop) {
+    show("kirp");
+    hataMesaji.textContent = r.message;
+    hataMesaji.hidden = false;
+    tekrarDugme.hidden = false;
+    return;
+  }
+  show("durum");
+  durumEtiket.textContent = "Fiş yüklenemedi";
+  durumIpucu.textContent = r.message;
+  durumIlerleme.style.width = "0%";
+  gecenSure.textContent = "";
+  yenidenCek.hidden = false;
 }
 
 async function gonder(crop) {
+  sonCrop = crop;
+  const tur = akis;
   hideError();
   if (!getApiKey()) {
     showError(
@@ -127,31 +177,39 @@ async function gonder(crop) {
   cizDurum();
   tickTimer = setInterval(cizDurum, 500);
   try {
-    const kabul = await submitJob(crop.blob, { clientRef, capturedAt });
+    const kabul = await withTimeout(submitJob(crop.blob, { clientRef, capturedAt }));
+    if (tur !== akis) return;
     guncel = kabul;
     cizDurum();
     const bitti = await pollJob(kabul.job_id, {
       onTick: (envelope) => {
-        if (envelope) guncel = envelope;
+        if (envelope && tur === akis) guncel = envelope;
       },
     });
+    if (tur !== akis) return;
     sonucGoster(bitti);
     history.refresh();
   } catch (err) {
-    showError(err && err.message ? err.message : "Fiş gönderilemedi, tekrar dene.");
+    if (tur !== akis) return;
+    hataGoster(err, { onCrop: true });
   } finally {
-    clearInterval(tickTimer);
-    tickTimer = null;
+    if (tur === akis) {
+      clearInterval(tickTimer);
+      tickTimer = null;
+    }
   }
 }
 
 // A history tap opens the same result view; a job that has not finished yet
 // resumes live tracking instead of showing a dead-end detail.
 async function detayAc(job) {
+  const tur = akis;
   hideError();
   try {
     if (job.status === "done" || job.status === "failed") {
-      sonucGoster(await getJob(job.job_id));
+      const env = await getJob(job.job_id);
+      if (tur !== akis) return;
+      sonucGoster(env);
       return;
     }
     guncel = job;
@@ -161,16 +219,20 @@ async function detayAc(job) {
     tickTimer = setInterval(cizDurum, 500);
     const bitti = await pollJob(job.job_id, {
       onTick: (envelope) => {
-        if (envelope) guncel = envelope;
+        if (envelope && tur === akis) guncel = envelope;
       },
     });
+    if (tur !== akis) return;
     sonucGoster(bitti);
     history.refresh();
   } catch (err) {
-    showError(err && err.message ? err.message : "Fiş yüklenemedi, tekrar dene.");
+    if (tur !== akis) return;
+    hataGoster(err);
   } finally {
-    clearInterval(tickTimer);
-    tickTimer = null;
+    if (tur === akis) {
+      clearInterval(tickTimer);
+      tickTimer = null;
+    }
   }
 }
 
@@ -256,18 +318,50 @@ hamJsonDugme.addEventListener("click", () => {
 });
 
 yeniFis.addEventListener("click", () => {
+  birak();
   cropper.clear();
   sonucEnvelope = null;
   guncel = null;
+  sonCrop = null;
   hideError();
   show("cekim");
 });
 
 cekimeDon.addEventListener("click", () => {
+  birak();
   cropper.clear();
+  sonCrop = null;
   hideError();
   show("cekim");
 });
+
+// The upload died but the crop survived: resend the very same blob under
+// the same client_ref, so a half-landed job is returned, not duplicated.
+tekrarDugme.addEventListener("click", () => {
+  if (sonCrop) gonder(sonCrop);
+});
+
+yenidenCek.addEventListener("click", () => {
+  birak();
+  cropper.clear();
+  sonCrop = null;
+  hideError();
+  show("cekim");
+});
+
+anahtarTamam.addEventListener("click", () => {
+  show(sonCrop ? "kirp" : "cekim");
+  anahtarGirisi.focus();
+});
+
+function cizNet() {
+  const bant = offlineNotice({ online: isOnline(), hasDraft: !!sonCrop });
+  netBant.hidden = !bant.visible;
+  if (bant.visible) netBant.textContent = bant.text;
+}
+addEventListener("online", cizNet);
+addEventListener("offline", cizNet);
+cizNet();
 
 const history = createHistory({
   container: document.getElementById("gecmis"),
