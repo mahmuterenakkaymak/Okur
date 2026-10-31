@@ -104,6 +104,8 @@
     .toplamlar dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
     .toplamlar .buyuk { font-size: 1.02rem; font-weight: 700; color: #fff; }
     .butonlar { display: flex; gap: .6rem; flex-wrap: wrap; }
+    #demo-alani { margin-top: .9rem; display: flex; flex-direction: column; gap: .5rem; }
+    #demo-alani[hidden] { display: none; }
     .btn {
       cursor: pointer; padding: .62rem 1.05rem; border-radius: .8rem;
       font: inherit; font-size: .9rem; font-weight: 600;
@@ -191,6 +193,13 @@
       <h2>Fişi çek</h2>
       <div id="cekim-alani"></div>
       <p class="hint" id="kamera-ipucu"></p>
+      <div id="demo-alani" hidden>
+        <div class="butonlar">
+          <button type="button" class="btn" id="ornek-fis">Örnek fiş</button>
+        </div>
+        <p class="hint">Demo sunucusu açık: kamera gerekmez, örnek bir fiş doğrudan kuyruğa gönderilir.</p>
+        <p class="hata" id="demo-hata" hidden></p>
+      </div>
     </section>
 
     <section class="card" id="adim-kirp" hidden>

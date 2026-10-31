@@ -28,8 +28,13 @@ self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET" || url.origin !== self.location.origin) {
     return;
   }
-  // Job state and authenticated views must never come from a stale cache.
-  if (url.pathname.startsWith("/v1") || url.pathname.startsWith("/api")) {
+  // Job state, authenticated views and the demo server's live config must
+  // never come from a stale cache.
+  if (
+    url.pathname.startsWith("/v1") ||
+    url.pathname.startsWith("/api") ||
+    url.pathname.startsWith("/demo")
+  ) {
     return;
   }
   event.respondWith(

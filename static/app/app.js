@@ -50,6 +50,8 @@ const kameraIpucu = document.getElementById("kamera-ipucu");
 const tekrarDugme = document.getElementById("tekrar-dene");
 const yenidenCek = document.getElementById("yeniden-cek");
 const anahtarTamam = document.getElementById("anahtar-tamam");
+const demoAlani = document.getElementById("demo-alani");
+const ornekFis = document.getElementById("ornek-fis");
 
 // D2: the four-stage row under the headline, ticking with the same clock the
 // status card already keeps.
@@ -385,6 +387,46 @@ anahtarGirisi.addEventListener("change", () => {
     ? "Kaydedildi ✓"
     : "Anahtar temizlendi.";
   history.refresh();
+});
+
+// Demo mode (scripts/serve_demo.py): the demo server hands out its key and
+// sample receipts at /demo/config.json, so the whole flow — submit, live
+// status, result — is reviewable without a camera. Anywhere else the fetch
+// 404s and the page stays a plain worker PWA.
+const demoHata = document.getElementById("demo-hata");
+let demo = null;
+let demoSira = 0;
+
+fetch("/demo/config.json", { cache: "no-store" })
+  .then((resp) => (resp.ok ? resp.json() : null))
+  .then((conf) => {
+    if (!conf || !conf.api_key || !Array.isArray(conf.samples) || !conf.samples.length) return;
+    demo = conf;
+    setApiKey(conf.api_key);
+    anahtarGirisi.value = conf.api_key;
+    anahtarIpucu.textContent = "Demo sunucusu: anahtar otomatik dolduruldu.";
+    demoAlani.hidden = false;
+    history.refresh();
+  })
+  .catch(() => {});
+
+ornekFis.addEventListener("click", async () => {
+  if (!demo) return;
+  ornekFis.disabled = true;
+  demoHata.hidden = true;
+  try {
+    const name = demo.samples[demoSira++ % demo.samples.length];
+    const resp = await fetch(`/demo/samples/${encodeURIComponent(name)}`);
+    if (!resp.ok) throw new Error(`sample ${name} failed`);
+    clientRef = globalThis.crypto?.randomUUID?.() || `fis-${Date.now()}`;
+    capturedAt = new Date().toISOString();
+    await gonder({ blob: await resp.blob() });
+  } catch {
+    demoHata.textContent = "Örnek fiş alınamadı. Sayfayı yenileyip tekrar dene.";
+    demoHata.hidden = false;
+  } finally {
+    ornekFis.disabled = false;
+  }
 });
 
 show("cekim");
