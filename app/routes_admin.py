@@ -21,7 +21,17 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 
-from app import auth, config, contract, db, exports, numbers, status, validator
+from app import (
+    auth,
+    config,
+    contract,
+    db,
+    exports,
+    numbers,
+    pipeline,
+    status,
+    validator,
+)
 from app.routes_jobs import _Status, _bad_field, _clean_iso, _envelope
 from app.routes_worker import _image_path
 
@@ -216,6 +226,57 @@ def correct_job(request: Request, job_id: str, body: CorrectionBody):
         conn.close()
 
 
+@router.post("/jobs/{job_id}/rerun")
+def rerun_job(request: Request, job_id: str):
+    """Quality-mode rerun: the same image, the better model, one atomic swap.
+
+    ASSUMPTION: the task names POST /v1/jobs/{id}/rerun; the door is the admin
+    one — the same reading as T37's corrections and T40's status. The route
+    only sets the mode: stage 2 owns quality routing (the pipeline builds the
+    Unsloth :8888 structurer from quality_mode), so the bundle comes back with
+    the model label and timings that belong to it, and the stored columns the
+    rerun replaces are the ones every view and export already reads.
+
+    ASSUMPTION: a rerun replaces a finished read, so a job still in the queue
+    is 409 — its first read has not landed — and a rerun whose model server
+    failed answers 502 with the stored columns untouched: a sick Unsloth must
+    not cost the reviewer the receipt they already have.
+    """
+    conn = _connect(request)
+    try:
+        row = _job(conn, job_id)
+        if row["status"] in ("queued", "running"):
+            raise HTTPException(409, "job has not finished its first run yet")
+        image = _image_path(row).read_bytes()
+        bundle = _runner(request)(image, quality_mode=True, worker=row["worker"])
+        if bundle.get("error"):
+            raise HTTPException(502, f"quality rerun failed: {bundle['error']}")
+        # Same merge as the queue worker: nulls never clobber what the route
+        # stored (captured_at), and received_at stays the upload time.
+        meta = {
+            **_json(row, "meta_json"),
+            **{
+                key: value
+                for key, value in (bundle.get("meta") or {}).items()
+                if value is not None
+            },
+            "received_at": row["created_at"],
+        }
+        guncel = db.set_status(
+            conn,
+            job_id,
+            "done",
+            mode="quality",
+            result_json=bundle.get("result"),
+            validation_json=bundle.get("validation"),
+            meta_json=meta,
+            error="",
+        )
+        return _detay(guncel)
+    finally:
+        conn.close()
+
+
 @router.get("/jobs/{job_id}/image")
 def get_image(request: Request, job_id: str):
     """The stored receipt, behind the same session as the rest of /admin/api."""
@@ -342,6 +403,12 @@ def service_status(request: Request):
 def _connect(request: Request):
     """One connection per request, same rule as main._connect."""
     return db.connect(request.app.state.db_path)
+
+
+def _runner(request: Request):
+    """The pipeline seam (the same one QueueWorker takes): create_app's runner
+    for tests and the demo, the real pipeline otherwise."""
+    return request.app.state.pipeline_runner or pipeline.run
 
 
 def _job(conn, job_id: str) -> dict:

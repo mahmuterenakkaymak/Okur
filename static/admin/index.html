@@ -215,14 +215,26 @@
             <h3>Okunamayan bölümler</h3>
             <ul class="okunamayan" id="detay-okunamayan-liste"></ul>
           </section>
+          <section class="fark" id="detay-fark" hidden>
+            <h3>Kalite modu — önce / sonra</h3>
+            <div id="detay-fark-icerik"></div>
+          </section>
         </div>
       </div>
     </div>
     <footer class="detay-alt">
       <div class="detay-alt-satiri">
         <button type="button" class="btn btn-mini btn-birincil" id="detay-kaydet" disabled>Kaydet</button>
+        <button type="button" class="btn btn-mini" id="detay-yeniden" disabled>Kalite modunda yeniden işle</button>
         <p class="not kayit-durum" id="detay-kaydet-durum" role="status" aria-live="polite" hidden></p>
         <button type="button" class="btn btn-mini saga-yasla" id="detay-json-dugme" aria-expanded="false">Ham JSON</button>
+      </div>
+      <div class="yeniden-onay" id="detay-yeniden-onay" hidden>
+        <p class="not">Fiş kalite modunda bir daha okunacak; mevcut sonuç, doğrulama ve model yerini yenisine bırakır. Bu birkaç saniye sürebilir.</p>
+        <div class="dialog-dugmeleri">
+          <button type="button" class="btn btn-mini" id="detay-yeniden-vazgec">Vazgeç</button>
+          <button type="button" class="btn btn-mini btn-birincil" id="detay-yeniden-onayla">Yeniden işle</button>
+        </div>
       </div>
       <pre class="ham-json" id="detay-json" hidden></pre>
     </footer>

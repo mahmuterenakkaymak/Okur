@@ -262,6 +262,22 @@ main {
   padding: .3rem .6rem; border-radius: .6rem; font-size: .8rem; color: #f87171;
   background: rgba(248,113,113,.08); border: 1px solid rgba(248,113,113,.22);
 }
+.fark {
+  margin: 0 0 1.4rem; padding: .9rem 1rem 1rem; border-radius: .8rem;
+  border: 1px solid rgba(167,139,250,.28); background: rgba(167,139,250,.06);
+  animation: belirme .26s ease both;
+}
+.fark h3 {
+  margin: 0 0 .6rem; font-size: .75rem; font-weight: 700;
+  letter-spacing: .05em; text-transform: uppercase; color: #c4b5fd;
+}
+.yeniden-onay {
+  margin-top: .7rem; padding: .8rem .9rem; border-radius: .8rem;
+  border: 1px solid rgba(167,139,250,.3); background: rgba(167,139,250,.07);
+  animation: belirme .22s ease both;
+}
+.yeniden-onay .not { margin: 0; }
+.yeniden-onay .dialog-dugmeleri { margin-top: .8rem; }
 .detay-alt { padding: .8rem 1.2rem; border-top: 1px solid rgba(255,255,255,.07); }
 .detay-alt-satiri { display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; }
 .saga-yasla { margin-left: auto; }
@@ -343,5 +359,5 @@ main {
 @media (prefers-reduced-motion: reduce) {
   .kart, .bos svg, .sallanma, .tablo tbody tr, .iskelet,
   .detay[open], .detay-gorsel img, .kayit-durum,
-  .dialog-kucuk[open], .durum-kart { animation: none; }
+  .dialog-kucuk[open], .durum-kart, .fark, .yeniden-onay { animation: none; }
 }

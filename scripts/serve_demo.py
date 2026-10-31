@@ -174,8 +174,9 @@ class DemoWorker(QueueWorker):
         return db.set_status(conn, row["id"], "running") if row else None
 
 
-def _start_worker(db_path: pathlib.Path, models) -> QueueWorker:
-    """The real queue worker running the real pipeline against the stubs."""
+def _model_runner(models):
+    """The real pipeline pointed at the stub servers; the queue worker and
+    the admin quality-rerun route share this one runner."""
     ocr = OcrClient(base_url=models.ocr.base_url)
     structurer = _HttpStructurer(models.structurer.base_url)
 
@@ -188,6 +189,11 @@ def _start_worker(db_path: pathlib.Path, models) -> QueueWorker:
             structurer=structurer,
         )
 
+    return runner
+
+
+def _start_worker(db_path: pathlib.Path, runner) -> QueueWorker:
+    """The real queue worker running the real pipeline against the stubs."""
     worker = DemoWorker(db_path=db_path, runner=runner, poll_interval=0.05)
     worker.start()
     return worker
@@ -241,10 +247,11 @@ def _boot(workdir: pathlib.Path, port: int):
     finally:
         conn.close()
     models = start_fake_models()
-    app = create_app(db_path=db_path)
+    runner = _model_runner(models)
+    app = create_app(db_path=db_path, runner=runner)
     _add_demo_routes(app, api_key)
     server = _serve(app, port)
-    worker = _start_worker(db_path, models)
+    worker = _start_worker(db_path, runner)
     return server, worker, models, api_key
 
 

@@ -74,6 +74,51 @@ function metin(deger) {
   return typeof deger === "string" ? deger.trim() : "";
 }
 
+const FARK_TOPLAMLAR = [
+  { alan: "ara_toplam", etiket: "Ara toplam" },
+  { alan: "iskonto", etiket: "İskonto" },
+  { alan: "kdv", etiket: "KDV" },
+  { alan: "toplam", etiket: "Genel toplam" },
+];
+
+/** Before-after rows for the rerun panel: only the values that actually moved.
+ *
+ * A rerun of a failed receipt has no "before" numbers at all, so an absent
+ * amount reads as an em dash here rather than the 0,00 a reviewer would try
+ * to compare against.
+ */
+export function kaliteFarki(eskiEnv, yeniEnv) {
+  const satirlar = [];
+  const ekle = (etiket, once, sonra) => {
+    if (once !== sonra) satirlar.push({ etiket, once, sonra });
+  };
+  const tutar = (env, alan) => {
+    const deger = env?.result?.totals?.[alan];
+    return Number.isFinite(deger) ? para(deger) : "—";
+  };
+  const dogrulama = (env) =>
+    VERDICT[env?.validation?.verdict]?.etiket || DURUM[env?.status] || "—";
+  ekle("Doğrulama", dogrulama(eskiEnv), dogrulama(yeniEnv));
+  ekle("Model", eskiEnv?.meta?.model || "—", yeniEnv?.meta?.model || "—");
+  for (const { alan, etiket } of FARK_TOPLAMLAR) {
+    ekle(etiket, tutar(eskiEnv, alan), tutar(yeniEnv, alan));
+  }
+  const adet = (env) =>
+    Array.isArray(env?.result?.items) ? String(env.result.items.length) : "—";
+  ekle("Ürün sayısı", adet(eskiEnv), adet(yeniEnv));
+  return satirlar;
+}
+
+async function hataMesaji(yanit) {
+  try {
+    const govde = await yanit.json();
+    if (govde?.error?.message) return govde.error.message;
+  } catch {
+    // a body that is not JSON has nothing better to say than its status
+  }
+  return `HTTP ${yanit.status}`;
+}
+
 export function createFisDetay({ onDuzeltme = () => {} } = {}) {
   const dialog = document.getElementById("fis-detay");
   const baslik = document.getElementById("detay-baslik");
@@ -97,12 +142,20 @@ export function createFisDetay({ onDuzeltme = () => {} } = {}) {
   const jsonAlani = document.getElementById("detay-json");
   const kaydetDugme = document.getElementById("detay-kaydet");
   const kaydetDurum = document.getElementById("detay-kaydet-durum");
+  const yenidenDugme = document.getElementById("detay-yeniden");
+  const onayKutusu = document.getElementById("detay-yeniden-onay");
+  const onaylaDugme = document.getElementById("detay-yeniden-onayla");
+  const vazgecDugme = document.getElementById("detay-yeniden-vazgec");
+  const farkKutusu = document.getElementById("detay-fark");
+  const farkIcerik = document.getElementById("detay-fark-icerik");
 
   let sira = 0; // a late answer from a superseded open must not draw
   let gorselSira = 0;
   let sonId = "";
   let envelope = null;
   let kaydediliyor = false;
+  let yenidenIsleniyor = false;
+  let islenebilir = false; // only a finished read (done/failed) can be rerun
 
   function hucre(metin, saga) {
     const td = document.createElement("td");
@@ -282,6 +335,11 @@ export function createFisDetay({ onDuzeltme = () => {} } = {}) {
 
   function ciz(env, { gorsel = true } = {}) {
     envelope = env;
+    islenebilir = env.status === "done" || env.status === "failed";
+    // A fresh envelope makes an open confirmation and a stale before/after
+    // diff belong to a state that no longer exists.
+    onayKutusu.hidden = true;
+    farkKutusu.hidden = true;
     const result = env.result;
     const header = result?.header || {};
     const meta = result?.meta || {};
@@ -346,6 +404,7 @@ export function createFisDetay({ onDuzeltme = () => {} } = {}) {
     ozet.textContent = "Yükleniyor…";
     durumEtiket.hidden = true;
     kayitDurumu("");
+    onayKutusu.hidden = true;
     kaydetDugme.disabled = true; // an edit belongs to the receipt it was typed on
     let env;
     try {
@@ -393,6 +452,78 @@ export function createFisDetay({ onDuzeltme = () => {} } = {}) {
 
   function dugumuGuncelle() {
     kaydetDugme.disabled = kaydediliyor || duzenlenenler().length === 0;
+    yenidenDugme.disabled = kaydediliyor || yenidenIsleniyor || !islenebilir;
+    onaylaDugme.disabled = yenidenIsleniyor;
+  }
+
+  function farklariCiz(satirlar) {
+    farkIcerik.textContent = "";
+    farkKutusu.hidden = false;
+    if (!satirlar.length) {
+      const not = document.createElement("p");
+      not.className = "uyusmazlik-durum";
+      not.textContent = "Kalite modu aynı veriyi üretti — değişen bir alan yok.";
+      farkIcerik.appendChild(not);
+      return;
+    }
+    const tablo = document.createElement("table");
+    tablo.className = "karsilastirma";
+    const basliklar = tablo.appendChild(document.createElement("tr"));
+    for (const [baslik, saga] of [
+      ["Alan", false],
+      ["Önce", true],
+      ["Sonra", true],
+    ]) {
+      const th = document.createElement("th");
+      th.scope = "col";
+      th.className = saga ? "saga" : "";
+      th.textContent = baslik;
+      basliklar.appendChild(th);
+    }
+    const govde = tablo.appendChild(document.createElement("tbody"));
+    for (const satir of satirlar) {
+      const tr = document.createElement("tr");
+      tr.append(
+        hucre(satir.etiket, false),
+        hucre(satir.once, true),
+        hucre(satir.sonra, true),
+      );
+      govde.appendChild(tr);
+    }
+    farkIcerik.appendChild(tablo);
+  }
+
+  async function yenidenIsle() {
+    if (!sonId || yenidenIsleniyor) return;
+    const once = envelope;
+    const tur = sira; // opening another receipt while this runs owns the dialog
+    yenidenIsleniyor = true;
+    onayKutusu.hidden = true;
+    dugumuGuncelle();
+    kayitDurumu("Kalite modu işleniyor… model fişi bir daha okuyor, bu birkaç saniye sürebilir.");
+    try {
+      const yanit = await fetch(`${API}/jobs/${encodeURIComponent(sonId)}/rerun`, {
+        method: "POST",
+      });
+      if (!yanit.ok) throw new Error(await hataMesaji(yanit));
+      const guncel = await yanit.json();
+      if (tur !== sira || sonId !== guncel.job_id) return;
+      ciz(guncel, { gorsel: false });
+      farklariCiz(kaliteFarki(once, guncel));
+      kayitDurumu(
+        "Kalite modu bitti ✓ doğrulama yeni sayılarla yeniden çalıştı.",
+        "kayit-iyi",
+      );
+      onDuzeltme(); // the list row underneath carries the same amounts
+    } catch (hata) {
+      if (tur !== sira) return;
+      kayitDurumu(`Yeniden işlenemedi — ${hata.message}`, "kayit-hata");
+    } finally {
+      if (tur === sira) {
+        yenidenIsleniyor = false;
+        dugumuGuncelle();
+      }
+    }
   }
 
   async function kaydet() {
@@ -460,6 +591,14 @@ export function createFisDetay({ onDuzeltme = () => {} } = {}) {
     dugumuGuncelle();
   });
   kaydetDugme.addEventListener("click", kaydet);
+  yenidenDugme.addEventListener("click", () => {
+    onayKutusu.hidden = false;
+    onaylaDugme.focus();
+  });
+  vazgecDugme.addEventListener("click", () => {
+    onayKutusu.hidden = true;
+  });
+  onaylaDugme.addEventListener("click", yenidenIsle);
 
   return { ac, kapat: () => dialog.close() };
 }

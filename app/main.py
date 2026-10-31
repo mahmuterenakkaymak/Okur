@@ -31,8 +31,15 @@ from app import auth, config, contract, db, routes_admin, routes_jobs, routes_wo
 STATIC_DIR = config.ROOT / "static"
 
 
-def create_app(db_path: str | os.PathLike[str] | None = None) -> FastAPI:
-    """The whole HTTP app; db_path defaults to config.db_path()."""
+def create_app(
+    db_path: str | os.PathLike[str] | None = None,
+    runner: Any | None = None,
+) -> FastAPI:
+    """The whole HTTP app; db_path defaults to config.db_path().
+
+    runner is the pipeline seam the quality rerun route calls — QueueWorker's
+    shape (image bytes + quality_mode/worker -> bundle); None is pipeline.run.
+    """
     app = FastAPI(
         title="OCR API — contract v1",
         version="v1",
@@ -43,6 +50,7 @@ def create_app(db_path: str | os.PathLike[str] | None = None) -> FastAPI:
         ),
     )
     app.state.db_path = db_path
+    app.state.pipeline_runner = runner
     app.include_router(routes_jobs.router)
     app.include_router(routes_worker.router)
     app.include_router(routes_admin.router)
