@@ -11,6 +11,10 @@ Breaking changes never land in `/v1/`. Adding a field is allowed (consumers
 must ignore unknown fields); renaming, removing or re-typing a field is
 breaking and ships as `/v2/`.
 
+Corrections are not a `/v1` door at all: the table below has no
+``PATCH | `/v1/jobs/{id}` `` row, and the admin door is the only way to
+correct a stored receipt.
+
 ## Defaults
 
 A missing field never arrives as null: strings are `""`, numbers `0.0`,
@@ -21,17 +25,21 @@ numbers before anyone downstream sees them.
 
 ## Endpoints
 
-All `/v1` routes require the `X-API-Key` header.
+All `/v1` routes require the `X-API-Key` header. The review doors below ship
+under `/admin/api` on the admin session cookie instead — POST
+`/admin/api/login` exchanges the server's `ADMIN_TOKEN` for it — because `/v1`
+is key-authed per integrator, while corrections, exports and health read every
+worker's receipts.
 
 | Method | Path | Purpose |
 | --- | --- | --- |
 | POST | `/v1/jobs` | Submit a receipt: multipart `image`, optional `mode`, `client_ref`, `captured_at`. New job → `202 {job_id}`; a repeated `client_ref` for the same key → `200` with the existing `job_id`, no re-queue. |
 | GET | `/v1/jobs/{id}` | The job envelope below. |
 | GET | `/v1/jobs` | List jobs; filters `status`, `worker`, `since`, `mine`. |
-| PATCH | `/v1/jobs/{id}` | Admin field correction; re-runs the validator. |
-| POST | `/v1/jobs/{id}/rerun` | Quality-mode rerun against the stronger model; replaces result and meta. |
-| GET | `/v1/export` | `format=json` / `csv` / `xlsx`; filters `ids`, `worker`, `since`. |
-| GET | `/v1/status` | Service health, VRAM and queue depth. |
+| PATCH | `/admin/api/jobs/{id}` | Admin field correction; re-runs the validator. |
+| POST | `/admin/api/jobs/{id}/rerun` | Quality-mode rerun against the stronger model; replaces result and meta. |
+| GET | `/admin/api/export` | `format=json` / `csv` / `xlsx`; filters `ids`, `worker`, `since`. |
+| GET | `/admin/api/status` | Service health, VRAM and queue depth. |
 
 
 ## Job envelope — response root
