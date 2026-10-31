@@ -1,4 +1,4 @@
-"""HTTP shell: app factory, /v1 auth + rate limit, JSON error envelope, static mounts.
+"""HTTP shell: app factory, auth + rate limit, JSON error envelope, static mounts.
 
 One factory assembles everything (run.py, smokes and tests all call
 create_app), so the middleware order — auth before routing, the envelope
@@ -6,8 +6,10 @@ around everything — is never reassembled by hand. /v1 and /api/me are the
 authenticated surfaces, and auth.authorize already folds key verification and
 the per-key token bucket into one verdict, so a single middleware maps
 401/429/200 onto responses and hands the key row to routes through
-request.state. Every failure the app can produce (missing route, bad request,
-crash, auth) leaves as the same JSON envelope, so integrators parse one shape.
+request.state. /admin/api is the other authenticated surface: an admin session
+cookie instead of a worker key. Every failure the app can produce (missing
+route, bad request, crash, auth) leaves as the same JSON envelope, so
+integrators parse one shape.
 """
 from __future__ import annotations
 
@@ -24,7 +26,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from app import auth, config, contract, db, routes_jobs, routes_worker
+from app import auth, config, contract, db, routes_admin, routes_jobs, routes_worker
 
 STATIC_DIR = config.ROOT / "static"
 
@@ -43,6 +45,7 @@ def create_app(db_path: str | os.PathLike[str] | None = None) -> FastAPI:
     app.state.db_path = db_path
     app.include_router(routes_jobs.router)
     app.include_router(routes_worker.router)
+    app.include_router(routes_admin.router)
 
     @app.get("/health", tags=["ops"])
     def health() -> dict[str, str]:
@@ -52,6 +55,7 @@ def create_app(db_path: str | os.PathLike[str] | None = None) -> FastAPI:
 
     _add_error_envelope(app)
     _add_auth_middleware(app)
+    _add_admin_guard(app)
     _mount_static(app)
     _describe_contract(app)
     return app
@@ -83,6 +87,19 @@ def _add_auth_middleware(app: FastAPI) -> None:
             return response
         request.state.key = row
         return await call_next(request)
+
+
+def _add_admin_guard(app: FastAPI) -> None:
+    @app.middleware("http")
+    async def admin_session(request: Request, call_next):
+        # By prefix, so every /admin/api route is protected the moment it is
+        # registered; the static shell under /admin stays public (no data).
+        path = request.url.path
+        if not path.startswith("/admin/api/") or path in routes_admin.PUBLIC_PATHS:
+            return await call_next(request)
+        if auth.session_ok(request.cookies.get(auth.ADMIN_COOKIE, "")):
+            return await call_next(request)
+        return _error(401, "unauthorized", "admin session required")
 
 
 def _error(

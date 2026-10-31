@@ -4,6 +4,10 @@ The plaintext leaves create_key once and is never written down: the database
 holds only the hash, so a stolen ocr.db cannot be replayed as a key. verify()
 hashes the candidate and compares hashes with hmac.compare_digest, and a
 revoked key stops resolving on the next call.
+
+Admin sessions follow the same rule one level up: ADMIN_TOKEN is compared in
+constant time and never leaves the server — login hands back a random session
+id, and that id alone is what the httpOnly cookie carries.
 """
 from __future__ import annotations
 
@@ -108,3 +112,62 @@ def _take_token(key_id: int, now: float) -> float:
         tokens = min(capacity, tokens + (now - last) * refill)
         _buckets[key_id] = (tokens - 1.0 if tokens >= 1.0 else tokens, now)
         return 0.0 if tokens >= 1.0 else (1.0 - tokens) / refill
+
+
+# --- admin sessions ---
+
+# ASSUMPTION: sessions live in this process only — PLAN.md runs one app
+# process, so a restart signs the operator out, the safe direction to fail.
+ADMIN_COOKIE = "ocr_admin_session"
+_sessions: dict[str, float] = {}  # session id -> monotonic expiry
+
+
+def admin_configured() -> bool:
+    """False when ADMIN_TOKEN is unset: the admin panel has no door at all."""
+    return bool(config.admin_token())
+
+
+def admin_token_ok(candidate: str) -> bool:
+    """Constant-time ADMIN_TOKEN check; an unset token matches nothing.
+
+    Both sides go to bytes first: hmac.compare_digest rejects non-ASCII str,
+    and a pasted token is whatever the operator typed.
+    """
+    expected = config.admin_token()
+    if not expected or not candidate:
+        return False
+    return hmac.compare_digest(
+        expected.encode("utf-8"), candidate.encode("utf-8")
+    )
+
+
+def start_session() -> str:
+    """New session id for the httpOnly cookie — never the token itself."""
+    now = time.monotonic()
+    session_id = secrets.token_urlsafe(32)
+    with _lock:
+        for stale in [sid for sid, end in _sessions.items() if end <= now]:
+            _sessions.pop(stale, None)
+        _sessions[session_id] = now + config.admin_session_hours() * 3600.0
+    return session_id
+
+
+def session_ok(session_id: str) -> bool:
+    """Live session id -> True; unknown or expired -> False (and forgotten)."""
+    if not session_id:
+        return False
+    now = time.monotonic()
+    with _lock:
+        end = _sessions.get(session_id)
+        if end is None:
+            return False
+        if end <= now:
+            _sessions.pop(session_id, None)
+            return False
+        return True
+
+
+def end_session(session_id: str) -> None:
+    """Log out one session; logging out twice is not an error."""
+    with _lock:
+        _sessions.pop(session_id, None)

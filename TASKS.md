@@ -50,7 +50,7 @@
 
 ## M3 — Admin UI
 
-- [ ] T34 | M3 | Admin auth: ADMIN_TOKEN env login issuing an httpOnly session cookie, constant-time token compare, 401 for /admin APIs without a session, logout; admin shell page with Turkish nav (Fişler, Anahtarlar, Durum) | accept: .venv\Scripts\python -m pytest tests/test_admin_auth.py -q
+- [x] T34 | M3 | Admin auth: ADMIN_TOKEN env login issuing an httpOnly session cookie, constant-time token compare, 401 for /admin APIs without a session, logout; admin shell page with Turkish nav (Fişler, Anahtarlar, Durum) | accept: .venv\Scripts\python -m pytest tests/test_admin_auth.py -q
 - [ ] T35 | M3 | Admin list view: all submissions table (job_id short, worker, tarih, firma, toplam, verdict, kalite modu), filters status/worker/date range, free-text search over header and items, sort, pagination; test feeds real seeded jobs and checks filter results | accept: .venv\Scripts\python -m pytest tests/test_admin_list.py -q
 - [ ] T36 | M3 | Job detail view: stored image preview, editable items table (ad, miktar, birim_fiyat, toplam) and totals form, expected-vs-actual discrepancy panel from the validation block, okunamayan list, raw JSON viewer toggle | accept: .venv\Scripts\python -m pytest tests/test_admin_detail.py -q
 - [ ] T37 | M3 | PATCH /v1/jobs/{id} field-level corrections (admin session): store correction rows with who and when, re-run the validator on corrected data, and propagate to GET /v1/jobs/{id}, admin detail, PWA result view and all export formats in one task; test asserts all five surfaces agree | accept: .venv\Scripts\python -m pytest tests/test_corrections.py -q

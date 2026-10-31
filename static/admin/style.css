@@ -1,0 +1,101 @@
+:root { color-scheme: dark; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0; min-height: 100dvh;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: #0f1115; color: #e8e6e1;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- ortak parçalar --- */
+.kart {
+  background: #171a21; border: 1px solid rgba(255,255,255,.07);
+  border-radius: 1rem; padding: 1.4rem 1.35rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  animation: belirme .32s ease both;
+}
+.kart h2 { margin: 0 0 1rem; font-size: 1.05rem; letter-spacing: .01em; }
+.not { margin: 0; font-size: .8rem; line-height: 1.55; color: #7c818b; }
+.hata {
+  margin: 0 0 .9rem; padding: .6rem .8rem; border-radius: .7rem;
+  font-size: .85rem; line-height: 1.5; color: #fbbf24;
+  background: rgba(251,191,36,.08); border: 1px solid rgba(251,191,36,.25);
+}
+.btn {
+  cursor: pointer; padding: .6rem 1.05rem; border-radius: .8rem;
+  font: inherit; font-size: .88rem; font-weight: 600; color: #e8e6e1;
+  border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.05);
+  transition: transform .12s ease, background-color .2s ease, border-color .2s ease;
+}
+.btn:hover { background: rgba(255,255,255,.09); }
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .6; cursor: progress; }
+.btn-birincil { border-color: rgba(74,222,128,.4); background: rgba(74,222,128,.16); color: #d7f5e3; }
+.btn-birincil:hover { background: rgba(74,222,128,.24); }
+.btn:focus-visible, .nav-li:focus-visible, input:focus-visible {
+  outline: 2px solid rgba(74,222,128,.65); outline-offset: 2px;
+}
+.alan { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1rem; }
+.alan label { font-size: .82rem; color: #b9bcc4; }
+.alan input {
+  padding: .62rem .8rem; border-radius: .7rem; font: inherit; font-size: .92rem;
+  border: 1px solid rgba(255,255,255,.14); background: #0b0d11; color: #e8e6e1;
+  transition: border-color .2s ease;
+}
+.alan input::placeholder { color: #5d626c; }
+.alan input:focus { outline: none; border-color: rgba(74,222,128,.5); }
+
+/* --- giriş ekranı --- */
+.giris { min-height: 100dvh; display: grid; place-items: center; padding: 1.5rem; }
+.giris-kart { width: 100%; max-width: 25rem; text-align: center; }
+.giris-kart .logo { display: block; margin: 0 auto .8rem; }
+.giris-kart h1 { margin: 0 0 .5rem; font-size: 1.2rem; letter-spacing: .01em; }
+.giris-kart p { margin: 0 0 1.15rem; font-size: .9rem; line-height: 1.6; color: #b9bcc4; }
+.giris-kart .alan { text-align: left; }
+.giris-kart .btn { width: 100%; }
+.giris-kart .not { margin-top: .9rem; }
+.sallanma { animation: sallanma .42s ease; }
+
+/* --- panel --- */
+.bar {
+  display: flex; align-items: center; gap: .7rem;
+  padding: .8rem 1.5rem; background: #14171d;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.bar svg { display: block; }
+.bar h1 { flex: 1; margin: 0; font-size: 1.02rem; letter-spacing: .01em; }
+.bar h1 span { margin-left: .45rem; font-size: .82rem; font-weight: 500; color: #7c818b; }
+.btn-cikis { padding: .45rem .85rem; font-size: .82rem; color: #b9bcc4; }
+.btn-cikis:hover { border-color: rgba(248,113,113,.35); color: #f87171; }
+.nav {
+  display: flex; gap: .35rem; width: 100%; max-width: 66rem;
+  margin: 0 auto; padding: 0 1.5rem;
+}
+.nav-li {
+  cursor: pointer; font: inherit; font-size: .9rem; font-weight: 600;
+  color: #8b8f99; background: none; border: 0; padding: .95rem .85rem;
+  border-bottom: 2px solid transparent;
+  transition: color .2s ease, border-color .2s ease;
+}
+.nav-li:hover { color: #dfe3e8; }
+.nav-li.secili { color: #4ade80; border-bottom-color: #4ade80; }
+main {
+  width: 100%; max-width: 66rem; margin: 0 auto;
+  padding: 1.3rem 1.5rem 3rem;
+}
+.bos { text-align: center; padding: 2.2rem 0 1.6rem; }
+.bos svg { display: block; margin: 0 auto .9rem; animation: salinim 3.8s ease-in-out infinite; }
+.bos p { margin: 0 0 .35rem; font-size: .95rem; color: #b9bcc4; }
+.bos .not { margin-top: .1rem; }
+
+@keyframes belirme { from { opacity: 0; transform: translateY(.4rem); } }
+@keyframes sallanma {
+  10%, 90% { transform: translateX(-.22rem); }
+  30%, 70% { transform: translateX(.34rem); }
+  50% { transform: translateX(-.34rem); }
+}
+@keyframes salinim { 50% { transform: translateY(-.22rem) rotate(.8deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .kart, .bos svg, .sallanma { animation: none; }
+}
