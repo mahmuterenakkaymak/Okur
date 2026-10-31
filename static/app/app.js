@@ -9,6 +9,7 @@ import { createCapture } from "./capture.js";
 import { createCropper } from "./crop.js";
 import { getApiKey, getJob, isOnline, pollJob, setApiKey, submitJob } from "./api.js";
 import { createHistory } from "./history.js";
+import { createFlow } from "./flow.js";
 import { cameraNotice, offlineNotice, recoveryFor, withTimeout } from "./recovery.js";
 import { statusOf } from "./status.js";
 import { createStages } from "./stages.js";
@@ -86,25 +87,16 @@ function metin(value) {
 let guncel = null;
 let sonucEnvelope = null;
 let startedAt = 0;
-let tickTimer = null;
 let clientRef = null;
 let capturedAt = null;
 let sonCrop = null;
-let akis = 0;
+const akis = createFlow();
 
 function show(step) {
   for (const [name, card] of Object.entries(ADIMLAR)) card.hidden = name !== step;
   if (step === "cekim") capture.start();
   else capture.stop();
   cizNet();
-}
-
-// Abandoning the live flow: the in-flight send may still land, but its
-// result must never paint over what the worker chose to do instead.
-function birak() {
-  akis += 1;
-  clearInterval(tickTimer);
-  tickTimer = null;
 }
 
 function hideError() {
@@ -175,7 +167,6 @@ function hataGoster(err, { onCrop = false } = {}) {
 
 async function gonder(crop) {
   sonCrop = crop;
-  const tur = akis;
   hideError();
   if (!getApiKey()) {
     showError(
@@ -187,40 +178,39 @@ async function gonder(crop) {
   guncel = null;
   startedAt = Date.now();
   cizDurum();
-  tickTimer = setInterval(cizDurum, 500);
+  const tur = akis.devral(cizDurum);
   try {
     const kabul = await withTimeout(submitJob(crop.blob, { clientRef, capturedAt }));
-    if (tur !== akis) return;
+    if (!akis.canli(tur)) return;
     guncel = kabul;
     cizDurum();
     const bitti = await pollJob(kabul.job_id, {
       onTick: (envelope) => {
-        if (envelope && tur === akis) guncel = envelope;
+        if (envelope && akis.canli(tur)) guncel = envelope;
       },
     });
-    if (tur !== akis) return;
+    if (!akis.canli(tur)) return;
     sonucGoster(bitti);
     history.refresh();
   } catch (err) {
-    if (tur !== akis) return;
+    if (!akis.canli(tur)) return;
     hataGoster(err, { onCrop: true });
   } finally {
-    if (tur === akis) {
-      clearInterval(tickTimer);
-      tickTimer = null;
-    }
+    akis.kapat(tur);
   }
 }
 
 // A history tap opens the same result view; a job that has not finished yet
-// resumes live tracking instead of showing a dead-end detail.
+// resumes live tracking instead of showing a dead-end detail. The tap takes
+// the screen away from whatever was running first, so a send in flight never
+// keeps a second poll loop ticking behind the detail.
 async function detayAc(job) {
-  const tur = akis;
+  let tur = akis.dur();
   hideError();
   try {
     if (job.status === "done" || job.status === "failed") {
       const env = await getJob(job.job_id);
-      if (tur !== akis) return;
+      if (!akis.canli(tur)) return;
       sonucGoster(env);
       return;
     }
@@ -228,23 +218,20 @@ async function detayAc(job) {
     startedAt = Date.now();
     show("durum");
     cizDurum();
-    tickTimer = setInterval(cizDurum, 500);
+    tur = akis.devral(cizDurum);
     const bitti = await pollJob(job.job_id, {
       onTick: (envelope) => {
-        if (envelope && tur === akis) guncel = envelope;
+        if (envelope && akis.canli(tur)) guncel = envelope;
       },
     });
-    if (tur !== akis) return;
+    if (!akis.canli(tur)) return;
     sonucGoster(bitti);
     history.refresh();
   } catch (err) {
-    if (tur !== akis) return;
+    if (!akis.canli(tur)) return;
     hataGoster(err);
   } finally {
-    if (tur === akis) {
-      clearInterval(tickTimer);
-      tickTimer = null;
-    }
+    akis.kapat(tur);
   }
 }
 
@@ -329,7 +316,7 @@ hamJsonDugme.addEventListener("click", () => {
 });
 
 function kamerayaDon() {
-  birak();
+  akis.dur();
   cropper.clear();
   sonucEnvelope = null;
   guncel = null;
@@ -341,7 +328,7 @@ function kamerayaDon() {
 yeniFis.addEventListener("click", kamerayaDon);
 
 cekimeDon.addEventListener("click", () => {
-  birak();
+  akis.dur();
   cropper.clear();
   sonCrop = null;
   hideError();
@@ -355,7 +342,7 @@ tekrarDugme.addEventListener("click", () => {
 });
 
 yenidenCek.addEventListener("click", () => {
-  birak();
+  akis.dur();
   cropper.clear();
   sonCrop = null;
   hideError();
