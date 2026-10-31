@@ -65,8 +65,7 @@ def create_job(
         updates = {"image_path": str(path)}
         if captured_at:
             # ASSUMPTION: captured_at is not a queue column, so it rides in
-            # meta_json; the worker replaces meta_json on completion (T13),
-            # after which the envelope reports it as null.
+            # meta_json, which the worker merges with when it completes.
             updates["meta_json"] = {"captured_at": captured_at}
         return _envelope(db.update_job(conn, job["id"], **updates))
     finally:

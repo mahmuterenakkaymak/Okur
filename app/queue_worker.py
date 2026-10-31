@@ -9,6 +9,7 @@ own connection because sqlite forbids sharing one across threads.
 """
 from __future__ import annotations
 
+import json
 import os
 import pathlib
 import threading
@@ -131,9 +132,17 @@ class QueueWorker:
                 conn, job["id"], "failed", error=f"{type(exc).__name__}: {exc}"
             )
             return
-        # ASSUMPTION: captured_at belongs to the route (not a queue column),
-        # so the worker only fills received_at from the row's created_at.
-        meta = {**(bundle.get("meta") or {}), "received_at": job["created_at"]}
+        # ASSUMPTION: captured_at belongs to the route (not a queue column), so
+        # it rides in the row's meta_json and the worker merges under it. The
+        # bundle's meta is a full JobMeta dump whose captured_at is null, and
+        # nulls never get to clobber what the route stored.
+        stored = json.loads(job["meta_json"]) if job["meta_json"] else {}
+        fresh = {
+            key: value
+            for key, value in (bundle.get("meta") or {}).items()
+            if value is not None
+        }
+        meta = {**stored, **fresh, "received_at": job["created_at"]}
         if bundle.get("error"):
             db.set_status(conn, job["id"], "failed", error=str(bundle["error"]))
         else:
