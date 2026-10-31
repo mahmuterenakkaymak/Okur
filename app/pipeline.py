@@ -15,6 +15,11 @@ from typing import Any
 
 from app import config, contract, validator
 from app.ocr_client import OcrClient, OcrError
+from app.structurer import UnreadableError
+
+# The reason shows up inline in the PWA's warning line and as a chip in the
+# admin detail, so a model's whole complaint never runs past either.
+REASON_MAX_CHARS = 160
 
 
 def run(
@@ -41,11 +46,21 @@ def run(
         return _bundle(worker, 0, started, quality_mode, f"stage 1: {exc}")
     ocr_ms = _ms(seen.get("ms"))
 
-    # ASSUMPTION: stage 2 reports unusable output with its own UnreadableError;
-    # any other stage-2 failure (dead server, timeout) means the same thing
-    # here — no result — so both take the unreadable path with the reason kept.
+    # ASSUMPTION: UnreadableError is the model's own verdict on the receipt, so
+    # the job completes done with that verdict and the reason in okunamayan;
+    # any other stage-2 failure (dead server, timeout) is an outage, so it stays
+    # a failed job with the reason in the error column.
     try:
         structured = structurer.structure(str(seen.get("text") or ""), image_bytes)
+    except UnreadableError as exc:
+        return _bundle(
+            worker,
+            ocr_ms,
+            started,
+            quality_mode,
+            "",
+            contract.Result(okunamayan=[_reason(exc)]),
+        )
     except Exception as exc:
         return _bundle(worker, ocr_ms, started, quality_mode, f"stage 2: {exc}")
 
@@ -87,6 +102,12 @@ def _bundle(
         "meta": meta.model_dump(),
         "error": error,
     }
+
+
+def _reason(exc: BaseException) -> str:
+    """One short line for the result's okunamayan list from a model's complaint."""
+    text = " ".join(str(exc).split())
+    return text if len(text) <= REASON_MAX_CHARS else text[: REASON_MAX_CHARS - 1].rstrip() + "…"
 
 
 def _ms(value: Any) -> int:
