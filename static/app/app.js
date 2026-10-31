@@ -11,6 +11,7 @@ import { getApiKey, getJob, isOnline, pollJob, setApiKey, submitJob } from "./ap
 import { createHistory } from "./history.js";
 import { cameraNotice, offlineNotice, recoveryFor, withTimeout } from "./recovery.js";
 import { statusOf } from "./status.js";
+import { createStages } from "./stages.js";
 
 const ADIMLAR = {
   cekim: document.getElementById("adim-cekim"),
@@ -47,6 +48,13 @@ const kameraIpucu = document.getElementById("kamera-ipucu");
 const tekrarDugme = document.getElementById("tekrar-dene");
 const yenidenCek = document.getElementById("yeniden-cek");
 const anahtarTamam = document.getElementById("anahtar-tamam");
+
+// D2: the four-stage row under the headline, ticking with the same clock the
+// status card already keeps.
+const asama = createStages({
+  container: document.getElementById("asama-satiri"),
+  sayac: gecenSure,
+});
 
 const TASI_CLASS = {
   ok: "chip-on",
@@ -132,7 +140,7 @@ function cizDurum() {
   durumEtiket.textContent = v.label;
   durumIpucu.textContent = v.hint;
   durumIlerleme.style.width = `${Math.round(v.progress * 100)}%`;
-  gecenSure.textContent = `${v.seconds} sn`;
+  asama.update(v);
   yenidenCek.hidden = !v.stale;
 }
 
@@ -157,7 +165,7 @@ function hataGoster(err, { onCrop = false } = {}) {
   durumEtiket.textContent = "Fiş yüklenemedi";
   durumIpucu.textContent = r.message;
   durumIlerleme.style.width = "0%";
-  gecenSure.textContent = "";
+  asama.update(null);
   yenidenCek.hidden = false;
 }
 
