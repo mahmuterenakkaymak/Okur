@@ -11,6 +11,8 @@ import hashlib
 import hmac
 import secrets
 import sqlite3
+import threading
+import time
 
 from app import config
 from app.db import _now
@@ -64,3 +66,45 @@ def revoke_key(conn: sqlite3.Connection, key_id: int) -> bool:
     )
     conn.commit()
     return cur.rowcount > 0
+
+
+# --- rate limit ---
+
+# ASSUMPTION: the HTTP layer arrives in T15; authorize() returns the status
+# code (401/429/200) its middleware maps straight onto a response.
+# ASSUMPTION: buckets live in this process only — PLAN.md runs one app
+# process, so a restart (empty buckets) is the only reset.
+
+_lock = threading.Lock()
+_buckets: dict[int, tuple[float, float]] = {}  # key_id -> (tokens, last_s)
+
+
+def authorize(
+    conn: sqlite3.Connection, key: str, *, now: float | None = None
+) -> tuple[int, dict | None, float]:
+    """Verify + per-key token bucket: (status, key row, retry-after seconds).
+
+    401 for a missing, unknown or revoked key (no token consumed), 429 with
+    the wait until the next token when the bucket is empty, 200 otherwise.
+    The row comes back on 429 too, so the caller can still attribute the hit.
+    """
+    row = verify(conn, key)
+    if row is None:
+        return 401, None, 0.0
+    if now is None:
+        now = time.monotonic()
+    retry_after = _take_token(row["id"], now)
+    if retry_after > 0.0:
+        return 429, row, retry_after
+    return 200, row, 0.0
+
+
+def _take_token(key_id: int, now: float) -> float:
+    """Consume one token if the bucket has it; else seconds until the next."""
+    capacity = float(config.rate_capacity())
+    refill = config.rate_refill_per_s()
+    with _lock:
+        tokens, last = _buckets.get(key_id, (capacity, now))
+        tokens = min(capacity, tokens + (now - last) * refill)
+        _buckets[key_id] = (tokens - 1.0 if tokens >= 1.0 else tokens, now)
+        return 0.0 if tokens >= 1.0 else (1.0 - tokens) / refill
