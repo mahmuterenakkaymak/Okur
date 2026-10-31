@@ -133,8 +133,10 @@ function cizDurum() {
 }
 
 // One failure, one way out: the key screen for a dead key, the crop card
-// with a retry (the crop is still loaded) for a failed upload, and for a
-// history read the status card turned into the error note with re-shoot.
+// with a retry (the crop is still loaded) for a failed upload, the same card
+// without one when the server refused this image — then only a tighter crop
+// or a new shot helps — and for a history read the status card turned into
+// the error note with re-shoot.
 function hataGoster(err, { onCrop = false } = {}) {
   const r = recoveryFor(err);
   if (r.action === "key") {
@@ -146,7 +148,7 @@ function hataGoster(err, { onCrop = false } = {}) {
     show("kirp");
     hataMesaji.textContent = r.message;
     hataMesaji.hidden = false;
-    tekrarDugme.hidden = false;
+    tekrarDugme.hidden = r.action === "retake";
     return;
   }
   show("durum");

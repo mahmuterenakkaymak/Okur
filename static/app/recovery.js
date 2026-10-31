@@ -1,7 +1,7 @@
 // Stuck-state recovery: every way a send can wedge (upload timeout, dead
-// network, revoked key, denied camera) maps to the one thing the worker can
-// do about it — retry in place with the crop still loaded, wait for the
-// network, or fix the key.
+// network, revoked key, image the server refused, denied camera) maps to the
+// one thing the worker can do about it — retry in place with the crop still
+// loaded, wait for the network, fix the key, or re-crop / re-shoot.
 //
 // ASSUMPTION: the API puts no deadline on an upload, so the PWA declares one
 // dead after UPLOAD_TIMEOUT_MS and offers the retry; the unchanged
@@ -26,16 +26,35 @@ export const RECOVERIES = {
     action: "key",
     message: "API anahtarın geçersiz ya da iptal edilmiş. Yöneticinden yeni bir anahtar iste.",
   },
+  // The image itself is the problem, so resending it cannot help: the worker
+  // crops tighter or shoots again, and the server's own line says which.
+  retake: {
+    action: "retake",
+    message:
+      "Bu görüntü sunucuya uymadı. Fişi daha küçük kırpmayı ya da yeniden çekmeyi dene.",
+  },
 };
 
 // Kinds whose own ApiError copy already explains the situation in Turkish.
-const OWN_COPY = new Set(["key_invalid", "offline", "rate_limited", "server_error"]);
+const OWN_COPY = new Set([
+  "key_invalid",
+  "offline",
+  "rate_limited",
+  "server_error",
+  "rejected",
+]);
 
 /** Any send-path failure -> { action, message } the UI branches on. */
 export function recoveryFor(error) {
   const kind = error && error.name === "ApiError" ? error.kind : "";
   const base =
-    kind === "key_invalid" ? RECOVERIES.key : kind === "offline" ? RECOVERIES.offline : RECOVERIES.retry;
+    kind === "key_invalid"
+      ? RECOVERIES.key
+      : kind === "offline"
+        ? RECOVERIES.offline
+        : kind === "rejected"
+          ? RECOVERIES.retake
+          : RECOVERIES.retry;
   return { ...base, message: OWN_COPY.has(kind) ? error.message : base.message };
 }
 

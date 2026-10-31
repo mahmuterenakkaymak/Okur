@@ -1,6 +1,7 @@
 // API client for the worker PWA: the key lives in localStorage, every call
 // carries X-API-Key, and every failure lands in one kind the UI can explain
-// in Turkish (key invalid / rate limited / offline / server error).
+// in Turkish (key invalid / rate limited / offline / server error), and an
+// image the server refused (413/422) carries the server's own Turkish line.
 //
 // ASSUMPTION: the PWA submits through the frozen /v1 intake route (the only
 // job POST) and polls its own key-scoped view under /api/me, which answers
@@ -26,8 +27,8 @@ const COPY = {
 };
 
 export class ApiError extends Error {
-  constructor(kind, { status = 0, retryAfter = null } = {}) {
-    super(COPY[kind] || COPY.server_error);
+  constructor(kind, { status = 0, retryAfter = null, message = "" } = {}) {
+    super(message || COPY[kind] || COPY.server_error);
     this.name = "ApiError";
     this.kind = kind;
     this.status = status;
@@ -36,10 +37,21 @@ export class ApiError extends Error {
 }
 
 /** One HTTP/network failure -> the kind the UI branches on. */
-export function classifyFailure({ status = 0, online = true, retryAfter = null } = {}) {
+export function classifyFailure({
+  status = 0,
+  online = true,
+  retryAfter = null,
+  serverMessage = "",
+} = {}) {
   if (!online || !status) return new ApiError("offline", { status });
   if (status === 401) return new ApiError("key_invalid", { status });
   if (status === 429) return new ApiError("rate_limited", { status, retryAfter });
+  // 413/422 are the server's verdict on this one image and its own copy says
+  // what to fix (kırp / yeniden çek); the same bytes resent fail the same
+  // way, so the worker reads that copy instead of "birazdan tekrar dene".
+  if ((status === 413 || status === 422) && serverMessage) {
+    return new ApiError("rejected", { status, message: serverMessage });
+  }
   return new ApiError("server_error", { status });
 }
 
@@ -75,6 +87,22 @@ export function setApiKey(key, storage = globalThis.localStorage) {
   return value;
 }
 
+/**
+ * The server's own line about a failed call (main._error's envelope). A 422
+ * leads with generic schema chatter, so the per-field copy it carries wins —
+ * that one is the Turkish sentence written for the worker.
+ */
+function failureMessage(data) {
+  const error = data && typeof data === "object" ? data.error : null;
+  if (!error || typeof error !== "object") return "";
+  const details = Array.isArray(error.details) ? error.details : [];
+  const fields = details
+    .map((detail) => (detail && typeof detail.message === "string" ? detail.message.trim() : ""))
+    .filter(Boolean);
+  if (fields.length) return fields.join(" · ");
+  return typeof error.message === "string" ? error.message.trim() : "";
+}
+
 function retryAfterSeconds(headers) {
   const value = Number(headers && headers.get("Retry-After"));
   return Number.isFinite(value) && value >= 0 ? value : null;
@@ -97,6 +125,7 @@ async function call(path, { apiKey = "", fetchFn = globalThis.fetch, baseUrl = "
       status: response.status,
       online: isOnline(),
       retryAfter: retryAfterSeconds(response.headers),
+      serverMessage: failureMessage(data),
     });
   }
   return data;
