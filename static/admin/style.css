@@ -362,7 +362,15 @@ main {
 .durum-deger { margin: 0 0 .3rem; font-size: 1.45rem; font-weight: 700; font-variant-numeric: tabular-nums; }
 .sayi-kotu { color: #f87171; }
 .vram-olcek { height: .55rem; overflow: hidden; border-radius: 999px; background: rgba(255,255,255,.08); }
-.vram-dolum { display: block; height: 100%; border-radius: 999px; background: #4ade80; transition: width .45s ease; }
+.vram-dolum { display: block; height: 100%; border-radius: 999px; background: #4ade80; transition: width .45s ease, background-color .45s ease; }
+.vram-amber { background: #fbbf24; }
+.vram-not-amber { color: #fbbf24; }
+.durum-spark-kart { margin-top: .8rem; }
+.durum-spark-kart .not { margin-bottom: .4rem; }
+.durum-spark { display: block; width: 100%; height: 46px; }
+.spark-cizgi { fill: none; stroke: #4ade80; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.spark-alan { fill: rgba(74, 222, 128, .12); }
+.spark-son { fill: #4ade80; }
 .durum-guncelleme { margin-top: 1.15rem; font-variant-numeric: tabular-nums; }
 
 @keyframes belirme { from { opacity: 0; transform: translateY(.4rem); } }

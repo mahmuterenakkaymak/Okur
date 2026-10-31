@@ -59,7 +59,7 @@
 - [x] T40 | M3 | app/status.py + GET /v1/status: health and latency probes for OCR 8081, Strata 8080 and Unsloth 8888, VRAM used and total from nvidia-smi with a graceful fallback when unavailable, queue depth queued/running/failed; admin Durum page rendering all of it | accept: .venv\Scripts\python -m pytest tests/test_status.py -q
 - [x] T41 | M3 | Quality-mode rerun: POST /v1/jobs/{id}/rerun re-runs the pipeline with quality_mode true against Unsloth 8888, replaces result, updates meta model, quality_mode and timings, re-validates, and refreshes every view and export; admin button with confirmation and a before-after diff | accept: .venv\Scripts\python -m pytest tests/test_quality_rerun.py -q
 - [x] T42 | M3 | static/admin/admin.js: list selection, inline field editing with validation before save, filter chips, keyboard shortcuts j and k to move rows, e to export, / to focus search, Esc to close detail; node tested | accept: node --test tests/js/admin.test.js
-- [ ] T43 | M3 | D5 status page feel: live queue-depth sparkline over the last 5 minutes and a VRAM gauge that turns amber past 90 percent, refreshing without a full reload | accept: node --test tests/js/status_page.test.js
+- [x] T43 | M3 | D5 status page feel: live queue-depth sparkline over the last 5 minutes and a VRAM gauge that turns amber past 90 percent, refreshing without a full reload | accept: node --test tests/js/status_page.test.js
 - [ ] T44 | M3 | D6 mutation toasts: slide-in confirmations for save, export and key creation (Kaydedildi ok, Anahtar oluşturuldu, bir daha gösterilmeyecek) with a copy action on the key toast and an error variant | accept: node --test tests/js/toasts.test.js
 
 ## M4 — Ship
