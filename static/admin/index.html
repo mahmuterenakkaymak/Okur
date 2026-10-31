@@ -75,8 +75,11 @@
           <div class="filtre-dugmeleri">
             <button type="button" class="btn btn-mini" id="fis-yenile">Yenile</button>
             <button type="button" class="btn btn-mini" id="fis-temizle" disabled>Filtreleri temizle</button>
+            <button type="button" class="btn btn-mini" id="fis-disaktar" title="Şu anki listeyi CSV indir (kısayol: e)">Dışa aktar (e)</button>
           </div>
         </form>
+        <div class="cipler" id="fis-cipler" hidden></div>
+        <p class="not" id="fis-disaktar-durum" role="status" aria-live="polite" hidden></p>
         <p class="hata" id="fis-hata" role="alert" hidden>
           Liste bir türlü yüklenemedi.
           <button type="button" class="btn btn-mini" id="fis-tekrar">Tekrar dene</button>

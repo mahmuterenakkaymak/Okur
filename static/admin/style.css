@@ -107,6 +107,22 @@ main {
 .hata .btn-mini { margin-left: .5rem; }
 .btn-mini { padding: .45rem .8rem; font-size: .8rem; }
 .btn-mini:disabled { cursor: default; }
+.cipler { display: flex; flex-wrap: wrap; gap: .45rem; margin: -.45rem 0 1rem; }
+.cip {
+  display: inline-flex; align-items: center; gap: .25rem;
+  padding: .26rem .35rem .26rem .65rem; border-radius: 999px;
+  font-size: .78rem; color: #d7f5e3;
+  background: rgba(74,222,128,.1); border: 1px solid rgba(74,222,128,.3);
+  animation: belirme .2s ease both;
+}
+.cip-sil {
+  display: grid; place-items: center; width: 1.2rem; height: 1.2rem; padding: 0;
+  border: 0; border-radius: 50%; background: none; color: inherit;
+  font-size: 1rem; line-height: 1; cursor: pointer;
+  transition: background-color .2s ease, color .2s ease;
+}
+.cip-sil:hover { background: rgba(248,113,113,.18); color: #f87171; }
+.cip-sil:focus-visible { outline: 2px solid rgba(74,222,128,.65); outline-offset: 1px; }
 .tablo-sar {
   overflow-x: auto; border-radius: .8rem;
   border: 1px solid rgba(255,255,255,.07);
@@ -135,6 +151,7 @@ main {
 .tablo tbody tr:last-child td { border-bottom: 0; }
 .tablo tbody tr { animation: belirme .2s ease both; transition: background-color .2s ease; }
 .tablo tbody tr:hover { background: rgba(255,255,255,.03); }
+.tablo tbody tr.secili-satir { background: rgba(74,222,128,.09); box-shadow: inset 2px 0 0 #4ade80; }
 .tablo .firma {
   max-width: 17rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   color: #dfe3e8;
