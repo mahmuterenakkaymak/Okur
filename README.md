@@ -60,7 +60,8 @@ One key per worker, printed exactly once:
 ```
 
 Start everything — `llama-server`, uvicorn and the queue worker — and the admin
-UI opens itself once both answer `/health`:
+UI opens itself once the roll-call is all green: the two children on `/health`,
+Strata (started outside this launcher) on its model listing:
 
 ```powershell
 .venv/Scripts/python run.py
@@ -205,6 +206,7 @@ the model server's own output are files under `data/logs/` (see
 | `eksik <path>` lines at startup | a model or the `llama-server` binary is missing | fix `LLAMA_SERVER` / `OCR_MODEL` / `OCR_MMPROJ` / `OCR_CHAT_TEMPLATE` in `.env`, or download the files |
 | `OCR ✗ 60 sn içinde hazır olmadı` | llama-server never answered `/health` | read `data/logs/ocr.log`; a slow disk or a huge `-ngl` swap needs a bigger `STARTUP_WAIT_S` |
 | `Uygulama ✗ …` | uvicorn never answered `/health` | read `data/logs/app.log`; a missing `ADMIN_TOKEN` is not one of these, the app boots without it |
+| `Strata ✗ …` | stage 2 never answered `/v1/models` — `run.py` waits for it, it never starts it | start Strata on `127.0.0.1:8080` (`STRATA_HOST`/`STRATA_PORT`), then run `python run.py` again |
 | `401 unauthorized` from `/v1`, or the PWA's "API anahtarı çalışmıyor" card | the key is wrong or revoked | `.venv/Scripts/python -m app.keys_cli list`, then issue a fresh key |
 | `429 rate_limited` | this key's token bucket is empty | obey `Retry-After`; raise `RATE_LIMIT_CAPACITY` / `RATE_LIMIT_REFILL_PER_S` only if the real load says so |
 | `413 payload_too_large` | the photo is over `MAX_UPLOAD_MB` (15) | retake closer, or raise the cap knowing what it costs the model |

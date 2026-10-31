@@ -1,0 +1,170 @@
+"""D7: the launcher's roll-call.
+
+One green ✓ line per service as it turns healthy, in the order PLAN names
+(OCR, Strata, Uygulama), the admin UI only once all three are up, and a ✗ that
+names the log to read (or, for Strata, the process to start) plus the retry
+command. Children, health gate, worker and browser stay faked at the same seams
+tests/test_run_py.py uses; the roll-call itself is the real code.
+"""
+import os
+import sys
+import webbrowser
+
+import pytest
+
+import run
+from app import config, status
+
+OWN_PREFIXES = (
+    "APP_", "OCR_", "STRATA_", "UNSLOTH_", "LLAMA_", "PROBE_",
+    "STARTUP_", "DATA_DIR", "DB_PATH",
+)
+
+
+@pytest.fixture(autouse=True)
+def isolated_data(monkeypatch, tmp_path):
+    for name in [n for n in os.environ if n.startswith(OWN_PREFIXES)]:
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
+
+
+def lines(text: str) -> list[str]:
+    return [line.strip() for line in text.splitlines() if line.strip()]
+
+
+def checks(text: str) -> list[str]:
+    return [line for line in lines(text) if "✓" in line]
+
+
+class FakeChild:
+    def __init__(self, pid: int) -> None:
+        self.pid = pid
+
+    def poll(self):
+        return None
+
+
+class FakeWorker:
+    started = stopped = 0
+
+    def __init__(self, db_path=None, **kwargs):
+        pass
+
+    def start(self):
+        FakeWorker.started += 1
+
+    def stop(self, timeout: float = 10.0):
+        FakeWorker.stopped += 1
+
+
+@pytest.fixture
+def launcher(monkeypatch):
+    """start() with the outside world faked; add a base_url to ``down`` to make
+    the service that never heals."""
+    FakeWorker.started = FakeWorker.stopped = 0
+    state = {"down": set(), "spawned": [], "killed": [], "opened": []}
+
+    def fake_spawn(name, args):
+        child = FakeChild(987_000 + len(state["spawned"]))
+        state["spawned"].append((name, args, child))
+        return child
+
+    def fake_wait_healthy(base_url, timeout, path=run.HEALTH_PATH, **kwargs):
+        return base_url not in state["down"]
+
+    monkeypatch.setattr(run, "_spawn", fake_spawn)
+    monkeypatch.setattr(run, "wait_healthy", fake_wait_healthy)
+    monkeypatch.setattr(
+        run, "_terminate", lambda pid, grace=0.0: state["killed"].append(pid) or True
+    )
+    monkeypatch.setattr(run, "QueueWorker", FakeWorker)
+    monkeypatch.setattr(run, "_wait_for_children", lambda children: None)
+    monkeypatch.setattr(webbrowser, "open", state["opened"].append)
+    return state
+
+
+# --- what is waited for, and where ---
+
+
+def test_roll_call_reads_ocr_strata_then_the_app_on_their_own_paths(monkeypatch):
+    monkeypatch.setenv("OCR_PORT", "9101")
+    monkeypatch.setenv("APP_PORT", "9100")
+    assert run.roll_call() == [
+        ("ocr", "http://127.0.0.1:9101", run.HEALTH_PATH),
+        ("strata", "http://127.0.0.1:8080", status.PROBE_PATH),
+        ("app", "http://127.0.0.1:9100", run.HEALTH_PATH),
+    ]
+
+
+def test_stop_never_touches_strata_that_this_launcher_never_started(launcher, capsys):
+    assert run.start(8081, 8090, browser=False) == 0
+    capsys.readouterr()
+    assert "strata" not in run.SERVICES
+    assert run.stop() == 0
+    assert "Strata" not in capsys.readouterr().out
+
+
+# --- the green lines ---
+
+
+def test_every_healthy_service_gets_its_own_check_line_in_order(launcher, capsys):
+    assert run.start(8081, 8090, browser=True) == 0
+    assert [line.split()[0] for line in checks(capsys.readouterr().out)] == [
+        "OCR",
+        "Strata",
+        "Uygulama",
+    ]
+
+
+def test_the_admin_ui_opens_only_after_the_last_service_turned_green(launcher, capsys):
+    assert run.start(8081, 8090, browser=True) == 0
+    out = capsys.readouterr().out
+    url = "http://127.0.0.1:8090/admin"
+    assert out.rindex("✓") < out.index(url)
+    assert launcher["opened"] == [url]
+
+
+def test_check_marks_are_green_on_a_console_and_plain_when_redirected(monkeypatch):
+    class Console:
+        def isatty(self):
+            return True
+
+    monkeypatch.setattr(sys, "stdout", Console())
+    assert run._green("OCR ✓") == f"{run.GREEN}OCR ✓{run.RESET}"
+    monkeypatch.setenv("NO_COLOR", "1")
+    assert run._green("OCR ✓") == "OCR ✓"
+
+
+def test_check_marks_stay_plain_text_in_a_redirected_run(launcher, capsys):
+    # a log file or a piped console has to read "OCR ✓", not the escape codes
+    assert run.start(8081, 8090, browser=False) == 0
+    out = capsys.readouterr().out
+    assert run.GREEN not in out and checks(out)
+
+
+# --- a service that never heals ---
+
+
+def test_a_child_that_never_heals_names_its_log_and_the_retry_command(launcher, capsys):
+    launcher["down"].add(config.ocr_base_url())
+
+    assert run.start(8081, 8090, browser=True) == 1
+    out = capsys.readouterr().out
+    failed = out.index("hazır olmadı")
+    assert failed < out.index(str(run.log_path("ocr")), failed)
+    assert "python run.py" in out
+    assert launcher["opened"] == []
+    assert sorted(launcher["killed"]) == sorted(child.pid for _, _, child in launcher["spawned"])
+
+
+def test_a_strata_that_never_answers_names_the_process_to_start(launcher, capsys):
+    launcher["down"].add(config.strata_base_url())
+
+    assert run.start(8081, 8090, browser=True) == 1
+    out = capsys.readouterr().out
+    assert any(line.startswith("Strata") and "✗" in line for line in lines(out))
+    assert config.strata_base_url() in out
+    assert "python run.py" in out
+    assert any(line.startswith("OCR") and "✓" in line for line in lines(out))
+    assert launcher["opened"] == []
+    assert sorted(launcher["killed"]) == sorted(child.pid for _, _, child in launcher["spawned"])

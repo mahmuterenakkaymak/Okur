@@ -7,10 +7,11 @@
 run.py supervises the two servers this stack needs and nothing else: it never
 downloads a model or builds a database. llama-server serves the PaddleOCR-VL
 GGUF with -ngl 0 by default (PLAN decision 2: CPU OCR coexists with Strata's
-32 GB, OCR_NGL flips it to GPU), uvicorn serves app.main:create_app, and both
-have to answer /health within config.startup_wait_s() before the launcher calls
-itself up. The queue worker thread lives here because the app factory does not
-own it — without it an upload would sit in the queue forever.
+32 GB, OCR_NGL flips it to GPU), uvicorn serves app.main:create_app. Every
+service then gets its own green ✓ line the moment it turns healthy (PLAN D7):
+the two children on /health, Strata — stage 2, a process this launcher does not
+own — on the model listing. The queue worker thread lives here because the app
+factory does not own it — without it an upload would sit in the queue forever.
 
 Child PIDs go to data/<name>.pid and their output to data/logs/<name>.log, so
 --stop works from another terminal and a failed start names the log to read.
@@ -29,20 +30,28 @@ import webbrowser
 
 import httpx
 
-from app import config
+from app import config, status
 from app.queue_worker import QueueWorker
 
 HEALTH_PATH = "/health"
 POLL_S = 0.25
 TERMINATE_GRACE_S = 5.0
+GREEN, RESET = "\x1b[32m", "\x1b[0m"
 
 # app first: stop feeding the queue before pulling the model server out.
 SERVICES = ("app", "ocr")
-LABELS = {"app": "Uygulama", "ocr": "OCR"}
+LABELS = {"app": "Uygulama", "ocr": "OCR", "strata": "Strata"}
 
 
 def _say(step: str, detail: str) -> None:
     print(f"{step:<13} {detail}", flush=True)
+
+
+def _green(text: str) -> str:
+    """ANSI green on a console; plain text when redirected or under NO_COLOR."""
+    if os.environ.get("NO_COLOR") or not sys.stdout.isatty():
+        return text
+    return f"{GREEN}{text}{RESET}"
 
 
 def pid_path(name: str) -> pathlib.Path:
@@ -90,6 +99,20 @@ def app_command(app_port: int | None = None) -> list[str]:
     ]
 
 
+def roll_call() -> list[tuple[str, str, str]]:
+    """(name, base_url, health path) in the order the roll-call reads (D7).
+
+    Strata is stage 2 and a separate process (OPERATIONS.md → Model paths), so
+    it is waited for and never spawned: it answers the OpenAI model listing
+    rather than /health, which is what app/status.py probes for every server.
+    """
+    return [
+        ("ocr", config.ocr_base_url(), HEALTH_PATH),
+        ("strata", config.strata_base_url(), status.PROBE_PATH),
+        ("app", config.app_base_url(), HEALTH_PATH),
+    ]
+
+
 def _spawn(name: str, args: list[str]) -> subprocess.Popen:
     """One child, its output appended to its own log under data/logs.
 
@@ -110,15 +133,16 @@ def _spawn(name: str, args: list[str]) -> subprocess.Popen:
 
 
 def wait_healthy(
-    base_url: str, timeout: float, transport: httpx.BaseTransport | None = None,
+    base_url: str, timeout: float, path: str = HEALTH_PATH,
+    transport: httpx.BaseTransport | None = None,
     process: subprocess.Popen | None = None,
 ) -> bool:
-    """True once /health answers 200; a process that already exited is final."""
+    """True once the path answers 200; a process that already exited is final."""
     deadline = time.monotonic() + timeout
     with httpx.Client(transport=transport, timeout=config.probe_timeout()) as client:
         while True:
             try:
-                if client.get(f"{base_url}{HEALTH_PATH}").status_code == 200:
+                if client.get(f"{base_url}{path}").status_code == 200:
                     return True
             except httpx.HTTPError:
                 pass
@@ -210,6 +234,21 @@ def _wait_for_children(children: dict[str, subprocess.Popen]) -> None:
         time.sleep(0.5)
 
 
+def _failure_help(name: str, base: str) -> None:
+    """What to read and what to run again, printed under a ✗ line.
+
+    A child has a log of its own; Strata does not — it is started outside this
+    launcher, so the operator gets the endpoint to start instead.
+    ASSUMPTION: Strata down fails the start as well, since every job would
+    otherwise die at stage 2 behind an admin UI that looks healthy.
+    """
+    if name in SERVICES:
+        _say("log", str(log_path(name)))
+    else:
+        _say("başlat", f"{LABELS[name]} stage 2 dışarıda çalışır → {base}")
+    _say("tekrar dene", "python run.py")
+
+
 def start(ocr_port: int, app_port: int, browser: bool) -> int:
     # the app child and this process's own worker both read the ports back
     # through config, so the flags land in the environment once, here.
@@ -237,15 +276,15 @@ def start(ocr_port: int, app_port: int, browser: bool) -> int:
         worker = QueueWorker(db_path=config.db_path())
         worker.start()
         deadline = time.monotonic() + config.startup_wait_s()
-        bases = {"ocr": config.ocr_base_url(), "app": config.app_base_url()}
-        for name in SERVICES:
+        for name, base, path in roll_call():
+            if name not in children:
+                _say(LABELS[name], f"bekleniyor… ({base})")
             left = max(0.0, deadline - time.monotonic())
-            if wait_healthy(bases[name], left, process=children[name]):
-                _say(LABELS[name], "✓")
+            if wait_healthy(base, left, path, process=children.get(name)):
+                _say(LABELS[name], _green("✓"))
             else:
                 _say(LABELS[name], f"✗ {config.startup_wait_s()} sn içinde hazır olmadı")
-                _say("log", str(log_path(name)))
-                _say("tekrar dene", "python run.py")
+                _failure_help(name, base)
                 return 1
         url = f"{config.app_base_url()}/admin"
         _say("admin", url)
