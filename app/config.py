@@ -104,6 +104,12 @@ def ocr_mmproj_path() -> pathlib.Path:
     )
 
 
+def ocr_chat_template_path() -> pathlib.Path:
+    """The GGUF ships its chat template as a sibling .jinja; llama-server
+    takes it through --chat-template-file (run.py)."""
+    return env_path("OCR_CHAT_TEMPLATE", ocr_model_path().with_name("chat_template.jinja"))
+
+
 def llama_server_path() -> pathlib.Path:
     return env_path("LLAMA_SERVER", ROOT / "vendor/llama/llama-server.exe")
 
