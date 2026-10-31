@@ -12,6 +12,7 @@ import { createHistory } from "./history.js";
 import { cameraNotice, offlineNotice, recoveryFor, withTimeout } from "./recovery.js";
 import { statusOf } from "./status.js";
 import { createStages } from "./stages.js";
+import { createVerdict } from "./verdict.js";
 
 const ADIMLAR = {
   cekim: document.getElementById("adim-cekim"),
@@ -27,6 +28,7 @@ const durumIlerleme = document.getElementById("durum-ilerleme");
 const gecenSure = document.getElementById("gecen-sure");
 const hataMesaji = document.getElementById("hata-mesaji");
 const verdictTasi = document.getElementById("verdict-tasi");
+const verdictDetay = document.getElementById("verdict-detay");
 const sonucUyari = document.getElementById("sonuc-uyari");
 const sonucFirma = document.getElementById("sonuc-firma");
 const sonucMeta = document.getElementById("sonuc-meta");
@@ -56,13 +58,13 @@ const asama = createStages({
   sayac: gecenSure,
 });
 
-const TASI_CLASS = {
-  ok: "chip-on",
-  done: "chip-on",
-  mismatch: "chip-off",
-  unreadable: "chip-bad",
-  failed: "chip-bad",
-};
+// D3: the chip that closes the receipt, with the re-shoot it offers straight
+// from an unreadable verdict.
+const verdict = createVerdict({
+  chip: verdictTasi,
+  detay: verdictDetay,
+  onYeniden: () => kamerayaDon(),
+});
 
 const tutar = new Intl.NumberFormat("tr-TR", {
   minimumFractionDigits: 2,
@@ -268,8 +270,7 @@ function cizTablo(items) {
 function sonucGoster(env) {
   sonucEnvelope = env;
   const v = statusOf(env);
-  verdictTasi.textContent = v.label;
-  verdictTasi.className = `chip ${TASI_CLASS[v.verdict] || TASI_CLASS[v.status] || "chip-off"}`;
+  verdict.update(v);
 
   const result = env.result || {};
   const header = result.header || {};
@@ -325,7 +326,7 @@ hamJsonDugme.addEventListener("click", () => {
   hamJsonDugme.setAttribute("aria-expanded", String(open));
 });
 
-yeniFis.addEventListener("click", () => {
+function kamerayaDon() {
   birak();
   cropper.clear();
   sonucEnvelope = null;
@@ -333,7 +334,9 @@ yeniFis.addEventListener("click", () => {
   sonCrop = null;
   hideError();
   show("cekim");
-});
+}
+
+yeniFis.addEventListener("click", kamerayaDon);
 
 cekimeDon.addEventListener("click", () => {
   birak();
