@@ -4,6 +4,149 @@ Local-first receipt OCR: a worker photographs a receipt on a phone, the pipeline
 returns contract v1 JSON in seconds. `PLAN.md` holds the architecture,
 `CONTRACT.md` the integrator contract, `PROJECT_BRIEF.md` the requirements.
 
+## What it is
+
+One machine, no cloud. The phone PWA posts a photo to FastAPI on `:8090`; a queue
+worker runs three stages and answers with one frozen JSON envelope:
+
+1. **OCR** — PaddleOCR-VL-1.6 through llama.cpp `llama-server` on `:8081`,
+   on CPU by default (`OCR_NGL=0`), so it never competes with Strata for VRAM.
+2. **Structuring** — Strata on `:8080` turns the raw text into contract v1
+   `result`; `mode: "quality"` routes the same job to Unsloth Studio on `:8888`.
+3. **Validation** — pure Python (`app/validator.py`) recomputes every line total,
+   ara toplam, iskonto and KDV from `items[]` and compares them with what the
+   model claimed. The LLM never owns a number: `validation.verdict` is `ok`,
+   `mismatch` (with the offending dotted paths in `fields`) or `unreadable`.
+
+| Door | What is behind it |
+| --- | --- |
+| `/app` | worker PWA — camera → crop/rotate → submit → live stages → history (Turkish, installable) |
+| `/admin` | review, corrections, JSON/CSV/XLSX exports, worker keys, live status |
+| `/v1/*` | the frozen integrator API (contract v1, `X-API-Key`) |
+| `/docs` | OpenAPI UI — the same schemas, with try-it-out |
+
+Receipt images and the SQLite database live under `data/`, which is gitignored:
+they are personal data (KVKK) and never leave this machine. Backups, key
+rotation, logs, model paths and VRAM are in [`OPERATIONS.md`](OPERATIONS.md).
+
+## Quickstart
+
+Windows, PowerShell, from the repository root. Python 3.12 and
+[uv](https://docs.astral.sh/uv/) — the venv has no pip of its own.
+
+```powershell
+uv venv .venv --python 3.12
+uv pip install --python .venv/Scripts/python.exe fastapi "uvicorn[standard]" httpx pydantic jsonschema openpyxl pillow python-dotenv python-multipart pytest
+```
+
+Then write `.env` at the root (gitignored; every name is read in `app/config.py`):
+
+```env
+ADMIN_TOKEN=pick-a-long-random-string
+LLAMA_SERVER=vendor/llama/llama-server.exe
+OCR_MODEL=models/paddleocr-vl-1.6/PaddleOCR-VL-1.6-GGUF.gguf
+OCR_MMPROJ=models/paddleocr-vl-1.6/PaddleOCR-VL-1.6-GGUF-mmproj.gguf
+OCR_CHAT_TEMPLATE=models/paddleocr-vl-1.6/chat_template.jinja
+```
+
+`ADMIN_TOKEN` has no default on purpose — with it unset the admin panel has no
+door at all. Model and binary paths, defaults and where to get the files:
+`OPERATIONS.md` → Model paths.
+
+One key per worker, printed exactly once:
+
+```powershell
+.venv/Scripts/python -m app.keys_cli add ayse
+```
+
+Start everything — `llama-server`, uvicorn and the queue worker — and the admin
+UI opens itself once both answer `/health`:
+
+```powershell
+.venv/Scripts/python run.py
+.venv/Scripts/python run.py --no-browser --app-port 8090 --ocr-port 8081
+.venv/Scripts/python run.py --stop
+```
+
+No models downloaded yet? The demo runs the real app, auth, queue and validator
+against stub model servers, seeded with the committed fixtures:
+
+```powershell
+.venv/Scripts/python scripts/serve_demo.py
+```
+
+Checks, smallest first:
+
+```powershell
+.venv/Scripts/python -m pytest -q
+.venv/Scripts/python scripts/smoke_e2e.py
+.venv/Scripts/python scripts/acceptance.py --demo
+```
+
+## PWA install
+
+The PWA is the worker's whole app; it installs from a real HTTPS origin, so
+[Tailscale](#tailscale--https-on-the-tailnet) has to be up first (`http://localhost:8090/app`
+works for local testing, but a browser will not offer to install it).
+
+1. Open `https://<tailnet-host>.ts.net/app` in the phone's browser — Chrome on
+   Android, Safari on iOS.
+2. Install it: Android → the browser menu → **Uygulamayı yükle**; iOS → Share →
+   **Ana Ekrana Ekle**. It launches standalone, in Turkish, as "Fiş Çek".
+3. Paste the worker's own API key into **API anahtarı** (admin → Anahtarlar, or
+   `python -m app.keys_cli add <name>`). Keys are shown once; the phone keeps it.
+4. Allow the camera when asked. Where `getUserMedia` is unavailable the form
+   falls back to `<input type=file capture>`, so the flow never dead-ends.
+5. A deploy lands on the next cold start — the service worker only caches the
+   app shell, never a receipt image.
+
+Lost phone or a worker leaving: revoke the key (admin → Anahtarlar, or
+`keys_cli revoke <id>`). Further calls answer 401 and the PWA stops on its
+"API anahtarı çalışmıyor" card instead of losing the photo.
+
+## Integrator guide
+
+Two documents, one truth:
+
+- [`CONTRACT.md`](CONTRACT.md) — the human contract: every field, the verdict
+  rules, the versioning promise. `contract/contract_v1.schema.json` is the
+  machine-readable form, generated from `app/contract.py`; regenerate both with
+  `.venv/Scripts/python scripts/gen_contract_doc.py` in the same commit as the
+  model change.
+- `/docs` — the live OpenAPI UI of the running instance (schemas plus
+  try-it-out, `X-API-Key` in the Authorize box). It is generated from the same
+  pydantic models, so it cannot drift from the server answering you.
+
+Every `/v1` call carries the key:
+
+```bash
+curl -s -X POST http://127.0.0.1:8090/v1/jobs \
+  -H "X-API-Key: ocrk_..." \
+  -F image=@fis.png \
+  -F client_ref=sof-0007 \
+  -F mode=fast
+```
+
+`POST /v1/jobs` answers **202** with the envelope and a `queued` status; the
+work happens in the queue. Poll `GET /v1/jobs/{job_id}` until `status` is `done`
+or `failed`, and read `result` (header, meta, items, totals) plus `validation`
+(verdict, expected, actual, fields). `GET /v1/jobs?status=done&mine=true` lists
+what this key has sent.
+
+- **Idempotency.** `client_ref` is unique per key: a retry that reuses one
+  answers **200** with the existing `job_id` and queues nothing. Omit it and you
+  get a fresh job every time — so send a ref whenever a retry is possible.
+- **Corrections are not yours to make.** Fixing a field, re-running a job in
+  quality mode and exporting live under `/admin/api/*` behind the admin session,
+  not under `/v1`.
+- **Errors are one shape:** `{"error": {"code", "message", "details?"}}` —
+  `unauthorized` (401, missing/revoked key), `rate_limited` (429 with
+  `Retry-After`), `payload_too_large` (413, over `MAX_UPLOAD_MB`),
+  `validation_error` (422, `details[]` names the field). A `202`/`200` envelope
+  is never a verdict: only `validation.verdict` is.
+- **v1 is frozen.** Fields are added, never renamed or removed; a breaking
+  change opens `/v2` and leaves `/v1` answering.
+
 ## Tailscale — HTTPS on the tailnet
 
 The app itself listens plain HTTP on `127.0.0.1:8090` (`APP_PORT`, see
@@ -50,3 +193,29 @@ separate product decision — TLS, hardening and data policy included.
    (admin → Anahtarlar, one key per worker) once. Keys are shown a single time.
 6. Revoke the key in the admin UI the day a phone is lost or a worker leaves —
    further calls answer 401 and the PWA shows its key-error state.
+
+## Troubleshooting
+
+`run.py` prints the log path of whatever failed to come up; the request log and
+the model server's own output are files under `data/logs/` (see
+[`OPERATIONS.md`](OPERATIONS.md) → Log locations).
+
+| Symptom | What it means | What to do |
+| --- | --- | --- |
+| `eksik <path>` lines at startup | a model or the `llama-server` binary is missing | fix `LLAMA_SERVER` / `OCR_MODEL` / `OCR_MMPROJ` / `OCR_CHAT_TEMPLATE` in `.env`, or download the files |
+| `OCR ✗ 60 sn içinde hazır olmadı` | llama-server never answered `/health` | read `data/logs/ocr.log`; a slow disk or a huge `-ngl` swap needs a bigger `STARTUP_WAIT_S` |
+| `Uygulama ✗ …` | uvicorn never answered `/health` | read `data/logs/app.log`; a missing `ADMIN_TOKEN` is not one of these, the app boots without it |
+| `401 unauthorized` from `/v1`, or the PWA's "API anahtarı çalışmıyor" card | the key is wrong or revoked | `.venv/Scripts/python -m app.keys_cli list`, then issue a fresh key |
+| `429 rate_limited` | this key's token bucket is empty | obey `Retry-After`; raise `RATE_LIMIT_CAPACITY` / `RATE_LIMIT_REFILL_PER_S` only if the real load says so |
+| `413 payload_too_large` | the photo is over `MAX_UPLOAD_MB` (15) | retake closer, or raise the cap knowing what it costs the model |
+| Job sits in `queued` | nothing is draining the queue | the worker lives in `run.py` — start it with `python run.py`, not with a bare uvicorn |
+| `Only images are accepted` / `image is empty` | the upload is not a decodable image | check the camera app's output format; `MAX_UPLOAD_MB` says 413, this says the bytes are not a picture |
+| Certificate error on the phone | HTTPS is not up, or Tailscale is off | `.\scripts\tailscale_serve.ps1 -Status`, then reconnect the phone's Tailscale |
+| `could not bind … address already in use` | a port is taken | `python run.py --stop` first, or move ports with `--app-port` / `--ocr-port` |
+| `verdict: mismatch` on clean-looking receipts | the printed total and the recomputed one disagree — usually a discount line the OCR missed | open the job in `/admin`, compare expected vs actual, correct the field; the correction re-runs the validator |
+| `verdict: unreadable` | stage 2 could not produce schema-valid JSON | re-shoot, or rerun the job in quality mode from `/admin` |
+
+## Operations
+
+Backups of `data/`, worker-key and `ADMIN_TOKEN` rotation, log locations, model
+paths and the VRAM budget: [`OPERATIONS.md`](OPERATIONS.md).
