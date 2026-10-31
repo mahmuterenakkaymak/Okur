@@ -11,6 +11,7 @@ import { getApiKey, getJob, isOnline, pollJob, setApiKey, submitJob } from "./ap
 import { createHistory } from "./history.js";
 import { createFlow } from "./flow.js";
 import { cameraNotice, offlineNotice, recoveryFor, withTimeout } from "./recovery.js";
+import { iskontoPara, para, sayi } from "./result_totals.js";
 import { statusOf } from "./status.js";
 import { createStages } from "./stages.js";
 import { createVerdict } from "./verdict.js";
@@ -69,16 +70,7 @@ const verdict = createVerdict({
   onYeniden: () => kamerayaDon(),
 });
 
-const tutar = new Intl.NumberFormat("tr-TR", {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
 const miktar = new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 3 });
-
-function sayi(value) {
-  const n = Number(value);
-  return Number.isFinite(n) ? n : 0;
-}
 
 function metin(value) {
   return typeof value === "string" ? value : "";
@@ -241,8 +233,8 @@ function cizTablo(items) {
     ? items.map((item) => [
         metin(item.ad),
         miktar.format(sayi(item.miktar)),
-        tutar.format(sayi(item.birim_fiyat)),
-        tutar.format(sayi(item.toplam)),
+        para(item.birim_fiyat),
+        para(item.toplam),
       ])
     : [["Bu fişte okunabilen ürün bulunamadı.", "", "", ""]];
   for (const cells of rows) {
@@ -289,13 +281,12 @@ function sonucGoster(env) {
   cizTablo(Array.isArray(result.items) ? result.items : []);
 
   const totals = result.totals || {};
-  const iskonto = sayi(totals.iskonto);
   const oran = sayi(totals.kdv_orani);
-  tAraToplam.textContent = tutar.format(sayi(totals.ara_toplam));
-  tIskonto.textContent = iskonto ? `−${tutar.format(iskonto)}` : tutar.format(0);
+  tAraToplam.textContent = para(totals.ara_toplam);
+  tIskonto.textContent = iskontoPara(totals.iskonto);
   tKdvOrani.textContent = oran ? `%${Math.round((oran > 1 ? oran : oran * 100) * 10) / 10}` : "";
-  tKdv.textContent = tutar.format(sayi(totals.kdv));
-  tToplam.textContent = tutar.format(sayi(totals.toplam));
+  tKdv.textContent = para(totals.kdv);
+  tToplam.textContent = para(totals.toplam);
   tParaBirimi.textContent = metin(result.para_birimi) || "TRY";
 
   hamJson.hidden = true;
