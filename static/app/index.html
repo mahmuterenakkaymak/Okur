@@ -141,9 +141,25 @@
     .yenileme.donuyor svg { animation: cark .9s linear infinite; }
     @keyframes cark { to { transform: rotate(360deg); } }
     .bos-fis { text-align: center; padding: 1.1rem 0 .5rem; color: #b9bcc4; font-size: .92rem; }
-    .bos-fis svg { display: block; margin: 0 auto .7rem; }
+    .bos-fis svg { display: block; margin: 0 auto .7rem; animation: salinim 3.6s ease-in-out infinite; }
     .bos-fis p { margin: 0; }
+    @keyframes salinim { 50% { transform: translateY(-.22rem) rotate(.8deg); } }
+    .iskele-satir {
+      display: flex; align-items: center; gap: .75rem;
+      border: 1px solid rgba(255,255,255,.06); border-radius: .85rem; padding: .55rem .75rem;
+    }
+    .iskele-satir + .iskele-satir { margin-top: .55rem; }
+    .iskele-mini { flex: none; width: 2.7rem; height: 2.7rem; border-radius: .55rem; }
+    .iskele-cizgi { height: .72rem; border-radius: 999px; }
+    .iskele-mini, .iskele-cizgi {
+      background: linear-gradient(100deg, rgba(255,255,255,.05) 40%, rgba(255,255,255,.13) 50%, rgba(255,255,255,.05) 60%);
+      background-size: 220% 100%; animation: parilti 1.25s ease-in-out infinite;
+    }
+    @keyframes parilti { from { background-position: 160% 0; } to { background-position: -80% 0; } }
     #gecmis-sentinel { height: 1px; }
+    @media (prefers-reduced-motion: reduce) {
+      .bos-fis svg, .iskele-mini, .iskele-cizgi { animation: none; }
+    }
   </style>
 </head>
 <body>
@@ -245,6 +261,11 @@
           <path d="M20 12a8 8 0 1 1-2.35-5.65" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
           <path d="M20 3.2v4.4h-4.4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
+      </div>
+      <div id="gecmis-yukleniyor" hidden aria-hidden="true">
+        <div class="iskele-satir"><span class="iskele-mini"></span><span class="iskele-cizgi" style="width: 45%"></span></div>
+        <div class="iskele-satir"><span class="iskele-mini"></span><span class="iskele-cizgi" style="width: 62%"></span></div>
+        <div class="iskele-satir"><span class="iskele-mini"></span><span class="iskele-cizgi" style="width: 38%"></span></div>
       </div>
       <ul class="fis-liste" id="gecmis-liste"></ul>
       <div class="bos-fis" id="gecmis-bos" hidden>

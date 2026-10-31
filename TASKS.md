@@ -38,7 +38,7 @@
 - [x] T29 | M2 | D1 capture feedback: shutter click via WebAudio with a mute toggle and navigator.vibrate haptic on capture, silent when the user has muted | accept: node --test tests/js/feedback.test.js
 - [x] T30 | M2 | D2 live pipeline feedback: animated stage row in Turkish (Sırada, Okunuyor, Yapılandırılıyor, Doğrulandı) with a ticking elapsed-seconds counter and smooth transitions between stages | accept: node --test tests/js/stages.test.js
 - [x] T31 | M2 | D3 verdict chip: animated green checkmark draw for ok, amber shake with offending field names for mismatch, and a one-tap re-shoot affordance for unreadable | accept: node --test tests/js/verdict.test.js
-- [ ] T32 | M2 | D4 friendly empty states: hand-drawn inline SVG receipt doodle with Turkish copy (Henüz fiş yok, ilk fişini çek!) and a loading shimmer for the history list | accept: .venv\Scripts\python -m pytest tests/test_pwa_empty_states.py -q
+- [x] T32 | M2 | D4 friendly empty states: hand-drawn inline SVG receipt doodle with Turkish copy (Henüz fiş yok, ilk fişini çek!) and a loading shimmer for the history list | accept: .venv\Scripts\python -m pytest tests/test_pwa_empty_states.py -q
 - [ ] T33 | M2 | scripts/serve_demo.py: run the app with fake model servers and jobs seeded from fixtures and fixtures_hard so every screen has data, on port 8090, plus a demo-mode Örnek fiş button on the PWA so flows are reviewable without a camera, plus a --check self-test mode that boots, requests /app /admin and /api/me/jobs and exits 0; used by visual review, smoke and README quickstart | accept: .venv\Scripts\python -m pytest tests/test_serve_demo.py -q
 
 ## M3 — Admin UI

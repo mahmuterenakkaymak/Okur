@@ -45,6 +45,7 @@ export function createHistory({ container, onOpen = () => {} }) {
   const durum = document.getElementById("gecmis-durum");
   const sentinel = document.getElementById("gecmis-sentinel");
   const yenileme = document.getElementById("gecmis-yenileme");
+  const yukleniyor = document.getElementById("gecmis-yukleniyor");
 
   let items = [];
   let toplam = null; // null until the first page answers
@@ -113,6 +114,7 @@ export function createHistory({ container, onOpen = () => {} }) {
     const hepsiYuklendi = toplam !== null && items.length >= toplam;
     sentinel.hidden = !anahtarli || hepsiYuklendi || loading;
     bos.hidden = !(anahtarli && toplam === 0 && !durum.textContent);
+    yukleniyor.hidden = !(loading && items.length === 0);
   }
 
   async function sayfaEkle() {
@@ -124,6 +126,7 @@ export function createHistory({ container, onOpen = () => {} }) {
     }
     loading = true;
     durum.textContent = "";
+    if (!items.length) yukleniyor.hidden = false;
     try {
       const body = await listJobs({ limit: SAYFA, offset: items.length });
       items = items.concat(Array.isArray(body?.jobs) ? body.jobs : []);
