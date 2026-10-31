@@ -21,8 +21,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 
-from app import auth, config, contract, db, numbers, validator
-from app.routes_jobs import _Status, _bad_field, _envelope
+from app import auth, config, contract, db, exports, numbers, validator
+from app.routes_jobs import _Status, _bad_field, _clean_iso, _envelope
 from app.routes_worker import _image_path
 
 router = APIRouter(prefix="/admin/api", tags=["admin"])
@@ -35,6 +35,15 @@ PUBLIC_PATHS = frozenset({"/admin/api/login", "/admin/api/logout"})
 # internal helper key can never reach the browser by accident.
 _Sort = Literal["worker", "tarih", "firma", "toplam", "verdict", "kalite_mode"]
 _Yon = Literal["asc", "desc"]
+_Bicim = Literal["json", "csv", "xlsx"]
+
+# What each export format lands on the wire as, so the browser saves a file
+# of the type it says rather than a spreadsheet named .csv.
+_TUR = {
+    "json": "application/json",
+    "csv": "text/csv; charset=utf-8",
+    "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+}
 _SUTUNLAR = (
     "job_id",
     "kisa_id",
@@ -210,6 +219,52 @@ def get_image(request: Request, job_id: str):
     finally:
         conn.close()
     return Response(content=data, media_type="image/jpeg")
+
+
+@router.get("/export")
+def export_jobs(
+    request: Request,
+    format: _Bicim = Query("csv"),
+    ids: str = Query(""),
+    worker: str = Query(""),
+    since: str = Query(""),
+):
+    """Every submission the caller names, as JSON, CSV or XLSX.
+
+    The three formats are one query apart: the rows come from the same two
+    stored columns the panels show (contract 8), so a receipt corrected here
+    exports corrected. ids is a comma-separated selection — the panel's
+    checkboxes — while worker and since narrow the whole set; with none of the
+    three the export is everything.
+
+    ASSUMPTION: the task names GET /v1/export; the door is the admin one,
+    because /v1 is key-authed and per-integrator while an export spans every
+    worker's receipts — the same reading as T37's corrections.
+    """
+    conn = _connect(request)
+    try:
+        isler = exports.select(
+            conn,
+            ids=[parca.strip() for parca in ids.split(",") if parca.strip()],
+            worker=worker.strip(),
+            since=_clean_iso(since, ("query", "since")),
+        )
+    finally:
+        conn.close()
+    if format == "json":
+        govde: str | bytes = json.dumps(exports.to_json(isler), ensure_ascii=False)
+    else:
+        satirlar = [exports.row(job) for job in isler]
+        govde = (
+            exports.to_csv(satirlar)
+            if format == "csv"
+            else exports.to_xlsx(satirlar)
+        )
+    response = Response(content=govde, media_type=_TUR[format])
+    response.headers["Content-Disposition"] = (
+        f'attachment; filename="{exports.filename(format)}"'
+    )
+    return response
 
 
 def _connect(request: Request):
