@@ -83,10 +83,10 @@ def test_revoked_key_is_401(env):
 
 def test_valid_key_reaches_the_router(env):
     _, client, _, _, plaintext = env
-    # /v1/jobs arrives in T16; the middleware's job ends at 404, not 401.
+    # A valid key clears the middleware and the route answers: 200, not 401.
     resp = client.get("/v1/jobs", headers=key_headers(plaintext))
-    assert resp.status_code == 404
-    assert resp.json()["error"]["code"] == "not_found"
+    assert resp.status_code == 200
+    assert resp.json() == []
 
 
 # --- rate limit ---
@@ -97,9 +97,9 @@ def test_rate_limit_returns_429_with_retry_after(env, monkeypatch):
     monkeypatch.setenv("RATE_LIMIT_CAPACITY", "3")
     monkeypatch.setenv("RATE_LIMIT_REFILL_PER_S", "0.1")
     headers = key_headers(plaintext)
-    codes = [client.get("/v1/jobs", headers=headers).status_code for _ in range(4)]
-    assert codes == [404, 404, 404, 429]
-    resp = client.get("/v1/jobs", headers=headers)
+    responses = [client.get("/v1/jobs", headers=headers) for _ in range(4)]
+    assert [resp.status_code for resp in responses] == [200, 200, 200, 429]
+    resp = responses[3]
     assert resp.json()["error"]["code"] == "rate_limited"
     assert int(resp.headers["Retry-After"]) >= 1
 
