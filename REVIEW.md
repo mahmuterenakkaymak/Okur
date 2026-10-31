@@ -1,15 +1,14 @@
-# REVIEW — M2 (T19–T33, base 9434ec9)
+# REVIEW — M3 (T34–T44, base c17ef59)
 
-**Red today:** `tests/test_main_app.py::test_valid_key_reaches_the_router` and `::test_rate_limit_returns_429_with_retry_after` expect 404 from `GET /v1/jobs`; T16 (6012789) added that route, so both are stale, not regressions → T51. Everything else is green: 357 pytest, 136 node, `smoke_e2e.py`, `serve_demo.py --check`.
-
-**Blocker outside M2:** `app/structurer.py` (T11) still does not exist — `pipeline._default_structurer` raises ImportError, so the real app cannot process a job. smoke/integration/demo each hold that seam with a stand-in and stay green. T11 must land before any real run.
+Green today: 487 pytest, 186 node. `app/structurer.py` (T11) still does not exist — the M2 blocker stands, the real app still cannot process a job.
 
 **Bugs** (fix tasks appended to TASKS.md):
-- B1 `captured_at` dies at the queue: the route stores it in `meta_json`, `queue_worker.py:136` rebuilds meta from the pipeline bundle alone, so every GET after `done` reports `captured_at: null` (verified end to end) — contract 1 and CONTRACT.md promise it → T52.
-- B2 the demo's live screens are empty: `LIVE_STATES` seeds queued/running, `QueueWorker.start()` requeues the running one and the worker drains both in ~3 s (statuses after boot: 8 done, 1 failed) → T53.
-- B3 `detayAc` (app.js:217) never calls `birak()`, so opening a history row mid-send leaves two poll loops sharing one `akis` token, fighting over the result view, and leaks the 500 ms tick interval → T54.
-- B4 a negative `totals.iskonto` — a shape the validator explicitly accepts — prints as `−-52,32` in the result view → T55.
-- B5 uploads are stored byte-for-byte: no Pillow re-encode, so EXIF/GPS from worker phones sits in `data/images` and `/api/me/jobs/{id}/image` serves it verbatim; the `crop.js:5` ASSUMPTION that the server re-encodes is false → T56 (pulls the T46 line forward; KVKK).
+- B1 the admin list's default sort is wrong: `_sirala` (routes_admin.py:609) sorts `tarih` by the printed `dd.MM.yyyy` string — verified desc order puts 2026-11-02 above 2026-12-01; it must sort the row's ISO `_gun` → T57.
+- B2 corrections corrupt 3-decimal numbers: `kaydet()` (detail.js:542) sends the raw `<input type=number>` string and `numbers.parse_number` reads dot+3-digits as a thousands separator — verified "0.250" → 250.0, "12.500" → 12500.0, so a kg-quantity fix lands 1000× off and the validator recomputes over the wrong number → T58.
+- B3 CONTRACT.md:31–34 advertises PATCH `/v1/jobs/{id}`, POST `/v1/jobs/{id}/rerun`, GET `/v1/export`, GET `/v1/status`, but the routes_admin ASSUMPTIONs (195/233/307/392) shipped all four under `/admin/api/*` — the integrator-facing doc 404s on every one; the doc is the outlier (decision 6 + tests agree) → T59.
 
-**Risks:** `crop.js` returns a crop rect no producer stores (contract v1 has no field for it); `POLL.ceilingMs` 180 s < worst-case pipeline (2×120 s model timeouts); history fetches every thumbnail at once against a 20-token bucket, so a full first page can 429 blank minis; `keys_cli` runs as `python -m app.keys_cli` while PLAN.md:42 and T19 still say `app.keys`.
-**Missing tests:** nothing pins the lite-row field names `history.js` reads, and no test opens a `failed` job from history.
+**Risks:** the list's date filter reads receipt date while export `since` reads `created_at`, so the exported file does not match the on-screen window (admin.js:60 ASSUMPTION admits partial carry-over, not the semantic switch); `/admin/api/login` has no rate limit — ADMIN_TOKEN is brute-forceable (fold into T46); the session cookie has no `Secure` until T47's HTTPS; key revoke is one click with no confirm and no toast (D6 covers save/export/create only); a quality rerun silently overwrites manual corrections — the confirmation dialog does not say so.
+
+**ASSUMPTIONs checked:** status.js queue-depth (queued+running, failed excluded) is a fair reading; toasts.js shown-once toast timing is fine; serve_demo.py:265 "admin answers 404 until M3" is stale but harmless (accepts 200).
+
+**Missing tests:** nothing sorts the admin list by `tarih` — the default sort — (only toplam/firma are tested; that gap let B1 ship); nothing pins the correction payload the frontend sends (B2); nothing asserts CONTRACT.md's endpoints exist (B3); export `ids` is untested and no UI ever sends it.
