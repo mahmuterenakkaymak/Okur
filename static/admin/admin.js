@@ -2,6 +2,7 @@ import { createFisDetay } from "./detail.js";
 import { DURUM, createFisListesi } from "./list.js";
 import { createAnahtarYonetimi } from "./keys.js";
 import { createDurumIzleme } from "./status.js";
+import { bildir } from "./toasts.js";
 
 const API = "/admin/api";
 const BOLUM = { fisler: "bolum-fisler", anahtarlar: "bolum-anahtarlar", durum: "bolum-durum" };
@@ -80,7 +81,6 @@ function kur() {
   const araAlani = document.getElementById("fis-ara");
   const cipSar = document.getElementById("fis-cipler");
   const disaAktarDugme = document.getElementById("fis-disaktar");
-  const disaAktarDurum = document.getElementById("fis-disaktar-durum");
   let fisListesi = null;
   let anahtarlar = null;
   let durumIzleme = null;
@@ -257,8 +257,7 @@ function kur() {
 
   function disaAktar() {
     location.assign(disaAktarimUrl(filtreDegerleri()));
-    disaAktarDurum.textContent = "Dışa aktarma yolda — indirilen dosyayı kontrol et.";
-    disaAktarDurum.hidden = false;
+    bildir("disaktar");
   }
   disaAktarDugme.addEventListener("click", disaAktar);
 

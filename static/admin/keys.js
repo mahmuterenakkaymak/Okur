@@ -3,6 +3,8 @@
 // key's plaintext lives exactly as long as this page holds it: the create
 // dialog shows it once with a copy button, and closing forgets it. Key text
 // reaches the page through textContent, never as markup.
+import { bildir } from "./toasts.js";
+
 const API = "/admin/api";
 
 export function createAnahtarYonetimi() {
@@ -162,6 +164,9 @@ export function createAnahtarYonetimi() {
 
   tek.addEventListener("close", () => {
     // The promise is "shown once": drop the text the moment the dialog goes.
+    // The toast inherits the copy action for a few seconds — the hand that
+    // closed the dialog might have meant to copy first.
+    if (duzMetin) bildir("anahtar", { anahtar: duzMetin });
     duzMetin = "";
     tekKutusu.textContent = "";
     yukle();

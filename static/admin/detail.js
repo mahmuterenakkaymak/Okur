@@ -9,6 +9,7 @@
 // envelope, with the verdict recomputed over the corrected numbers.
 import { iskontoPara, para, sayi } from "../app/result_totals.js";
 import { DURUM, VERDICT } from "./list.js";
+import { bildir } from "./toasts.js";
 
 const API = "/admin/api";
 
@@ -555,15 +556,14 @@ export function createFisDetay({ onDuzeltme = () => {} } = {}) {
       const guncel = await yanit.json();
       if (sonId !== guncel.job_id) return; // a newer open owns the dialog
       ciz(guncel, { gorsel: false });
-      kayitDurumu(
-        `Kaydedildi ✓ ${alanSayisi} alan düzeltildi, doğrulama yeniden çalıştı.`,
-        "kayit-iyi",
-      );
+      kayitDurumu("");
+      bildir("kaydet", { alan: alanSayisi });
       onDuzeltme(); // the list row underneath carries the same amounts
     } catch {
       // The typed values stay on screen: a lost correction is worse than a
       // second try.
-      kayitDurumu("Kaydedilemedi — bağlantıyı kontrol edip tekrar dene.", "kayit-hata");
+      kayitDurumu("");
+      bildir("hata", { metin: "Kaydedilemedi — bağlantıyı kontrol edip tekrar dene." });
     } finally {
       kaydediliyor = false;
       dugumuGuncelle();
