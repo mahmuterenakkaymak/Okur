@@ -608,10 +608,15 @@ def _icerir(satir: dict, terimler: list[str]) -> bool:
 
 def _sirala(satirlar: list[dict], sort: str, ters: bool) -> list[dict]:
     """Order on one column; a row with nothing in it stays at the bottom
-    whichever way the column is read, and the day breaks ties."""
+    whichever way the column is read, and the day breaks ties.
+
+    ASSUMPTION: tarih sorts on the row's ISO _gun key — the printed
+    dd.MM.yyyy string would put 02.11 above 01.12.
+    """
+    alan = "_gun" if sort == "tarih" else sort
     dolu = [satir for satir in satirlar if satir[sort] is not None]
     bos = [satir for satir in satirlar if satir[sort] is None]
-    dolu.sort(key=lambda satir: (satir[sort], satir["_gun"], satir["job_id"]), reverse=ters)
+    dolu.sort(key=lambda satir: (satir[alan], satir["_gun"], satir["job_id"]), reverse=ters)
     return dolu + bos
 
 
