@@ -67,6 +67,12 @@ class CorrectionBody(BaseModel):
     fields: dict[str, Any] = {}
 
 
+class KeyBody(BaseModel):
+    """The worker label a new key is issued to: {"worker": "ayşe"}."""
+
+    worker: str = ""
+
+
 @router.post("/login")
 def login(body: LoginBody):
     """Exchange the admin token for a session cookie."""
@@ -265,6 +271,57 @@ def export_jobs(
         f'attachment; filename="{exports.filename(format)}"'
     )
     return response
+
+
+@router.get("/keys")
+def list_keys(request: Request):
+    """Every issued key as identities only: id, worker, date, status.
+
+    The plaintext was never stored and db.list_keys does not even select
+    the hash, so this response has no secret to leak by construction.
+    """
+    conn = _connect(request)
+    try:
+        rows = db.list_keys(conn)
+    finally:
+        conn.close()
+    return {"keys": [{**row, "revoked": bool(row["revoked"])} for row in rows]}
+
+
+@router.post("/keys")
+def create_key(request: Request, body: KeyBody):
+    """Issue a key for a worker; the plaintext answers once and never again.
+
+    ASSUMPTION: the create dialog's copy button rests on this being the one
+    and only response that ever carries the key — auth.create_key stores the
+    SHA-256 hash alone, so a lost key is a new key, not a recovery flow.
+    """
+    worker = body.worker.strip()
+    if not worker:
+        raise _bad_field(("body", "worker"), "expected a worker label")
+    conn = _connect(request)
+    try:
+        key_id, plaintext = auth.create_key(conn, worker)
+    finally:
+        conn.close()
+    return {"key_id": key_id, "worker": worker, "key": plaintext}
+
+
+@router.post("/keys/{key_id}/revoke")
+def revoke_key(request: Request, key_id: int):
+    """Revoke a key; the row stays so the worker's jobs keep their owner.
+
+    auth.verify refuses revoked keys on the next call and the PWA path has
+    no cache in front of it, so the worker's very next request is 401.
+    """
+    conn = _connect(request)
+    try:
+        if not auth.revoke_key(conn, key_id):
+            raise HTTPException(409, "key is unknown or already revoked")
+        satir = next(k for k in db.list_keys(conn) if k["id"] == key_id)
+    finally:
+        conn.close()
+    return {**satir, "revoked": True}
 
 
 def _connect(request: Request):

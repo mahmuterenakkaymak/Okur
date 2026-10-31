@@ -1,5 +1,6 @@
 import { createFisDetay } from "./detail.js";
 import { createFisListesi } from "./list.js";
+import { createAnahtarYonetimi } from "./keys.js";
 
 const API = "/admin/api";
 const BOLUM = { fisler: "bolum-fisler", anahtarlar: "bolum-anahtarlar", durum: "bolum-durum" };
@@ -13,6 +14,7 @@ const panel = document.getElementById("panel");
 const cikisDugme = document.getElementById("cikis-dugme");
 const navDugmeleri = [...document.querySelectorAll(".nav-li")];
 let fisListesi = null;
+let anahtarlar = null;
 // A corrected amount moves the list row underneath the dialog, so a save
 // refreshes it instead of leaving the table showing the old total.
 const detay = createFisDetay({ onDuzeltme: () => fisListesi?.yenile() });
@@ -61,6 +63,10 @@ function bolumuGoster(ad) {
   if (ad === "fisler" && !panel.hidden) {
     if (fisListesi) fisListesi.yenile();
     else fisListesi = createFisListesi({ acis: detay.ac });
+  }
+  if (ad === "anahtarlar" && !panel.hidden) {
+    if (anahtarlar) anahtarlar.yenile();
+    else anahtarlar = createAnahtarYonetimi();
   }
 }
 

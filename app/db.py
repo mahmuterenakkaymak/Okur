@@ -130,6 +130,21 @@ def _migrate(conn: sqlite3.Connection) -> None:
     conn.commit()
 
 
+# --- api keys ---
+
+
+def list_keys(conn: sqlite3.Connection) -> list[dict]:
+    """Every key row, oldest first.
+
+    key_hash is deliberately not selected: the admin panel shows identities,
+    and a secret cannot leak from a column this function never reads.
+    """
+    rows = conn.execute(
+        "SELECT id, worker, created_at, revoked FROM api_keys ORDER BY id"
+    )
+    return [dict(row) for row in rows]
+
+
 # --- jobs ---
 
 
