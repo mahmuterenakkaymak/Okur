@@ -122,6 +122,39 @@ export async function submitJob(image, options = {}) {
 }
 
 /**
+ * One page of the worker's own history (PLAN.md contract 10 lite rows).
+ * The server scopes every page to the caller's key; paging walks that
+ * feed newest-first.
+ */
+export async function listJobs({ limit = 20, offset = 0, ...options } = {}) {
+  const { apiKey = getApiKey() } = options;
+  return call(`/api/me/jobs?limit=${limit}&offset=${offset}`, { ...options, apiKey });
+}
+
+/** Full envelope of one of the caller's own jobs; anyone else's job 404s. */
+export async function getJob(jobId, options = {}) {
+  const { apiKey = getApiKey() } = options;
+  return call(`/api/me/jobs/${jobId}`, { ...options, apiKey });
+}
+
+/**
+ * Authenticated image bytes. Thumbnails sit behind X-API-Key, which an
+ * <img src> cannot carry, so the history feed fetches blobs itself.
+ */
+export async function fetchImage(url, { apiKey = getApiKey(), fetchFn = globalThis.fetch } = {}) {
+  let response;
+  try {
+    response = await fetchFn(url, { headers: { "X-API-Key": apiKey } });
+  } catch {
+    throw classifyFailure({ status: 0, online: isOnline() });
+  }
+  if (!response.ok) {
+    throw classifyFailure({ status: response.status, online: isOnline() });
+  }
+  return response.blob();
+}
+
+/**
  * Follow one job until done/failed. Queued and running envelopes are handed
  * to onTick; a dead key stops at once, everything else (offline, 429, a
  * server hiccup) rides the backoff out to the ceiling, where the last

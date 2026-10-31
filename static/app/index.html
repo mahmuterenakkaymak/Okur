@@ -13,6 +13,7 @@
     * { box-sizing: border-box; }
     body {
       margin: 0; min-height: 100dvh; display: flex; flex-direction: column;
+      overscroll-behavior-y: contain;
       font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
       background: #0f1115; color: #e8e6e1;
     }
@@ -112,6 +113,33 @@
       font-size: .76rem; line-height: 1.5; background: #0b0d11; color: #b9bcc4;
       border: 1px solid rgba(255,255,255,.07);
     }
+    .fis-liste { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .55rem; }
+    .fis-liste:empty { display: none; }
+    .fis-satiri {
+      display: flex; align-items: center; gap: .75rem; width: 100%;
+      text-align: left; font: inherit; color: inherit; cursor: pointer;
+      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+      border-radius: .85rem; padding: .55rem .75rem;
+      transition: background-color .18s ease, transform .12s ease;
+    }
+    .fis-satiri:active { transform: scale(.98); background: rgba(255,255,255,.06); }
+    .fis-mini {
+      flex: none; width: 2.7rem; height: 2.7rem; border-radius: .55rem;
+      overflow: hidden; background: rgba(255,255,255,.06);
+    }
+    .fis-mini img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .35s ease; }
+    .fis-mini img.yuklu { opacity: 1; }
+    .fis-ozet { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .12rem; }
+    .fis-tarih { font-size: .82rem; color: #8b8f99; }
+    .fis-tutar { font-weight: 600; font-variant-numeric: tabular-nums; }
+    .fis-tutar:empty { display: none; }
+    .yenileme { display: flex; justify-content: center; padding: .3rem 0 .5rem; color: #4ade80; }
+    .yenileme.donuyor svg { animation: cark .9s linear infinite; }
+    @keyframes cark { to { transform: rotate(360deg); } }
+    .bos-fis { text-align: center; padding: 1.1rem 0 .5rem; color: #b9bcc4; font-size: .92rem; }
+    .bos-fis svg { display: block; margin: 0 auto .7rem; }
+    .bos-fis p { margin: 0; }
+    #gecmis-sentinel { height: 1px; }
   </style>
 </head>
 <body>
@@ -187,6 +215,28 @@
         <button type="button" class="btn btn-birincil" id="yeni-fis">Yeni fiş çek</button>
       </div>
       <pre id="ham-json" hidden></pre>
+    </section>
+
+    <section class="card" id="gecmis">
+      <h2>Geçmiş</h2>
+      <div class="yenileme" id="gecmis-yenileme" hidden aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="20" height="20">
+          <path d="M20 12a8 8 0 1 1-2.35-5.65" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M20 3.2v4.4h-4.4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <ul class="fis-liste" id="gecmis-liste"></ul>
+      <div class="bos-fis" id="gecmis-bos" hidden>
+        <svg viewBox="0 0 48 48" width="54" height="54" aria-hidden="true">
+          <g transform="rotate(-4 24 24)">
+            <path d="M12 6h24v36l-6-3-6 3-6-3-6 3Z" fill="none" stroke="#3f4652" stroke-width="2.4" stroke-dasharray="3 3.4" stroke-linejoin="round"/>
+            <path d="M18 16h12M18 23h12M18 30h7" stroke="#3f4652" stroke-width="2.4" stroke-dasharray="3 3.4" stroke-linecap="round"/>
+          </g>
+        </svg>
+        <p>Henüz fiş yok — ilk fişini çek!</p>
+      </div>
+      <p class="hint" id="gecmis-durum"></p>
+      <div id="gecmis-sentinel"></div>
     </section>
   </main>
   <footer>OCR API &middot; sözleşme v1</footer>

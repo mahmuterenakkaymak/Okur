@@ -7,7 +7,8 @@
 
 import { createCapture } from "./capture.js";
 import { createCropper } from "./crop.js";
-import { getApiKey, pollJob, setApiKey, submitJob } from "./api.js";
+import { getApiKey, getJob, pollJob, setApiKey, submitJob } from "./api.js";
+import { createHistory } from "./history.js";
 import { statusOf } from "./status.js";
 
 const ADIMLAR = {
@@ -135,8 +136,38 @@ async function gonder(crop) {
       },
     });
     sonucGoster(bitti);
+    history.refresh();
   } catch (err) {
     showError(err && err.message ? err.message : "Fiş gönderilemedi, tekrar dene.");
+  } finally {
+    clearInterval(tickTimer);
+    tickTimer = null;
+  }
+}
+
+// A history tap opens the same result view; a job that has not finished yet
+// resumes live tracking instead of showing a dead-end detail.
+async function detayAc(job) {
+  hideError();
+  try {
+    if (job.status === "done" || job.status === "failed") {
+      sonucGoster(await getJob(job.job_id));
+      return;
+    }
+    guncel = job;
+    startedAt = Date.now();
+    show("durum");
+    cizDurum();
+    tickTimer = setInterval(cizDurum, 500);
+    const bitti = await pollJob(job.job_id, {
+      onTick: (envelope) => {
+        if (envelope) guncel = envelope;
+      },
+    });
+    sonucGoster(bitti);
+    history.refresh();
+  } catch (err) {
+    showError(err && err.message ? err.message : "Fiş yüklenemedi, tekrar dene.");
   } finally {
     clearInterval(tickTimer);
     tickTimer = null;
@@ -238,11 +269,17 @@ cekimeDon.addEventListener("click", () => {
   show("cekim");
 });
 
+const history = createHistory({
+  container: document.getElementById("gecmis"),
+  onOpen: (job) => detayAc(job),
+});
+
 anahtarGirisi.value = getApiKey();
 anahtarGirisi.addEventListener("change", () => {
   anahtarIpucu.textContent = setApiKey(anahtarGirisi.value)
     ? "Kaydedildi ✓"
     : "Anahtar temizlendi.";
+  history.refresh();
 });
 
 show("cekim");

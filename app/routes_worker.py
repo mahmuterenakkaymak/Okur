@@ -26,11 +26,14 @@ router = APIRouter(prefix="/api/me", tags=["worker"])
 
 
 @router.get("/jobs")
-def list_jobs(request: Request):
+def list_jobs(request: Request, limit: int = 100, offset: int = 0):
+    """Newest first, paged for the PWA history's infinite scroll."""
     key = request.state.key
+    limit = max(1, min(limit, 200))
+    offset = max(0, offset)
     conn = _connect(request)
     try:
-        rows = db.list_jobs(conn, key_id=key["id"])
+        rows = db.list_jobs(conn, key_id=key["id"], limit=limit, offset=offset)
         total = conn.execute(
             "SELECT COUNT(*) FROM jobs WHERE key_id = ?", (key["id"],)
         ).fetchone()[0]

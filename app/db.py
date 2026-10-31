@@ -179,6 +179,7 @@ def list_jobs(
     key_id: int | None = None,
     since: str | None = None,
     limit: int = 100,
+    offset: int = 0,
 ) -> list[dict]:
     where, args = [], []
     if status:
@@ -196,8 +197,8 @@ def list_jobs(
     sql = "SELECT * FROM jobs"
     if where:
         sql += " WHERE " + " AND ".join(where)
-    sql += " ORDER BY created_at DESC, id LIMIT ?"
-    args.append(limit)
+    sql += " ORDER BY created_at DESC, id LIMIT ? OFFSET ?"
+    args.extend([limit, offset])
     return [dict(row) for row in conn.execute(sql, args)]
 
 
