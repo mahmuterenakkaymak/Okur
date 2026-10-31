@@ -1,0 +1,304 @@
+{
+  "$defs": {
+    "Header": {
+      "properties": {
+        "isim": {
+          "default": "",
+          "title": "Isim",
+          "type": "string"
+        },
+        "vergi_dairesi": {
+          "default": "",
+          "title": "Vergi Dairesi",
+          "type": "string"
+        },
+        "vergi_no": {
+          "default": "",
+          "title": "Vergi No",
+          "type": "string"
+        }
+      },
+      "title": "Header",
+      "type": "object"
+    },
+    "Item": {
+      "properties": {
+        "ad": {
+          "default": "",
+          "title": "Ad",
+          "type": "string"
+        },
+        "birim_fiyat": {
+          "default": 0.0,
+          "title": "Birim Fiyat",
+          "type": "number"
+        },
+        "miktar": {
+          "default": 0.0,
+          "title": "Miktar",
+          "type": "number"
+        },
+        "toplam": {
+          "default": 0.0,
+          "title": "Toplam",
+          "type": "number"
+        }
+      },
+      "title": "Item",
+      "type": "object"
+    },
+    "JobMeta": {
+      "properties": {
+        "captured_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Captured At"
+        },
+        "model": {
+          "default": "",
+          "title": "Model",
+          "type": "string"
+        },
+        "ocr_ms": {
+          "default": 0,
+          "title": "Ocr Ms",
+          "type": "integer"
+        },
+        "quality_mode": {
+          "default": false,
+          "title": "Quality Mode",
+          "type": "boolean"
+        },
+        "received_at": {
+          "default": "",
+          "title": "Received At",
+          "type": "string"
+        },
+        "total_ms": {
+          "default": 0,
+          "title": "Total Ms",
+          "type": "integer"
+        },
+        "worker": {
+          "default": "",
+          "title": "Worker",
+          "type": "string"
+        }
+      },
+      "title": "JobMeta",
+      "type": "object"
+    },
+    "ReceiptMeta": {
+      "properties": {
+        "no": {
+          "default": "",
+          "title": "No",
+          "type": "string"
+        },
+        "saat": {
+          "default": "",
+          "title": "Saat",
+          "type": "string"
+        },
+        "tarih": {
+          "default": "",
+          "title": "Tarih",
+          "type": "string"
+        },
+        "tip": {
+          "default": "",
+          "title": "Tip",
+          "type": "string"
+        }
+      },
+      "title": "ReceiptMeta",
+      "type": "object"
+    },
+    "Result": {
+      "properties": {
+        "header": {
+          "$ref": "#/$defs/Header"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/Item"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "meta": {
+          "$ref": "#/$defs/ReceiptMeta"
+        },
+        "okunamayan": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Okunamayan",
+          "type": "array"
+        },
+        "para_birimi": {
+          "default": "TRY",
+          "title": "Para Birimi",
+          "type": "string"
+        },
+        "totals": {
+          "$ref": "#/$defs/Totals"
+        }
+      },
+      "title": "Result",
+      "type": "object"
+    },
+    "Totals": {
+      "properties": {
+        "ara_toplam": {
+          "default": 0.0,
+          "title": "Ara Toplam",
+          "type": "number"
+        },
+        "iskonto": {
+          "default": 0.0,
+          "title": "Iskonto",
+          "type": "number"
+        },
+        "kdv": {
+          "default": 0.0,
+          "title": "Kdv",
+          "type": "number"
+        },
+        "kdv_orani": {
+          "default": 0.0,
+          "title": "Kdv Orani",
+          "type": "number"
+        },
+        "toplam": {
+          "default": 0.0,
+          "title": "Toplam",
+          "type": "number"
+        }
+      },
+      "title": "Totals",
+      "type": "object"
+    },
+    "TotalsBlock": {
+      "description": "The four amounts the validator recomputes, used for expected and actual.",
+      "properties": {
+        "ara_toplam": {
+          "default": 0.0,
+          "title": "Ara Toplam",
+          "type": "number"
+        },
+        "iskonto": {
+          "default": 0.0,
+          "title": "Iskonto",
+          "type": "number"
+        },
+        "kdv": {
+          "default": 0.0,
+          "title": "Kdv",
+          "type": "number"
+        },
+        "toplam": {
+          "default": 0.0,
+          "title": "Toplam",
+          "type": "number"
+        }
+      },
+      "title": "TotalsBlock",
+      "type": "object"
+    },
+    "Validation": {
+      "properties": {
+        "actual": {
+          "$ref": "#/$defs/TotalsBlock"
+        },
+        "expected": {
+          "$ref": "#/$defs/TotalsBlock"
+        },
+        "fields": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Fields",
+          "type": "array"
+        },
+        "verdict": {
+          "default": "unreadable",
+          "enum": [
+            "ok",
+            "mismatch",
+            "unreadable"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        }
+      },
+      "title": "Validation",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "client_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Client Ref"
+    },
+    "job_id": {
+      "default": "",
+      "title": "Job Id",
+      "type": "string"
+    },
+    "meta": {
+      "$ref": "#/$defs/JobMeta"
+    },
+    "result": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Result"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "status": {
+      "default": "queued",
+      "enum": [
+        "queued",
+        "running",
+        "done",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "validation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Validation"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "title": "JobEnvelope",
+  "type": "object"
+}

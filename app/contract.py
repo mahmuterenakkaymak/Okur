@@ -10,6 +10,7 @@ discrepancy rather than the contract guessing.
 """
 from __future__ import annotations
 
+import json
 from collections.abc import Mapping
 from typing import Annotated, Any, Literal, Self
 
@@ -142,3 +143,17 @@ class JobEnvelope(_Model):
     result: Result | None = None
     validation: Validation | None = None
     meta: JobMeta = Field(default_factory=JobMeta)
+
+
+SCHEMA_PATH = config.ROOT / "contract" / "contract_v1.schema.json"
+
+
+def schema_text() -> str:
+    """Byte-stable JSON Schema (draft 2020-12) text, job envelope at the root.
+
+    sort_keys keeps regeneration byte-identical; scripts/gen_contract_doc.py
+    writes this to SCHEMA_PATH, which is committed.
+    """
+    schema = JobEnvelope.model_json_schema()
+    schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
+    return json.dumps(schema, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
