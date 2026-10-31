@@ -110,6 +110,23 @@ export function kaliteFarki(eskiEnv, yeniEnv) {
   return satirlar;
 }
 
+/** Edited fields -> the PATCH body, keyed by the contract's dotted paths.
+ *
+ * A number input holds "0.250", and the server reads a dot followed by three
+ * digits as a thousands group — 250, a kg correction 1000x off. So a
+ * number-shaped value leaves as a JSON number and is never re-parsed from text
+ * the reviewer never typed; only the text fields travel as strings.
+ */
+export function duzeltmeAlanlari(girdiler) {
+  const alanlar = {};
+  for (const girdiAlani of girdiler) {
+    const deger = girdiAlani.value.trim();
+    alanlar[girdiAlani.dataset.yol] =
+      girdiAlani.dataset.bicim === "sayi" ? Number(deger) : deger;
+  }
+  return alanlar;
+}
+
 async function hataMesaji(yanit) {
   try {
     const govde = await yanit.json();
@@ -537,10 +554,7 @@ export function createFisDetay({ onDuzeltme = () => {} } = {}) {
       );
       return;
     }
-    const alanlar = {};
-    for (const girdiAlani of duzenlenenler()) {
-      alanlar[girdiAlani.dataset.yol] = girdiAlani.value.trim();
-    }
+    const alanlar = duzeltmeAlanlari(duzenlenenler());
     const alanSayisi = Object.keys(alanlar).length;
     if (!alanSayisi) return;
     kaydediliyor = true;
