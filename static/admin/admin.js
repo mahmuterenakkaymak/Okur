@@ -1,3 +1,4 @@
+import { createFisDetay } from "./detail.js";
 import { createFisListesi } from "./list.js";
 
 const API = "/admin/api";
@@ -12,6 +13,7 @@ const panel = document.getElementById("panel");
 const cikisDugme = document.getElementById("cikis-dugme");
 const navDugmeleri = [...document.querySelectorAll(".nav-li")];
 let fisListesi = null;
+const detay = createFisDetay();
 
 function hataGoster(metin) {
   girisHata.textContent = metin;
@@ -30,6 +32,7 @@ function paneliGoster() {
 }
 
 function giriseDon() {
+  detay.kapat(); // a receipt must not stay open over the login screen
   panel.hidden = true;
   girisEkrani.hidden = false;
   girisHata.hidden = true;
@@ -55,7 +58,7 @@ function bolumuGoster(ad) {
   // not ask for it; the first real look builds it, later ones refresh in place.
   if (ad === "fisler" && !panel.hidden) {
     if (fisListesi) fisListesi.yenile();
-    else fisListesi = createFisListesi();
+    else fisListesi = createFisListesi({ acis: detay.ac });
   }
 }
 

@@ -131,6 +131,66 @@
     </main>
   </div>
 
+  <dialog class="detay" id="fis-detay" aria-labelledby="detay-baslik">
+    <header class="detay-ust">
+      <div class="detay-kimlik">
+        <h2 id="detay-baslik">Fiş detayı</h2>
+        <p class="not" id="detay-ozet"></p>
+      </div>
+      <span class="etiket" id="detay-dogrulama" hidden></span>
+      <button type="button" class="btn btn-mini" id="detay-kapat">Kapat</button>
+    </header>
+    <div class="detay-govde">
+      <p class="hata" id="detay-hata" role="alert" hidden>
+        Detay bir türlü yüklenemedi.
+        <button type="button" class="btn btn-mini" id="detay-tekrar">Tekrar dene</button>
+      </p>
+      <div class="detay-icerik" id="detay-icerik" hidden>
+        <figure class="detay-gorsel" id="detay-gorsel">
+          <img id="detay-resim" alt="Fişin kaydedilmiş fotoğrafı">
+          <figcaption class="not" id="detay-gorsel-not"></figcaption>
+        </figure>
+        <p class="detay-bekleme" id="detay-bekleniyor" hidden></p>
+        <div class="detay-panel" id="detay-panel">
+          <section class="detay-bolum">
+            <h3>Ürünler</h3>
+            <div class="tablo-sar">
+              <table class="tablo detay-tablo">
+                <thead>
+                  <tr>
+                    <th scope="col">Ad</th>
+                    <th scope="col" class="saga">Miktar</th>
+                    <th scope="col" class="saga">Birim fiyat</th>
+                    <th scope="col" class="saga">Tutar</th>
+                  </tr>
+                </thead>
+                <tbody id="detay-urun-govde"></tbody>
+              </table>
+            </div>
+            <p class="not" id="detay-urun-bos" hidden>Bu fişte okunabilen ürün yok.</p>
+          </section>
+          <section class="detay-bolum">
+            <h3>Toplamlar</h3>
+            <div class="toplamlar" id="detay-toplamlar"></div>
+            <p class="not">KDV oranı ondalık yazılır (0,20 = %20). Düzenlediğin alanlar vurgulanır.</p>
+          </section>
+          <section class="uyusmazlik" id="detay-karsilastirma-kutusu" hidden>
+            <h3>Beklenen — fişte yazan</h3>
+            <div id="detay-karsilastirma"></div>
+          </section>
+          <section class="detay-bolum" id="detay-okunamayan" hidden>
+            <h3>Okunamayan bölümler</h3>
+            <ul class="okunamayan" id="detay-okunamayan-liste"></ul>
+          </section>
+        </div>
+      </div>
+    </div>
+    <footer class="detay-alt">
+      <button type="button" class="btn btn-mini" id="detay-json-dugme" aria-expanded="false">Ham JSON</button>
+      <pre class="ham-json" id="detay-json" hidden></pre>
+    </footer>
+  </dialog>
+
   <script type="module" src="admin.js"></script>
 </body>
 </html>

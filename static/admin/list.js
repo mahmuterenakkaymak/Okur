@@ -9,8 +9,8 @@ const API = "/admin/api";
 const SAYFA_BOYU = 25;
 const ARAMA_BEKLEMESI = 300; // ms of typing before a search is worth a request
 
-const DURUM = { queued: "Sırada", running: "İşleniyor", done: "Bitti", failed: "İşlenemedi" };
-const VERDICT = {
+export const DURUM = { queued: "Sırada", running: "İşleniyor", done: "Bitti", failed: "İşlenemedi" };
+export const VERDICT = {
   ok: { etiket: "Temiz", renk: "iyi" },
   mismatch: { etiket: "Uyuşmazlık", renk: "uyari" },
   unreadable: { etiket: "Okunamadı", renk: "kotu" },
@@ -27,7 +27,7 @@ const KOLONLAR = [
 const ASAGI = ["tarih", "toplam"]; // a fresh sort starts with the newest/biggest
 const OK = { asc: "▲", desc: "▼" };
 
-export function createFisListesi() {
+export function createFisListesi({ acis = () => {} } = {}) {
   const form = document.getElementById("fis-filtreler");
   const ara = document.getElementById("fis-ara");
   const durumSecimi = document.getElementById("fis-durum");
@@ -150,6 +150,8 @@ export function createFisListesi() {
     firma.title = is.firma || "";
 
     const tr = document.createElement("tr");
+    tr.dataset.job = is.job_id || "";
+    tr.tabIndex = 0;
     tr.append(td(kod), td(is.worker), td(is.tarih), firma, tutar, td(etiket), td(mod));
     return tr;
   }
@@ -250,6 +252,17 @@ export function createFisListesi() {
     yukle();
   });
   document.getElementById("fis-tekrar").addEventListener("click", () => yukle());
+  // Rows are redrawn on every load, so the detail opens through one delegated
+  // listener on the body instead of a handler per row.
+  function detayAc(olay) {
+    const tr = olay.target.closest("tr[data-job]");
+    if (!tr) return;
+    if (olay.type === "keydown" && olay.key !== "Enter" && olay.key !== " ") return;
+    olay.preventDefault();
+    acis(tr.dataset.job);
+  }
+  govde.addEventListener("click", detayAc);
+  govde.addEventListener("keydown", detayAc);
   onceki.addEventListener("click", () => {
     offset = Math.max(0, offset - SAYFA_BOYU);
     yukle();

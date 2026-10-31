@@ -15,11 +15,12 @@ from datetime import date, datetime
 from typing import Literal
 
 from fastapi import APIRouter, HTTPException, Query, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 
 from app import auth, config, db
-from app.routes_jobs import _Status, _bad_field
+from app.routes_jobs import _Status, _bad_field, _envelope
+from app.routes_worker import _image_path
 
 router = APIRouter(prefix="/admin/api", tags=["admin"])
 
@@ -131,9 +132,46 @@ def list_jobs(
     }
 
 
+@router.get("/jobs/{job_id}")
+def get_job(request: Request, job_id: str):
+    """One job as the contract v1 envelope, plus where its image lives.
+
+    The detail is the same body GET /v1/jobs/{id} answers with, so the
+    reviewer and the integrator never read two versions of one receipt.
+    """
+    conn = _connect(request)
+    try:
+        row = _job(conn, job_id)
+        envelope = _envelope(row)
+        envelope["image_url"] = (
+            f"/admin/api/jobs/{row['id']}/image" if row["image_path"] else None
+        )
+        return envelope
+    finally:
+        conn.close()
+
+
+@router.get("/jobs/{job_id}/image")
+def get_image(request: Request, job_id: str):
+    """The stored receipt, behind the same session as the rest of /admin/api."""
+    conn = _connect(request)
+    try:
+        data = _image_path(_job(conn, job_id)).read_bytes()
+    finally:
+        conn.close()
+    return Response(content=data, media_type="image/jpeg")
+
+
 def _connect(request: Request):
     """One connection per request, same rule as main._connect."""
     return db.connect(request.app.state.db_path)
+
+
+def _job(conn, job_id: str) -> dict:
+    row = db.get_job(conn, job_id)
+    if row is None:
+        raise HTTPException(404, "job not found")
+    return row
 
 
 def _satir(row: dict) -> dict:
