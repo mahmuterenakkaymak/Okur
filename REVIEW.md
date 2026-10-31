@@ -1,16 +1,14 @@
-# REVIEW — M4 (T45–T50, base d9a41af)
+# REVIEW — M1 (T01–T18, base 742bfd9; T11 landed last, at HEAD 17468f6)
 
-Green today: 599 pytest / 21 red, 192 node, smoke_e2e OK, acceptance --demo 7/7. All 21 reds are stale tests, not code regressions — T46 and T50 changed behaviour the old tests pinned and shipped without updating them.
+Green today: 665 pytest, 192 node, smoke_e2e OK. M1's core (contract, validator, db, auth, queue) holds up; all three bugs sit at the seams T11's late arrival exposed.
 
 **Bugs** (fix tasks appended to TASKS.md):
-- B1 T46's `_require_image` (routes_jobs.py:132) refuses the shared fixture `b"\xff\xd8\xff\xe0fakejpeg"`, redding 19 tests — tests/test_routes_jobs.py (15) and tests/test_captured_at_survives.py (4) can no longer submit at all; the T46 ASSUMPTION admits the fixtures needed fixing and never fixed them → T60.
-- B2 tests/test_upload_exif_stripped.py::test_an_undecodable_upload_is_still_accepted still asserts T56's pre-T46 contract (202 + verbatim store); T46 rejects undecodable bytes 422 at the door → T61.
-- B3 tests/test_run_py.py:258 counts 2 ✓, but T50's roll-call prints three (OCR, Strata, Uygulama — pinned by test_launcher_rollcall.py) → T62.
-- B4 the PWA swallows T46's Turkish intake copy: `too_large_message()` promises "the worker's phone shows this copy verbatim", but `classifyFailure` (api.js:39) maps 413/422 to the generic server_error "Birazdan tekrar dene" — the worker is told to retry when the fix is crop/retake → T63.
-- B5 OPERATIONS.md:40,131's daily check `acceptance.py --base-url` can never pass: `_live()` (acceptance.py:418) reads the key only from `/demo/config.json`, which only serve_demo serves → T64.
+- B1 a stage-2 UnreadableError becomes failed, never verdict unreadable: pipeline.py:47-50 folds it into bundle["error"] and queue_worker._process fails any non-empty error, discarding the unreadable validation — a receipt the model could not structure shows the worker "İşlenemedi — tekrar dene" instead of D3's re-shoot, the integrator gets status failed with no reason, and the pipeline ASSUMPTION "both take the unreadable path" is false (only the empty-items path survives; serve_demo has to fake the state) → T65.
+- B2 the smoke and the M1 integration still stand in for stage 2 with hand-rolled clients; their ASSUMPTIONs ("app/structurer.py is T11 and not in the tree yet… this class gets replaced once it lands") are false since T11 landed — the shipped Structurer's prompt, JSON extraction and quality routing are exercised by no end-to-end gate, only its own MockTransport unit tests → T66.
+- B3 routes_jobs.create_job commits the queued row before the image exists: the worker can claim the row in that window and fail a good receipt with "image: …", and any failure between commit and update (e.g. _strip_exif on a decodable-but-odd upload) leaves an orphan queued row → T67.
 
-**Risks:** `/admin/api/login` is still unthrottled (M3 said fold into T46; T46 did not); the admin cookie has no `Secure` (routes_admin.py:628 ASSUMPTION documents the http-dev tradeoff — fine on the tailnet, bad if 8090 ever leaks to the LAN); CSP `script-src 'unsafe-inline'` — the comment credits it with stopping injected OCR text, but textContent is what actually stops it; revoke is still one-click and a rerun still silently overwrites corrections (both M3 carry-overs).
+**Risks:** _strip_exif stores no-EXIF uploads verbatim (routes_jobs.py:156) — PLAN decision 7 says re-encode, and PNG tEXt metadata survives; any valid worker key reads every worker's receipts via GET /v1/jobs/{id} (global by design for integrators, but a leaked phone key exposes the fleet, not one worker); M4 carry-overs still open (unthrottled admin login, CSP unsafe-inline, rerun overwrites corrections).
 
-**ASSUMPTIONs checked:** the single-worker claim holds (create_app never starts a QueueWorker; README tells operators not to run bare uvicorn); Strata-down-fails-start matches brief 9.1; the tailscale rollback keeping the exported key matches the no-silent-delete rule; test_docs' `-m` importability limit is honest; `_require_image`'s ASSUMPTION is the B1 confession.
+**ASSUMPTIONs checked:** the two false ones are B1/B2; sound: db's mode vocabulary matches routes_jobs/exports, ocr_client's quality no-op matches PLAN, keys_cli's honest app.keys_cli path (docs agree), queue_worker's captured_at merge (T52), validator's iskonto/mixed-rate trust rules.
 
-**Missing tests:** nothing pins the PWA surfacing the server's error message (B4); nothing runs acceptance against a non-demo instance (B5); CONTRACT.md documents no error envelope at all — 401/429/413/422 live only in README, while CONTRACT.md is the integrator's door.
+**Missing tests:** nothing runs the real Structurer through the pipeline (B2); the envelope carries no failure reason, so an integrator cannot tell "retake the photo" from "model server down" — CONTRACT.md still documents no error envelope (M4 carry-over).
