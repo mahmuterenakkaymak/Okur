@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import http
 import math
+import mimetypes
 import os
 import sqlite3
 from typing import Any
@@ -128,6 +129,7 @@ def _code_for(status_code: int) -> str:
 def _mount_static(app: FastAPI) -> None:
     # The PWA and admin bundles arrive in M2/M3; the directories are created
     # on first boot so a fresh clone still starts.
+    mimetypes.add_type("application/manifest+json", ".webmanifest")
     for name in ("app", "admin"):
         directory = STATIC_DIR / name
         directory.mkdir(parents=True, exist_ok=True)
