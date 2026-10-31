@@ -1,8 +1,8 @@
 """Deterministic arithmetic: the LLM never owns a number.
 
-validate() recomputes line totals, ara toplam, single-rate KDV and genel
-toplam from items[] and compares each printed value with the recomputed one
-at 0.01 tolerance, so a misread digit surfaces as a mismatch naming the
+validate() recomputes line totals, ara toplam, single- and mixed-rate KDV and
+genel toplam from items[] and compares each printed value with the recomputed
+one at 0.01 tolerance, so a misread digit surfaces as a mismatch naming the
 offending field (items[2].toplam, totals.kdv) instead of a silently wrong
 total. Pure function: no I/O, no mutation of the input.
 """
@@ -22,6 +22,21 @@ def validate(result: Mapping[str, Any] | contract.Result) -> dict[str, Any]:
     parsed = result if isinstance(result, contract.Result) else contract.Result.parse(result)
     printed = parsed.totals
 
+    if not parsed.items:
+        # ASSUMPTION: no items means nothing was read, so the verdict is
+        # unreadable rather than a vacuous ok over zero totals.
+        return contract.Validation(
+            verdict="unreadable",
+            expected=contract.TotalsBlock(),
+            actual=contract.TotalsBlock(
+                ara_toplam=printed.ara_toplam,
+                iskonto=printed.iskonto,
+                kdv=printed.kdv,
+                toplam=printed.toplam,
+            ),
+            fields=[],
+        ).model_dump()
+
     fields: list[str] = []
     ara_toplam = 0.0
     for index, item in enumerate(parsed.items):
@@ -31,9 +46,17 @@ def validate(result: Mapping[str, Any] | contract.Result) -> dict[str, Any]:
             fields.append(f"items[{index}].toplam")
 
     # ASSUMPTION: iskonto is a receipt-level discount no item carries, so it is
-    # trusted as a chain input and never flagged on its own.
-    matrah = ara_toplam - printed.iskonto
-    kdv = round(matrah * printed.kdv_orani, 2)
+    # trusted as a chain input and never flagged on its own; a negative one is
+    # the printed "52,32-" form, so its magnitude reduces the base.
+    iskonto = abs(printed.iskonto)
+    matrah = ara_toplam - iskonto
+    if printed.kdv_orani > 0:
+        kdv = round(matrah * printed.kdv_orani, 2)
+    else:
+        # ASSUMPTION: mixed-rate receipts have no single kdv_orani, so the
+        # structurer emits 0 and the printed kdv is trusted as a chain input;
+        # the toplam = matrah + kdv check below still ties it to the base.
+        kdv = printed.kdv
     toplam = matrah + kdv
 
     for name, expected in (
@@ -48,7 +71,7 @@ def validate(result: Mapping[str, Any] | contract.Result) -> dict[str, Any]:
         verdict="ok" if not fields else "mismatch",
         expected=contract.TotalsBlock(
             ara_toplam=round(ara_toplam, 2),
-            iskonto=printed.iskonto,
+            iskonto=iskonto,
             kdv=kdv,
             toplam=round(toplam, 2),
         ),
