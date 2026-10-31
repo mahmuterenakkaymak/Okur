@@ -311,6 +311,27 @@ main {
 }
 #anahtar-kopya-durum { margin-top: .7rem; }
 
+/* --- durum --- */
+.durum-bekleme { padding: 1.6rem 0; margin: 0; text-align: center; font-size: .9rem; color: #b9bcc4; }
+.durum-baslik {
+  margin: 1.25rem 0 .6rem; font-size: .75rem; font-weight: 700;
+  letter-spacing: .05em; text-transform: uppercase; color: #8b8f99;
+}
+.durum-izgara { display: grid; gap: .8rem; grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr)); }
+.durum-kart {
+  padding: .9rem 1rem 1rem; border-radius: .8rem;
+  background: #12151b; border: 1px solid rgba(255,255,255,.07);
+  animation: belirme .24s ease both;
+}
+.durum-kart h3 { margin: 0 0 .15rem; font-size: .95rem; letter-spacing: .01em; }
+.durum-kart .not { margin: 0 0 .55rem; }
+.durum-kart .etiket { margin-top: .1rem; }
+.durum-deger { margin: 0 0 .3rem; font-size: 1.45rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.sayi-kotu { color: #f87171; }
+.vram-olcek { height: .55rem; overflow: hidden; border-radius: 999px; background: rgba(255,255,255,.08); }
+.vram-dolum { display: block; height: 100%; border-radius: 999px; background: #4ade80; transition: width .45s ease; }
+.durum-guncelleme { margin-top: 1.15rem; font-variant-numeric: tabular-nums; }
+
 @keyframes belirme { from { opacity: 0; transform: translateY(.4rem); } }
 @keyframes sallanma {
   10%, 90% { transform: translateX(-.22rem); }
@@ -322,5 +343,5 @@ main {
 @media (prefers-reduced-motion: reduce) {
   .kart, .bos svg, .sallanma, .tablo tbody tr, .iskelet,
   .detay[open], .detay-gorsel img, .kayit-durum,
-  .dialog-kucuk[open] { animation: none; }
+  .dialog-kucuk[open], .durum-kart { animation: none; }
 }

@@ -21,7 +21,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 
-from app import auth, config, contract, db, exports, numbers, validator
+from app import auth, config, contract, db, exports, numbers, status, validator
 from app.routes_jobs import _Status, _bad_field, _clean_iso, _envelope
 from app.routes_worker import _image_path
 
@@ -322,6 +322,21 @@ def revoke_key(request: Request, key_id: int):
     finally:
         conn.close()
     return {**satir, "revoked": True}
+
+
+@router.get("/status")
+def service_status(request: Request):
+    """A live snapshot: OCR/Strata/Unsloth health, VRAM and queue depth.
+
+    ASSUMPTION: the task names GET /v1/status; the door is the admin one,
+    because /v1 is key-authed for integrators while the Durum page rides the
+    admin session — the same reading as T37's corrections and T38's export.
+    """
+    conn = _connect(request)
+    try:
+        return status.probe_all(conn)
+    finally:
+        conn.close()
 
 
 def _connect(request: Request):

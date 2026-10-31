@@ -217,6 +217,17 @@ def list_jobs(
     return [dict(row) for row in conn.execute(sql, args)]
 
 
+def queue_depth(conn: sqlite3.Connection) -> dict:
+    """Open queue depth per status; a status with no rows reads as 0."""
+    sayilar = {
+        satir["status"]: satir["adet"]
+        for satir in conn.execute(
+            "SELECT status, COUNT(*) AS adet FROM jobs GROUP BY status"
+        )
+    }
+    return {durum: sayilar.get(durum, 0) for durum in ("queued", "running", "failed")}
+
+
 def update_job(conn: sqlite3.Connection, job_id: str, **values) -> dict | None:
     """Update mutable job columns; dict/list JSON fields serialize.
 

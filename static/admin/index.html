@@ -140,13 +140,22 @@
       </section>
 
       <section class="kart" id="bolum-durum" hidden>
-        <h2>Durum</h2>
-        <div class="bos">
-          <svg viewBox="0 0 48 48" width="56" height="56" aria-hidden="true">
-            <path d="M6 30h8l5-14 6 22 5-12h12" fill="none" stroke="#3f4652" stroke-width="2.4" stroke-dasharray="3 3.4" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <p>Henüz ölçüm yok.</p>
-          <p class="not">OCR, Strata ve kuyruk durumu burada canlı olarak izlenir.</p>
+        <div class="bolum-ust">
+          <h2>Durum</h2>
+          <button type="button" class="btn btn-mini" id="durum-yenile">Yenile</button>
+        </div>
+        <p class="hata" id="durum-hata" role="alert" hidden>
+          Durum bir türlü alınamadı.
+          <button type="button" class="btn btn-mini" id="durum-tekrar">Tekrar dene</button>
+        </p>
+        <p class="durum-bekleme" id="durum-bekleme">Sunucular yoklanıyor…</p>
+        <div id="durum-icerik" hidden>
+          <div class="durum-izgara" id="durum-servisler"></div>
+          <h3 class="durum-baslik">VRAM</h3>
+          <div class="durum-izgara" id="durum-vram"></div>
+          <h3 class="durum-baslik">Kuyruk</h3>
+          <div class="durum-izgara" id="durum-kuyruk"></div>
+          <p class="not durum-guncelleme" id="durum-guncelleme" role="status" aria-live="polite"></p>
         </div>
       </section>
     </main>
