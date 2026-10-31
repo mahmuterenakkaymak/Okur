@@ -10,6 +10,7 @@ contract.JobEnvelope, so integrators parse the frozen contract everywhere.
 """
 from __future__ import annotations
 
+import io
 import json
 import sqlite3
 from datetime import datetime
@@ -18,6 +19,7 @@ from typing import Literal
 from fastapi import APIRouter, File, Form, HTTPException, Query, Request, UploadFile
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from PIL import Image, ImageOps
 
 from app import config, contract, db
 
@@ -61,7 +63,7 @@ def create_job(
             return JSONResponse(status_code=200, content=_envelope(raced))
         path = config.images_dir() / f"{job['id']}.jpg"
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_bytes(data)
+        path.write_bytes(_strip_exif(data))
         updates = {"image_path": str(path)}
         if captured_at:
             # ASSUMPTION: captured_at is not a queue column, so it rides in
@@ -110,6 +112,28 @@ def get_job(request: Request, job_id: str):
 def _connect(request: Request):
     """One connection per request, same rule as main._connect."""
     return db.connect(request.app.state.db_path)
+
+
+def _strip_exif(data: bytes) -> bytes:
+    """PLAN decision 7: a worker phone's EXIF/GPS must not outlive the request.
+
+    Re-encoding drops the metadata segment and bakes the EXIF orientation into
+    the pixels, so the stored JPEG is upright for the OCR stage and for
+    /api/me/jobs/{id}/image alike.
+    ASSUMPTION: an upload with no EXIF is stored verbatim rather than
+    recompressed a second time on its way to disk.
+    """
+    try:
+        img = Image.open(io.BytesIO(data))
+        if not img.getexif():
+            return data
+        img = ImageOps.exif_transpose(img)
+    except (OSError, Image.DecompressionBombError):
+        # Undecodable bytes stay as they are; rejecting them is T46's job.
+        return data
+    buf = io.BytesIO()
+    img.convert("RGB").save(buf, "JPEG", quality=config.jpeg_quality())
+    return buf.getvalue()
 
 
 def _envelope(row: dict) -> dict:

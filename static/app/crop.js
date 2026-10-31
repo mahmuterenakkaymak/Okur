@@ -2,9 +2,10 @@
 // 90 degree rotation, and EXIF orientation applied before anything else, so the
 // recorded crop rect and the stored JPEG live in the same upright pixels.
 //
-// ASSUMPTION: the crop rect is recorded in the pixels of the upright, rotated
-// image the user cropped (turns and orientation travel with it), because the raw
-// file's pixels never reach the server (PLAN decision 7 re-encodes anyway).
+// NOTE: the crop rect is recorded in the pixels of the upright, rotated image
+// the user cropped (turns and orientation travel with it). The canvas output
+// uploaded from here carries no EXIF, and the server re-encodes an upload that
+// still does (PLAN decision 7), so the stored JPEG is always upright.
 
 import { DEFAULT_JPEG_QUALITY, DEFAULT_MAX_EDGE, scaleToFit } from "./capture.js";
 
