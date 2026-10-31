@@ -255,7 +255,8 @@ def test_start_tracks_pids_starts_the_worker_and_reports_the_admin_url(launcher,
     }
     assert (FakeWorker.started, FakeWorker.stopped) == (1, 1)
     out = capsys.readouterr().out
-    assert out.count("✓") == 2
+    # D7 roll-call: OCR, Strata and Uygulama, though only two are children
+    assert out.count("✓") == 3
     assert "http://127.0.0.1:8090/admin" in out
     assert launcher.opened == ["http://127.0.0.1:8090/admin"]
     assert sorted(launcher.killed) == sorted(launcher.children.values())
