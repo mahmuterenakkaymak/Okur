@@ -4,7 +4,7 @@
 
 ## M1 — Contract + API core
 
-- [ ] T01 | M1 | app/config.py: every tunable in one place read from env with typed getters and safe defaults (OCR port 8081, Strata 8080, Unsloth 8888, app port 8090, data dir, OCR_NGL default 0, HTTP timeouts, rate limit, admin token); no secrets hardcoded | accept: .venv\Scripts\python -m pytest tests/test_config.py -q
+- [x] T01 | M1 | app/config.py: every tunable in one place read from env with typed getters and safe defaults (OCR port 8081, Strata 8080, Unsloth 8888, app port 8090, data dir, OCR_NGL default 0, HTTP timeouts, rate limit, admin token); no secrets hardcoded | accept: .venv\Scripts\python -m pytest tests/test_config.py -q
 - [ ] T02 | M1 | app/numbers.py: Turkish number normalization shared by validator and structurer (1.046,40 to 1046.40, thousands dots, thin/nbsp spaces, percent forms %8 and 8,%, TL and ₺ prefixes, KDV %20X OCR slip tolerance) | accept: .venv\Scripts\python -m pytest tests/test_numbers.py -q
 - [ ] T03 | M1 | app/contract.py: pydantic models for result (header, meta, items, totals, para_birimi, okunamayan), validation block and job envelope with meta block; parse applies house defaults (strings empty, numbers 0.0, arrays empty, TRY, quality_mode false, client_ref null) | accept: .venv\Scripts\python -m pytest tests/test_contract.py -q
 - [ ] T04 | M1 | Export contract/contract_v1.schema.json from contract.py (committed, byte-stable regeneration) and scripts/gen_contract_doc.py writing CONTRACT.md (field table, verdicts, endpoints, /v1 frozen versioning rule); test asserts every committed fixtures/*.json parses as a valid result | accept: .venv\Scripts\python -m pytest tests/test_contract_export.py -q
