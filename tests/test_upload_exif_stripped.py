@@ -116,8 +116,12 @@ def test_a_clean_upload_is_stored_verbatim(env):
     assert stored(conn, job_id).read_bytes() == raw
 
 
-def test_an_undecodable_upload_is_still_accepted(env):
+def test_an_undecodable_upload_is_refused_at_the_door(env):
+    """T46 supersedes T56: bytes Pillow cannot decode never reach the queue."""
     _, client, conn, _, plaintext = env
     resp = submit(client, plaintext, BROKEN)
-    assert resp.status_code == 202
-    assert stored(conn, resp.json()["job_id"]).read_bytes() == BROKEN
+    assert resp.status_code == 422
+    error = resp.json()["error"]
+    assert error["code"] == "validation_error"
+    assert error["details"][0]["field"] == "body.image"
+    assert db.list_jobs(conn) == []
