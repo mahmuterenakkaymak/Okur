@@ -6,6 +6,8 @@
 // IMAGE_MAX_EDGE and JPEG_QUALITY through createCapture, so the defaults here
 // mirror that module's defaults and JPEG_QUALITY keeps its percent unit.
 
+import { createFeedback } from "./feedback.js";
+
 export const DEFAULT_MAX_EDGE = 1600;
 export const DEFAULT_JPEG_QUALITY = 85;
 
@@ -36,6 +38,12 @@ const CSS = `
   transition: transform .12s ease, background-color .2s ease; }
 .cap-shutter:active { transform: scale(.92); }
 .cap-shutter:disabled { opacity: .45; cursor: default; }
+.cap-mute { display: none; align-items: center; justify-content: center;
+  width: 2.4rem; height: 2.4rem; padding: 0; cursor: pointer;
+  border-radius: 50%; border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.05); color: #b9bcc4;
+  transition: color .2s ease, border-color .2s ease; }
+.cap-mute[aria-pressed="true"] { color: #6b6f78; }
 .cap-file { display: none; align-items: center; padding: .7rem 1.15rem; cursor: pointer;
   border-radius: .8rem; border: 1px solid rgba(74,222,128,.35);
   background: rgba(74,222,128,.1); color: #d7f5e3; font-size: .92rem; font-weight: 600; }
@@ -45,12 +53,22 @@ const CSS = `
 .cap[data-state="camera"] .cap-video,
 .cap[data-state="camera"] .cap-frame,
 .cap[data-state="camera"] .cap-shutter { display: block; }
+.cap[data-state="camera"] .cap-mute { display: inline-flex; }
 .cap[data-state="idle"] .cap-note,
 .cap[data-state="file"] .cap-note,
 .cap[data-state="denied"] .cap-note { display: block; }
 .cap[data-state="file"] .cap-file,
 .cap[data-state="denied"] .cap-file { display: inline-flex; }
 `;
+
+const ICON_SOUND =
+  '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">' +
+  '<path d="M4 9v6h4l5 4V5L8 9H4Z" fill="currentColor"/>' +
+  '<path d="M16.2 8.8a4.2 4.2 0 0 1 0 6.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const ICON_MUTED =
+  '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">' +
+  '<path d="M4 9v6h4l5 4V5L8 9H4Z" fill="currentColor"/>' +
+  '<path d="M16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
 
 /** Cap the long edge at maxEdge, preserving the ratio; never upscale. */
 export function scaleToFit(width, height, maxEdge) {
@@ -88,6 +106,7 @@ export function createCapture(options = {}) {
     quality = DEFAULT_JPEG_QUALITY,
     onShot = () => {},
     onState = () => {},
+    feedback = createFeedback(),
   } = options;
 
   injectStyles(doc);
@@ -110,6 +129,8 @@ export function createCapture(options = {}) {
   const shutter = el("button", "cap-shutter", "Çek");
   shutter.setAttribute("type", "button");
   shutter.setAttribute("aria-label", "Fişi çek");
+  const muteBtn = el("button", "cap-mute");
+  muteBtn.setAttribute("type", "button");
   const input = el("input", "cap-input");
   input.setAttribute("type", "file");
   input.setAttribute("accept", "image/*");
@@ -122,6 +143,7 @@ export function createCapture(options = {}) {
   view.appendChild(video);
   view.appendChild(frame);
   view.appendChild(note);
+  actions.appendChild(muteBtn);
   actions.appendChild(shutter);
   actions.appendChild(fileButton);
   root.appendChild(view);
@@ -136,6 +158,14 @@ export function createCapture(options = {}) {
 
   // the shell must render the loading note before start() resolves.
   setState("idle");
+
+  function paintMute(muted) {
+    muteBtn.innerHTML = muted ? ICON_MUTED : ICON_SOUND;
+    muteBtn.setAttribute("aria-pressed", String(muted));
+    muteBtn.setAttribute("aria-label", muted ? "Sesli çekimi aç" : "Sessiz çekimi aç");
+  }
+  paintMute(feedback.isMuted());
+  muteBtn.addEventListener("click", () => paintMute(feedback.toggleMuted()));
 
   function setState(next) {
     state = next;
@@ -215,6 +245,7 @@ export function createCapture(options = {}) {
 
   shutter.addEventListener("click", async () => {
     error.textContent = "";
+    feedback.click();
     try {
       const shot = await freeze();
       if (shot) onShot(shot);
@@ -241,6 +272,6 @@ export function createCapture(options = {}) {
     freeze,
     fileToJpeg,
     getState: () => state,
-    elements: { root, video, note, shutter, input, error },
+    elements: { root, video, note, shutter, input, error, muteBtn },
   };
 }
