@@ -45,6 +45,8 @@ WORKER = "demo"
 MISMATCH_FIXTURE = "fis_market_foto"  # tampered total -> the discrepancy panel
 FAILED_FIXTURE = "fis_kotu_cekim"  # a bad capture that never structured
 LIVE_STATES = {"fis_benzin_clean": "queued", "fis_restoran_foto": "running"}
+# what seed_jobs names them, which is how the worker spots them again
+LIVE_REFS = frozenset(f"demo-{name}" for name in LIVE_STATES)
 
 
 class DemoError(RuntimeError):
@@ -138,6 +140,40 @@ def seed_jobs(conn, *, key_id: int, images_dir: str | os.PathLike[str]) -> list[
     return jobs
 
 
+class DemoWorker(QueueWorker):
+    """The real worker, minus the two jobs the demo shows as live.
+
+    The stock worker requeues the seeded running job on start and then drains
+    both live jobs, so seconds later the queued/running screens are empty —
+    the very views the demo exists to review. Claiming skips the seeded refs
+    and their states go back after recovery has run over them, while a real
+    "Örnek fiş" upload still runs through the same queue.
+    """
+
+    def start(self) -> None:
+        super().start()
+        self._restate_live_jobs()
+
+    def _restate_live_jobs(self) -> None:
+        """Undo recover()'s requeue of the running one; it never ran."""
+        conn = self._db()
+        for job in db.list_jobs(conn, limit=1000):
+            name = str(job["client_ref"] or "").removeprefix("demo-")
+            wanted = LIVE_STATES.get(name)
+            if wanted and job["status"] != wanted:
+                db.set_status(conn, job["id"], wanted)
+
+    def _claim(self, conn):
+        marks = ", ".join("?" * len(LIVE_REFS))
+        row = conn.execute(
+            "SELECT id FROM jobs WHERE status = 'queued'"
+            f" AND (client_ref IS NULL OR client_ref NOT IN ({marks}))"
+            " ORDER BY created_at, rowid LIMIT 1",
+            tuple(LIVE_REFS),
+        ).fetchone()
+        return db.set_status(conn, row["id"], "running") if row else None
+
+
 def _start_worker(db_path: pathlib.Path, models) -> QueueWorker:
     """The real queue worker running the real pipeline against the stubs."""
     ocr = OcrClient(base_url=models.ocr.base_url)
@@ -152,7 +188,7 @@ def _start_worker(db_path: pathlib.Path, models) -> QueueWorker:
             structurer=structurer,
         )
 
-    worker = QueueWorker(db_path=db_path, runner=runner, poll_interval=0.05)
+    worker = DemoWorker(db_path=db_path, runner=runner, poll_interval=0.05)
     worker.start()
     return worker
 
