@@ -172,7 +172,10 @@
           <section class="detay-bolum">
             <h3>Toplamlar</h3>
             <div class="toplamlar" id="detay-toplamlar"></div>
-            <p class="not">KDV oranı ondalık yazılır (0,20 = %20). Düzenlediğin alanlar vurgulanır.</p>
+            <p class="not">
+              KDV oranı ondalık yazılır (0,20 = %20). Düzenlediğin alanlar vurgulanır;
+              Kaydet ile işlenir, doğrulama düzeltilen sayılarla yeniden çalışır.
+            </p>
           </section>
           <section class="uyusmazlik" id="detay-karsilastirma-kutusu" hidden>
             <h3>Beklenen — fişte yazan</h3>
@@ -186,7 +189,11 @@
       </div>
     </div>
     <footer class="detay-alt">
-      <button type="button" class="btn btn-mini" id="detay-json-dugme" aria-expanded="false">Ham JSON</button>
+      <div class="detay-alt-satiri">
+        <button type="button" class="btn btn-mini btn-birincil" id="detay-kaydet" disabled>Kaydet</button>
+        <p class="not kayit-durum" id="detay-kaydet-durum" role="status" aria-live="polite" hidden></p>
+        <button type="button" class="btn btn-mini saga-yasla" id="detay-json-dugme" aria-expanded="false">Ham JSON</button>
+      </div>
       <pre class="ham-json" id="detay-json" hidden></pre>
     </footer>
   </dialog>

@@ -256,6 +256,31 @@ def _update(conn: sqlite3.Connection, job_id: str, sets: dict) -> None:
     conn.commit()
 
 
+# --- corrections ---
+
+
+def add_correction(
+    conn: sqlite3.Connection,
+    job_id: str,
+    *,
+    field: str,
+    old_value: str = "",
+    new_value: str = "",
+    who: str = "",
+) -> dict:
+    """One audit row for one corrected field, stamped with the time it landed."""
+    cur = conn.execute(
+        "INSERT INTO corrections (job_id, field, old_value, new_value, who, created_at)"
+        " VALUES (?, ?, ?, ?, ?, ?)",
+        (job_id, field, old_value, new_value, who, _now()),
+    )
+    conn.commit()
+    row = conn.execute(
+        "SELECT * FROM corrections WHERE id = ?", (cur.lastrowid,)
+    ).fetchone()
+    return dict(row)
+
+
 # --- events ---
 
 

@@ -3,8 +3,10 @@
 // printed, the fragments that never survived the photograph, and the raw
 // envelope underneath for when the two disagree about something.
 //
-// The fields are editable because the correction flow starts here; saving is
-// T37's PATCH, so an edited field is only marked, never sent.
+// The fields are editable because the correction flow starts here: an edited
+// field is marked, Kaydet sends the marked ones as one PATCH, and the panel
+// redraws from the answer. What stays on screen is therefore the server's own
+// envelope, with the verdict recomputed over the corrected numbers.
 import { iskontoPara, para, sayi } from "../app/result_totals.js";
 import { DURUM, VERDICT } from "./list.js";
 
@@ -72,7 +74,7 @@ function metin(deger) {
   return typeof deger === "string" ? deger.trim() : "";
 }
 
-export function createFisDetay() {
+export function createFisDetay({ onDuzeltme = () => {} } = {}) {
   const dialog = document.getElementById("fis-detay");
   const baslik = document.getElementById("detay-baslik");
   const ozet = document.getElementById("detay-ozet");
@@ -93,11 +95,14 @@ export function createFisDetay() {
   const okunamayanListe = document.getElementById("detay-okunamayan-liste");
   const jsonDugme = document.getElementById("detay-json-dugme");
   const jsonAlani = document.getElementById("detay-json");
+  const kaydetDugme = document.getElementById("detay-kaydet");
+  const kaydetDurum = document.getElementById("detay-kaydet-durum");
 
   let sira = 0; // a late answer from a superseded open must not draw
   let gorselSira = 0;
   let sonId = "";
   let envelope = null;
+  let kaydediliyor = false;
 
   function hucre(metin, saga) {
     const td = document.createElement("td");
@@ -106,17 +111,23 @@ export function createFisDetay() {
     return td;
   }
 
-  function girdi(kolon, deger, etiket) {
+  function girdi(kolon, deger, etiket, yol) {
     const alan = document.createElement("input");
     alan.type = kolon.metin ? "text" : "number";
     if (kolon.adim) alan.step = kolon.adim;
     // An amount field that opens as "1046.4" reads like a rounding mistake; a
     // quantity keeps however many decimals the receipt printed.
-    alan.value = kolon.metin
+    const gosterim = kolon.metin
       ? metin(deger)
       : kolon.basamak === undefined
         ? String(sayi(deger))
         : sayi(deger).toFixed(kolon.basamak);
+    alan.value = gosterim;
+    // What a save sends is the field's own contract path, and what makes it
+    // worth sending is a value that no longer matches the one drawn here.
+    alan.dataset.baslangic = gosterim;
+    alan.dataset.yol = yol;
+    alan.dataset.bicim = kolon.metin ? "metin" : "sayi";
     alan.dataset.alan = kolon.alan;
     alan.setAttribute("aria-label", etiket);
     return alan;
@@ -162,7 +173,12 @@ export function createFisDetay() {
         const td = document.createElement("td");
         if (!kolon.metin) td.className = "saga";
         td.appendChild(
-          girdi(kolon, item?.[kolon.alan], `${kolon.etiket} — ürün ${index + 1}`),
+          girdi(
+            kolon,
+            item?.[kolon.alan],
+            `${kolon.etiket} — ürün ${index + 1}`,
+            `items[${index}].${kolon.alan}`,
+          ),
         );
         tr.appendChild(td);
       }
@@ -177,7 +193,12 @@ export function createFisDetay() {
       alan.className = "alan";
       const etiket = document.createElement("label");
       etiket.textContent = kolon.etiket;
-      const girdiAlani = girdi(kolon, totals?.[kolon.alan], kolon.etiket);
+      const girdiAlani = girdi(
+        kolon,
+        totals?.[kolon.alan],
+        kolon.etiket,
+        `totals.${kolon.alan}`,
+      );
       etiket.htmlFor = `detay-${kolon.alan}`;
       girdiAlani.id = `detay-${kolon.alan}`;
       alan.append(etiket, girdiAlani);
@@ -259,7 +280,7 @@ export function createFisDetay() {
     jsonDugme.setAttribute("aria-expanded", "false");
   }
 
-  function ciz(env) {
+  function ciz(env, { gorsel = true } = {}) {
     envelope = env;
     const result = env.result;
     const header = result?.header || {};
@@ -287,15 +308,22 @@ export function createFisDetay() {
     durumEtiket.textContent = etiket.etiket;
     durumEtiket.hidden = false;
 
-    gorseliGoster(env.image_url);
+    if (gorsel) gorseliGoster(env.image_url);
     karsilikKutusu.hidden = !env.validation;
-    jsonuSifirla();
+    // A save redraws under an open raw-JSON panel: it has to show the envelope
+    // that is now on the server, not the one that was there before the save.
+    if (jsonAlani.hidden) jsonuSifirla();
+    else jsonAlani.textContent = JSON.stringify(env, null, 2);
+    dugumuGuncelle();
     icerik.hidden = false;
     // A receipt still in the queue has a photograph worth judging on; only the
     // numbers it has not produced are missing.
     bekleme.hidden = !!result;
     panel.hidden = !result;
     if (!result) {
+      // Nothing to correct, so nothing left on screen that could be saved.
+      urunleriCiz([]);
+      toplamlar.textContent = "";
       bekleme.textContent =
         env.status === "failed"
           ? "Bu fiş işlenemedi — ürünler ve toplamlar ancak işlenince burada görünür."
@@ -317,6 +345,8 @@ export function createFisDetay() {
     baslik.textContent = "Fiş detayı";
     ozet.textContent = "Yükleniyor…";
     durumEtiket.hidden = true;
+    kayitDurumu("");
+    kaydetDugme.disabled = true; // an edit belongs to the receipt it was typed on
     let env;
     try {
       const yanit = await fetch(`${API}/jobs/${encodeURIComponent(jobId)}`);
@@ -331,6 +361,84 @@ export function createFisDetay() {
     ciz(env);
   }
 
+  function duzenlenenler() {
+    return [...dialog.querySelectorAll("input[data-yol]")].filter(
+      (girdiAlani) => girdiAlani.value !== girdiAlani.dataset.baslangic,
+    );
+  }
+
+  /** Marks the edited fields a number cannot be read from; how many there are.
+   *
+   * A number input holding garbage reads as empty, and an empty box sent as a
+   * correction would land on 0,00 — an amount the reviewer never typed.
+   */
+  function gecerisizleriIsaretle() {
+    let sayim = 0;
+    for (const girdiAlani of duzenlenenler()) {
+      const deger = girdiAlani.value.trim();
+      const bozuk =
+        girdiAlani.dataset.bicim === "sayi" &&
+        (!deger || !Number.isFinite(Number(deger)));
+      girdiAlani.classList.toggle("gecersiz", bozuk);
+      if (bozuk) sayim++;
+    }
+    return sayim;
+  }
+
+  function kayitDurumu(metin, renk = "") {
+    kaydetDurum.textContent = metin;
+    kaydetDurum.className = ["kayit-durum", renk].filter(Boolean).join(" ");
+    kaydetDurum.hidden = !metin;
+  }
+
+  function dugumuGuncelle() {
+    kaydetDugme.disabled = kaydediliyor || duzenlenenler().length === 0;
+  }
+
+  async function kaydet() {
+    if (!sonId) return;
+    const gecerisiz = gecerisizleriIsaretle();
+    if (gecerisiz) {
+      kayitDurumu(
+        `${gecerisiz} alanda sayı olmayan bir değer var — önce onları düzelt.`,
+        "kayit-hata",
+      );
+      return;
+    }
+    const alanlar = {};
+    for (const girdiAlani of duzenlenenler()) {
+      alanlar[girdiAlani.dataset.yol] = girdiAlani.value.trim();
+    }
+    const alanSayisi = Object.keys(alanlar).length;
+    if (!alanSayisi) return;
+    kaydediliyor = true;
+    dugumuGuncelle();
+    kayitDurumu("Kaydediliyor…");
+    try {
+      const yanit = await fetch(`${API}/jobs/${encodeURIComponent(sonId)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fields: alanlar }),
+      });
+      if (!yanit.ok) throw new Error(`HTTP ${yanit.status}`);
+      const guncel = await yanit.json();
+      if (sonId !== guncel.job_id) return; // a newer open owns the dialog
+      ciz(guncel, { gorsel: false });
+      kayitDurumu(
+        `Kaydedildi ✓ ${alanSayisi} alan düzeltildi, doğrulama yeniden çalıştı.`,
+        "kayit-iyi",
+      );
+      onDuzeltme(); // the list row underneath carries the same amounts
+    } catch {
+      // The typed values stay on screen: a lost correction is worse than a
+      // second try.
+      kayitDurumu("Kaydedilemedi — bağlantıyı kontrol edip tekrar dene.", "kayit-hata");
+    } finally {
+      kaydediliyor = false;
+      dugumuGuncelle();
+    }
+  }
+
   document.getElementById("detay-kapat").addEventListener("click", () => dialog.close());
   document
     .getElementById("detay-tekrar")
@@ -343,10 +451,15 @@ export function createFisDetay() {
     jsonDugme.setAttribute("aria-expanded", String(acik));
   });
   // One listener for every field in the dialog: the mark is what tells the
-  // reviewer a value on screen is no longer the value the model read.
+  // reviewer a value on screen is no longer the value the model read, and it
+  // is what the save collects.
   dialog.addEventListener("input", (olay) => {
     olay.target.classList.add("duzenlendi");
+    olay.target.classList.remove("gecersiz");
+    kayitDurumu("");
+    dugumuGuncelle();
   });
+  kaydetDugme.addEventListener("click", kaydet);
 
   return { ac, kapat: () => dialog.close() };
 }

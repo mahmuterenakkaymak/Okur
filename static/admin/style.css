@@ -227,6 +227,9 @@ main {
 .detay-tablo input.duzenlendi, .toplamlar input.duzenlendi {
   border-color: rgba(251,191,36,.5); background: rgba(251,191,36,.07);
 }
+.detay-tablo input.gecersiz, .toplamlar input.gecersiz {
+  border-color: rgba(248,113,113,.6); background: rgba(248,113,113,.08);
+}
 .toplamlar {
   display: grid; gap: .7rem .85rem; margin-bottom: .5rem;
   grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
@@ -260,6 +263,14 @@ main {
   background: rgba(248,113,113,.08); border: 1px solid rgba(248,113,113,.22);
 }
 .detay-alt { padding: .8rem 1.2rem; border-top: 1px solid rgba(255,255,255,.07); }
+.detay-alt-satiri { display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; }
+.saga-yasla { margin-left: auto; }
+.kayit-durum {
+  flex: 1 1 10rem; font-size: .8rem; line-height: 1.5; color: #b9bcc4;
+  animation: belirme .26s ease both;
+}
+.kayit-iyi { color: #4ade80; }
+.kayit-hata { color: #f87171; }
 .ham-json {
   margin: .85rem 0 0; max-height: 17rem; overflow: auto; padding: .8rem .9rem;
   border-radius: .7rem; background: #0b0d11; border: 1px solid rgba(255,255,255,.08);
@@ -281,5 +292,5 @@ main {
 @keyframes parilti { from { background-position: 100% 0; } to { background-position: -100% 0; } }
 @media (prefers-reduced-motion: reduce) {
   .kart, .bos svg, .sallanma, .tablo tbody tr, .iskelet,
-  .detay[open], .detay-gorsel img { animation: none; }
+  .detay[open], .detay-gorsel img, .kayit-durum { animation: none; }
 }

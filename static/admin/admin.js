@@ -13,7 +13,9 @@ const panel = document.getElementById("panel");
 const cikisDugme = document.getElementById("cikis-dugme");
 const navDugmeleri = [...document.querySelectorAll(".nav-li")];
 let fisListesi = null;
-const detay = createFisDetay();
+// A corrected amount moves the list row underneath the dialog, so a save
+// refreshes it instead of leaving the table showing the old total.
+const detay = createFisDetay({ onDuzeltme: () => fisListesi?.yenile() });
 
 function hataGoster(metin) {
   girisHata.textContent = metin;

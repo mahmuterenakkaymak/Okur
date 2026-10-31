@@ -9,16 +9,19 @@ it is registered.
 """
 from __future__ import annotations
 
+import copy
 import json
+import re
 import unicodedata
 from datetime import date, datetime
-from typing import Literal
+from typing import Any, Literal
 
 from fastapi import APIRouter, HTTPException, Query, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 
-from app import auth, config, db
+from app import auth, config, contract, db, numbers, validator
 from app.routes_jobs import _Status, _bad_field, _envelope
 from app.routes_worker import _image_path
 
@@ -47,6 +50,12 @@ _SUTUNLAR = (
 
 class LoginBody(BaseModel):
     token: str = ""
+
+
+class CorrectionBody(BaseModel):
+    """One entry per corrected field: {"items[0].toplam": "12,50"}."""
+
+    fields: dict[str, Any] = {}
 
 
 @router.post("/login")
@@ -141,12 +150,53 @@ def get_job(request: Request, job_id: str):
     """
     conn = _connect(request)
     try:
+        return _detay(_job(conn, job_id))
+    finally:
+        conn.close()
+
+
+@router.patch("/jobs/{job_id}")
+def correct_job(request: Request, job_id: str, body: CorrectionBody):
+    """Field-level corrections: one write, and every view follows.
+
+    A correction rewrites the two columns the job is made of — result_json and
+    a validation block recomputed over the corrected data — and every surface
+    reads those columns: GET /v1/jobs/{id}, this panel's detail, the worker
+    PWA's result view, both list views and the export rows (T38) derive from
+    exactly these keys. So one PATCH here is what makes the receipt correct
+    everywhere, and the verdict on screen is always the verdict of the numbers
+    on screen — the model never gets to keep a wrong total.
+
+    ASSUMPTION: the task names the resource (PATCH /v1/jobs/{id}); the door is
+    the admin one, because /v1 is key-authed and frozen for integrators while
+    PLAN.md puts corrections behind the admin session in routes_admin.
+    """
+    if not body.fields:
+        raise _bad_field(("body", "fields"), "expected at least one field")
+    conn = _connect(request)
+    try:
         row = _job(conn, job_id)
-        envelope = _envelope(row)
-        envelope["image_url"] = (
-            f"/admin/api/jobs/{row['id']}/image" if row["image_path"] else None
+        if not row["result_json"]:
+            # ASSUMPTION: a job the pipeline has not read has no fields to
+            # correct, so 409 — the row exists, it simply is not ready yet.
+            raise HTTPException(409, "job has no result to correct yet")
+        sonuc, kayitlar = _duzelt(_json(row, "result_json"), body.fields)
+        guncel = db.update_job(
+            conn,
+            job_id,
+            result_json=sonuc,
+            validation_json=validator.validate(sonuc),
         )
-        return envelope
+        for alan, eski, yeni in kayitlar:
+            db.add_correction(
+                conn,
+                job_id,
+                field=alan,
+                old_value=eski,
+                new_value=yeni,
+                who=WHO,
+            )
+        return _detay(guncel)
     finally:
         conn.close()
 
@@ -172,6 +222,100 @@ def _job(conn, job_id: str) -> dict:
     if row is None:
         raise HTTPException(404, "job not found")
     return row
+
+
+def _detay(row: dict) -> dict:
+    """Queue row -> contract envelope, plus where this job's image lives."""
+    envelope = _envelope(row)
+    envelope["image_url"] = (
+        f"/admin/api/jobs/{row['id']}/image" if row["image_path"] else None
+    )
+    return envelope
+
+
+# ASSUMPTION: one shared ADMIN_TOKEN signs every correction, so the audit
+# column records the operator as "admin" — there is no per-person identity.
+WHO = "admin"
+
+
+def _metin(deger: object) -> str | None:
+    return deger.strip() if isinstance(deger, str) else None
+
+
+# The correctable fields and how each one is read, in the validator's own
+# dotted-path vocabulary (items[2].toplam, totals.kdv) — so a correction names
+# a field exactly the way the discrepancy panel reports one, and a printed
+# "1.046,40" lands on the same float the pipeline stored.
+_OKULAR = {
+    "items": {
+        "ad": (_metin, "text"),
+        "miktar": (numbers.parse_number, "number"),
+        "birim_fiyat": (numbers.parse_number, "number"),
+        "toplam": (numbers.parse_number, "number"),
+    },
+    "totals": {
+        "ara_toplam": (numbers.parse_number, "number"),
+        "iskonto": (numbers.parse_number, "number"),
+        "kdv": (numbers.parse_number, "number"),
+        "kdv_orani": (numbers.parse_percent, "number"),
+        "toplam": (numbers.parse_number, "number"),
+    },
+}
+
+
+def _uyari(yol: str, mesaj: str) -> RequestValidationError:
+    return _bad_field(("body", "fields", yol), mesaj)
+
+
+# One section and one field: anything else hanging off the path is a typo, not
+# a field a reviewer corrects.
+_YOL = re.compile(r"(?:items\[(\d+)\]|totals)\.(\w+)")
+
+
+def _yol(yol: str) -> tuple[str, int | None, str]:
+    """'items[2].toplam' -> ("items", 2, "toplam"), 'totals.kdv' -> ("totals", None, "kdv")."""
+    adim = _YOL.fullmatch(yol)
+    if adim is None:
+        raise _uyari(yol, "expected items[N].field or totals.field")
+    sira, ad = adim.groups()
+    return ("items", int(sira), ad) if sira else ("totals", None, ad)
+
+
+def _kayit(deger: object) -> str:
+    """An old/new value as audit text; absent reads as empty, never as "None"."""
+    return "" if deger is None else str(deger)
+
+
+def _duzelt(
+    sonuc: dict, duzeltmeler: dict[str, Any]
+) -> tuple[dict, list[tuple[str, str, str]]]:
+    """Corrected result + one (field, old, new) row per field that moved.
+
+    Nothing is written from here, and the caller stores only once every field
+    has read cleanly, so a body carrying one bad path leaves the job as it was.
+    """
+    govde = copy.deepcopy(sonuc)
+    kayitlar = []
+    for yol, deger in duzeltmeler.items():
+        bolum, sira, ad = _yol(yol)
+        okuyucu = _OKULAR[bolum].get(ad)
+        if okuyucu is None:
+            raise _uyari(yol, f"not a correctable field: {ad or 'field'}")
+        if bolum == "totals":
+            hedef = govde.setdefault("totals", {})
+        else:
+            urunler = govde.setdefault("items", [])
+            if sira >= len(urunler):
+                raise _uyari(yol, f"this receipt has {len(urunler)} items")
+            hedef = urunler[sira]
+        yeni = okuyucu[0](deger)
+        if yeni is None:
+            raise _uyari(yol, f"expected a {okuyucu[1]}")
+        eski = hedef.get(ad)
+        hedef[ad] = yeni
+        if eski != yeni:
+            kayitlar.append((yol, _kayit(eski), _kayit(yeni)))
+    return contract.Result.parse(govde).model_dump(), kayitlar
 
 
 def _satir(row: dict) -> dict:
