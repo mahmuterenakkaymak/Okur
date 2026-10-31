@@ -37,9 +37,13 @@ def create_job(
     client_ref: str | None = Form(None),
     captured_at: str | None = Form(None),
 ):
-    data = image.file.read()
+    limit = config.max_upload_mb() * 1024 * 1024
+    data = image.file.read(limit + 1)
     if not data:
         raise _bad_field(("body", "image"), "image is empty")
+    if len(data) > limit:
+        raise HTTPException(413, too_large_message())
+    _require_image(data)
     client_ref = client_ref.strip() if client_ref and client_ref.strip() else None
     captured_at = _clean_iso(captured_at, ("body", "captured_at"))
     key = request.state.key
@@ -47,6 +51,7 @@ def create_job(
     try:
         existing = db.find_job_by_client_ref(conn, key["id"], client_ref)
         if existing is not None:
+            request.state.job_id = existing["id"]
             return JSONResponse(status_code=200, content=_envelope(existing))
         try:
             job = db.create_job(
@@ -60,7 +65,9 @@ def create_job(
             raced = db.find_job_by_client_ref(conn, key["id"], client_ref)
             if raced is None:
                 raise
+            request.state.job_id = raced["id"]
             return JSONResponse(status_code=200, content=_envelope(raced))
+        request.state.job_id = job["id"]
         path = config.images_dir() / f"{job['id']}.jpg"
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(_strip_exif(data))
@@ -114,6 +121,32 @@ def _connect(request: Request):
     return db.connect(request.app.state.db_path)
 
 
+def too_large_message() -> str:
+    """Turkish, because the worker's phone shows this copy verbatim."""
+    return (
+        f"Görsel {config.max_upload_mb()} MB sınırını aşıyor. "
+        "Fotoğrafı kırpıp yeniden göndermeyi deneyin."
+    )
+
+
+def _require_image(data: bytes) -> None:
+    """T46: only bytes Pillow can actually decode reach the queue.
+
+    load() forces the pixel decode, so a truncated or disguised file fails at
+    intake instead of burning a queue slot and an OCR run on the way to failed.
+    ASSUMPTION: refusing at the door is what T46 asks for, so the older tests
+    that post b"\\xff\\xd8\\xff\\xe0fakejpeg" as a stand-in upload now get 422
+    and need a real image in their fixture.
+    """
+    try:
+        with Image.open(io.BytesIO(data)) as img:
+            img.load()
+    except (OSError, ValueError, SyntaxError, Image.DecompressionBombError):
+        raise _bad_field(
+            ("body", "image"), "geçerli bir görsel değil (JPEG ya da PNG olmalı)"
+        )
+
+
 def _strip_exif(data: bytes) -> bytes:
     """PLAN decision 7: a worker phone's EXIF/GPS must not outlive the request.
 
@@ -129,7 +162,8 @@ def _strip_exif(data: bytes) -> bytes:
             return data
         img = ImageOps.exif_transpose(img)
     except (OSError, Image.DecompressionBombError):
-        # Undecodable bytes stay as they are; rejecting them is T46's job.
+        # Undecodable bytes never get here (_require_image refuses them);
+        # staying verbatim keeps this helper total either way.
         return data
     buf = io.BytesIO()
     img.convert("RGB").save(buf, "JPEG", quality=config.jpeg_quality())

@@ -10,14 +10,22 @@ request.state. /admin/api is the other authenticated surface: an admin session
 cookie instead of a worker key. Every failure the app can produce (missing
 route, bad request, crash, auth) leaves as the same JSON envelope, so
 integrators parse one shape.
+
+T46 adds the three outermost layers, in this order from the inside out: the
+upload cap (refuse before the body is buffered), the security headers (they
+have to cover the auth rejections too) and the request log (one line per
+request, whatever it cost or returned).
 """
 from __future__ import annotations
 
 import http
+import logging
 import math
 import mimetypes
 import os
+import re
 import sqlite3
+import time
 from typing import Any
 
 from fastapi import FastAPI, Request
@@ -29,6 +37,29 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from app import auth, config, contract, db, routes_admin, routes_jobs, routes_worker
 
 STATIC_DIR = config.ROOT / "static"
+
+REQUEST_LOG = logging.getLogger("app.request")
+_JOB_IN_PATH = re.compile(r"/jobs/([^/]+)")
+
+SECURITY_HEADERS = {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "no-referrer",
+    "Cross-Origin-Resource-Policy": "same-origin",
+}
+# script/style stay 'unsafe-inline' because the PWA shell carries an inline
+# bootstrap block and inline widths (static/app/index.html); everything else
+# is same-origin only, which is what stops injected OCR text from executing.
+CSP = (
+    "default-src 'self'; "
+    "img-src 'self' blob: data:; "
+    "script-src 'self' 'unsafe-inline'; "
+    "style-src 'self' 'unsafe-inline'; "
+    "connect-src 'self'; "
+    "frame-ancestors 'none'; base-uri 'none'; form-action 'self'"
+)
+# swagger-ui arrives from a CDN, so /docs is the one document CSP skips.
+CSP_EXEMPT = ("/docs", "/redoc")
 
 
 def create_app(
@@ -64,6 +95,9 @@ def create_app(
     _add_error_envelope(app)
     _add_auth_middleware(app)
     _add_admin_guard(app)
+    _add_upload_cap(app)
+    _add_security_headers(app)
+    _add_request_logging(app)
     _mount_static(app)
     _describe_contract(app)
     return app
@@ -110,6 +144,79 @@ def _add_admin_guard(app: FastAPI) -> None:
         return _error(401, "unauthorized", "admin session required")
 
 
+def _add_upload_cap(app: FastAPI) -> None:
+    @app.middleware("http")
+    async def upload_cap(request: Request, call_next):
+        # The declared length refuses an oversize upload before a single byte
+        # is buffered; routes_jobs repeats the check on the bytes it actually
+        # read, because a chunked upload carries no Content-Length at all.
+        declared = request.headers.get("content-length", "")
+        limit = config.max_upload_mb() * 1024 * 1024
+        if declared.isdigit() and int(declared) > limit:
+            return _error(413, "payload_too_large", routes_jobs.too_large_message())
+        return await call_next(request)
+
+
+def _add_security_headers(app: FastAPI) -> None:
+    @app.middleware("http")
+    async def security_headers(request: Request, call_next):
+        response = await call_next(request)
+        for name, value in SECURITY_HEADERS.items():
+            response.headers[name] = value
+        if request.url.path not in CSP_EXEMPT:
+            response.headers["Content-Security-Policy"] = CSP
+        return response
+
+
+def _add_request_logging(app: FastAPI) -> None:
+    _configure_request_log()
+
+    @app.middleware("http")
+    async def log_request(request: Request, call_next):
+        started = time.perf_counter()
+        try:
+            response = await call_next(request)
+        except Exception:
+            # a crash that outlives every handler still gets its line
+            _log_request(request, started, 500)
+            raise
+        _log_request(request, started, response.status_code)
+        return response
+
+
+def _configure_request_log() -> None:
+    """uvicorn leaves the root logger alone, so the request line asks for it.
+
+    basicConfig only attaches a stream when none exists (pytest already has
+    one), and run.py appends this process's stderr to data/logs/app.log.
+    """
+    logging.basicConfig(format="%(asctime)s %(message)s")
+    REQUEST_LOG.setLevel(logging.INFO)
+
+
+def _log_request(request: Request, started: float, status: int) -> None:
+    key = getattr(request.state, "key", None) or {}
+    REQUEST_LOG.info(
+        "%s %s %d %dms job=%s worker=%s",
+        request.method,
+        request.url.path,
+        status,
+        round((time.perf_counter() - started) * 1000),
+        _job_id(request),
+        key.get("worker", "-"),
+    )
+
+
+def _job_id(request: Request) -> str:
+    """The id this request is about: the route's own when it created one,
+    otherwise the one in the path."""
+    job_id = getattr(request.state, "job_id", None)
+    if job_id:
+        return str(job_id)
+    match = _JOB_IN_PATH.search(request.url.path)
+    return match.group(1) if match else "-"
+
+
 def _error(
     status_code: int, code: str, message: str, details: list | None = None
 ) -> JSONResponse:
@@ -141,10 +248,19 @@ def _add_error_envelope(app: FastAPI) -> None:
 
     @app.exception_handler(Exception)
     async def unhandled(request: Request, exc: Exception):
+        # T46: the traceback belongs to the log, never to the response — it
+        # would hand a caller our internals with every crash.
+        REQUEST_LOG.exception(
+            "%s %s failed: %s", request.method, request.url.path, exc
+        )
         return _error(500, "internal_error", "unexpected server error")
 
 
 def _code_for(status_code: int) -> str:
+    # 413's phrase is "Content Too Long" on 3.12 and "Request Entity Too
+    # Large" on 3.11, so the integrator-facing code is pinned instead.
+    if status_code == 413:
+        return "payload_too_large"
     try:
         return http.HTTPStatus(status_code).phrase.lower().replace(" ", "_")
     except ValueError:
