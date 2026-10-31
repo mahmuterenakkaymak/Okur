@@ -1,15 +1,25 @@
+import io
 import json
-import pathlib
 from datetime import datetime, timedelta, timezone
 
 import pytest
 from fastapi.testclient import TestClient
+from PIL import Image
 
 from app import auth, db
 from app.main import create_app
 
-IMAGE = b"\xff\xd8\xff\xe0fakejpeg"
 ENVELOPE_KEYS = {"job_id", "status", "client_ref", "result", "validation", "meta"}
+
+
+def jpeg(width: int = 60, height: int = 40) -> bytes:
+    """A real decodable JPEG; T46's _require_image refuses anything else."""
+    buf = io.BytesIO()
+    Image.new("RGB", (width, height), (200, 30, 30)).save(buf, "JPEG", quality=90)
+    return buf.getvalue()
+
+
+IMAGE = jpeg()
 
 
 @pytest.fixture
@@ -68,7 +78,12 @@ def test_post_stores_the_image_for_the_worker(env):
     _, client, conn, _, plaintext = env
     job_id = submit(client, plaintext).json()["job_id"]
     image_path = db.get_job(conn, job_id)["image_path"]
-    assert pathlib.Path(image_path).read_bytes() == IMAGE
+    # The stored file is the EXIF-stripped re-encode, so compare what the OCR
+    # stage sees (decoded pixels), not the bytes on disk.
+    with Image.open(io.BytesIO(IMAGE)) as sent, Image.open(image_path) as stored:
+        assert stored.format == "JPEG"
+        assert stored.size == sent.size
+        assert stored.convert("RGB").tobytes() == sent.convert("RGB").tobytes()
 
 
 def test_post_defaults_to_fast_mode(env):

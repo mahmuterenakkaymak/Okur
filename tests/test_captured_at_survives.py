@@ -8,20 +8,30 @@ exactly the one production produces, and GET is where a null would surface.
 """
 from __future__ import annotations
 
+import io
+
 import pytest
 from fastapi.testclient import TestClient
+from PIL import Image
 
 from app import auth, config, db, pipeline
 from app.main import create_app
 from app.queue_worker import QueueWorker
 
-IMAGE = b"\xff\xd8\xff\xe0fakejpeg"
 STAMP = "2026-10-30T14:03:00Z"
 RESULT = {
     "header": {"isim": "Test Market", "vergi_dairesi": "Kadıköy"},
     "items": [{"ad": "Çay", "miktar": 1.0, "birim_fiyat": 12.5, "toplam": 12.5}],
     "totals": {"ara_toplam": 12.5, "iskonto": 0.0, "kdv": 2.08, "toplam": 12.5},
 }
+def jpeg(width: int = 60, height: int = 40) -> bytes:
+    """A real decodable JPEG; T46's _require_image refuses anything else."""
+    buf = io.BytesIO()
+    Image.new("RGB", (width, height), (200, 30, 30)).save(buf, "JPEG", quality=90)
+    return buf.getvalue()
+
+
+IMAGE = jpeg()
 
 
 class FakeOcr:
