@@ -1,3 +1,5 @@
+import { createFisListesi } from "./list.js";
+
 const API = "/admin/api";
 const BOLUM = { fisler: "bolum-fisler", anahtarlar: "bolum-anahtarlar", durum: "bolum-durum" };
 
@@ -9,6 +11,7 @@ const anahtarAlani = document.getElementById("yonetici-anahtari");
 const panel = document.getElementById("panel");
 const cikisDugme = document.getElementById("cikis-dugme");
 const navDugmeleri = [...document.querySelectorAll(".nav-li")];
+let fisListesi = null;
 
 function hataGoster(metin) {
   girisHata.textContent = metin;
@@ -47,6 +50,12 @@ function bolumuGoster(ad) {
     const secili = dugme.dataset.bolum === ad;
     dugme.classList.toggle("secili", secili);
     dugme.setAttribute("aria-current", secili ? "page" : "false");
+  }
+  // The table only exists behind a session, so an anonymous hash change must
+  // not ask for it; the first real look builds it, later ones refresh in place.
+  if (ad === "fisler" && !panel.hidden) {
+    if (fisListesi) fisListesi.yenile();
+    else fisListesi = createFisListesi();
   }
 }
 

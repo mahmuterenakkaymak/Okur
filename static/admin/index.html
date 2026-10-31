@@ -43,15 +43,64 @@
     <main>
       <section class="kart" id="bolum-fisler">
         <h2>Fişler</h2>
-        <div class="bos">
+        <form class="filtreler" id="fis-filtreler" autocomplete="off">
+          <div class="alan alan-ara">
+            <label for="fis-ara">Ara</label>
+            <input id="fis-ara" type="search" spellcheck="false" placeholder="Firma, vergi dairesi, vergi no veya ürün…">
+          </div>
+          <div class="alan">
+            <label for="fis-durum">Durum</label>
+            <select id="fis-durum">
+              <option value="">Tümü</option>
+              <option value="queued">Sırada</option>
+              <option value="running">İşleniyor</option>
+              <option value="done">Bitti</option>
+              <option value="failed">İşlenemedi</option>
+            </select>
+          </div>
+          <div class="alan">
+            <label for="fis-calisan">Çalışan</label>
+            <select id="fis-calisan">
+              <option value="">Tümü</option>
+            </select>
+          </div>
+          <div class="alan">
+            <label for="fis-baslangic">Tarih — başlangıç</label>
+            <input id="fis-baslangic" type="date">
+          </div>
+          <div class="alan">
+            <label for="fis-bitis">Tarih — bitiş</label>
+            <input id="fis-bitis" type="date">
+          </div>
+          <div class="filtre-dugmeleri">
+            <button type="button" class="btn btn-mini" id="fis-yenile">Yenile</button>
+            <button type="button" class="btn btn-mini" id="fis-temizle" disabled>Filtreleri temizle</button>
+          </div>
+        </form>
+        <p class="hata" id="fis-hata" role="alert" hidden>
+          Liste bir türlü yüklenemedi.
+          <button type="button" class="btn btn-mini" id="fis-tekrar">Tekrar dene</button>
+        </p>
+        <div class="tablo-sar">
+          <table class="tablo" id="fis-tablo">
+            <thead><tr></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="bos" id="fis-bos" hidden>
           <svg viewBox="0 0 48 48" width="56" height="56" aria-hidden="true">
             <g transform="rotate(-4 24 24)">
               <path d="M12 6h24v36l-6-3-6 3-6-3-6 3Z" fill="none" stroke="#3f4652" stroke-width="2.4" stroke-dasharray="3 3.4" stroke-linejoin="round"/>
               <path d="M18 16h12M18 23h12M18 30h7" stroke="#3f4652" stroke-width="2.4" stroke-dasharray="3 3.4" stroke-linecap="round"/>
             </g>
           </svg>
-          <p>Henüz fiş yok.</p>
-          <p class="not">Saha ekibi fiş gönderdiğinde kayıtlar burada listelenir.</p>
+          <p id="fis-bos-baslik">Henüz fiş yok.</p>
+          <p class="not" id="fis-bos-not">Saha ekibi fiş gönderdiğinde kayıtlar burada listelenir.</p>
+        </div>
+        <div class="sayfalama" id="fis-sayfalama" hidden>
+          <button type="button" class="btn btn-mini" id="fis-onceki">‹ Önceki</button>
+          <p class="not" id="fis-sayfa" role="status"></p>
+          <button type="button" class="btn btn-mini" id="fis-sonraki">Sonraki ›</button>
         </div>
       </section>
 
