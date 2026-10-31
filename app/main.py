@@ -2,8 +2,8 @@
 
 One factory assembles everything (run.py, smokes and tests all call
 create_app), so the middleware order — auth before routing, the envelope
-around everything — is never reassembled by hand. /v1 is the only
-authenticated surface, and auth.authorize already folds key verification and
+around everything — is never reassembled by hand. /v1 and /api/me are the
+authenticated surfaces, and auth.authorize already folds key verification and
 the per-key token bucket into one verdict, so a single middleware maps
 401/429/200 onto responses and hands the key row to routes through
 request.state. Every failure the app can produce (missing route, bad request,
@@ -23,7 +23,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from app import auth, config, contract, db, routes_jobs
+from app import auth, config, contract, db, routes_jobs, routes_worker
 
 STATIC_DIR = config.ROOT / "static"
 
@@ -41,6 +41,7 @@ def create_app(db_path: str | os.PathLike[str] | None = None) -> FastAPI:
     )
     app.state.db_path = db_path
     app.include_router(routes_jobs.router)
+    app.include_router(routes_worker.router)
 
     @app.get("/health", tags=["ops"])
     def health() -> dict[str, str]:
@@ -64,7 +65,7 @@ def _connect(app: FastAPI) -> sqlite3.Connection:
 def _add_auth_middleware(app: FastAPI) -> None:
     @app.middleware("http")
     async def api_key_auth(request: Request, call_next):
-        if not request.url.path.startswith("/v1"):
+        if not request.url.path.startswith(("/v1", "/api")):
             return await call_next(request)
         conn = _connect(app)
         try:
