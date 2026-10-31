@@ -23,7 +23,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from app import auth, config, contract, db
+from app import auth, config, contract, db, routes_jobs
 
 STATIC_DIR = config.ROOT / "static"
 
@@ -40,6 +40,7 @@ def create_app(db_path: str | os.PathLike[str] | None = None) -> FastAPI:
         ),
     )
     app.state.db_path = db_path
+    app.include_router(routes_jobs.router)
 
     @app.get("/health", tags=["ops"])
     def health() -> dict[str, str]:
@@ -133,9 +134,8 @@ def _mount_static(app: FastAPI) -> None:
 
 
 def _describe_contract(app: FastAPI) -> None:
-    # ASSUMPTION: /v1 routes arrive in T16; until then the contract v1
-    # envelope and the X-API-Key scheme go straight into the OpenAPI
-    # document, so /docs already describes the frozen contract.
+    # The routes answer with contract dicts, so the frozen envelope and the
+    # X-API-Key scheme go straight into the OpenAPI document for /docs.
     spec = app.openapi()
     schemas = spec.setdefault("components", {}).setdefault("schemas", {})
     schemas["JobEnvelope"] = contract.JobEnvelope.model_json_schema()
