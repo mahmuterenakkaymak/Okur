@@ -23,6 +23,7 @@ from app import auth, config, contract, db, pipeline
 from app.main import create_app
 from app.ocr_client import OcrClient
 from app.queue_worker import QueueWorker
+from app.structurer import Structurer
 from scripts.fake_models import FixtureBook, default_dirs
 
 FIXTURE = "fis_market_clean"
@@ -36,10 +37,6 @@ BOOK = FixtureBook(default_dirs())
 
 
 # --- model stubs: canned fixture outputs at the HTTP transport ---
-
-
-def data_url(image_bytes: bytes) -> str:
-    return "data:image/png;base64," + base64.b64encode(image_bytes).decode()
 
 
 def completion(content: str) -> dict:
@@ -71,34 +68,6 @@ def structurer_transport(tamper=None):
     return httpx.MockTransport(handle)
 
 
-class HttpStructurer:
-    """Stage 2 as a real OpenAI-compatible POST over a stubbed transport.
-
-    ASSUMPTION: app/structurer.py belongs to T11; pipeline.run accepts any
-    object with structure(), so the integration holds that seam open with a
-    transport-level stand-in and needs no change when the real client lands.
-    """
-
-    def __init__(self, transport):
-        self._client = httpx.Client(transport=transport, base_url="http://strata")
-
-    def structure(self, ocr_text, image_bytes):
-        started = time.perf_counter()
-        resp = self._client.post("/v1/chat/completions", json={"messages": [{
-            "role": "user",
-            "content": [
-                {"type": "text", "text": ocr_text},
-                {"type": "image_url", "image_url": {"url": data_url(image_bytes)}},
-            ],
-        }]})
-        resp.raise_for_status()
-        content = resp.json()["choices"][0]["message"]["content"]
-        return {
-            **json.loads(content),
-            "ms": int((time.perf_counter() - started) * 1000),
-        }
-
-
 # --- harness ---
 
 
@@ -119,7 +88,7 @@ def env(tmp_path, monkeypatch):
 def start_worker(path, tamper=None):
     """Real queue worker thread running the real pipeline."""
     ocr = OcrClient(transport=ocr_transport())
-    structurer = HttpStructurer(structurer_transport(tamper))
+    structurer = Structurer(transport=structurer_transport(tamper))
 
     def runner(image_bytes, *, quality_mode=False, worker=""):
         return pipeline.run(

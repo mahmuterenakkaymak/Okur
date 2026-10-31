@@ -11,7 +11,6 @@ contract shows up as a nonzero exit — which is what run.py and CI gate on.
 """
 from __future__ import annotations
 
-import base64
 import json
 import os
 import pathlib
@@ -32,6 +31,7 @@ from app import auth, config, contract, db, pipeline  # noqa: E402
 from app.main import create_app  # noqa: E402
 from app.ocr_client import OcrClient  # noqa: E402
 from app.queue_worker import QueueWorker  # noqa: E402
+from app.structurer import Structurer  # noqa: E402
 from scripts.fake_models import start_fake_models  # noqa: E402
 
 FIXTURE = "fis_market_clean"
@@ -80,50 +80,23 @@ class _App:
             self._thread.join(timeout=10.0)
 
 
-class _HttpStructurer:
-    """Stage 2 over a real socket: OCR text plus image in, contract JSON out.
+def _strata_env(stub_url: str) -> dict[str, str | None]:
+    """Move config's stage-2 server onto the stub; hands back what to restore.
 
-    ASSUMPTION: app/structurer.py is T11 and not in the tree yet, so the smoke
-    holds the stage-2 seam with the plain OpenAI-compatible request the real
-    client makes; once it lands, pipeline's own default replaces this class.
+    The shipped client resolves Strata from config, so pointing config at the
+    stub is what puts the real client over a real socket.
     """
-
-    def __init__(self, base_url: str) -> None:
-        self._client = httpx.Client(
-            base_url=base_url, timeout=config.structurer_timeout()
-        )
-
-    def structure(self, ocr_text: str, image_bytes: bytes) -> dict:
-        started = time.perf_counter()
-        resp = self._client.post(
-            "/v1/chat/completions",
-            json={
-                "model": config.strata_model(),
-                "messages": [{
-                    "role": "user",
-                    "content": [
-                        {"type": "text", "text": ocr_text},
-                        {"type": "image_url", "image_url": {"url": _data_url(image_bytes)}},
-                    ],
-                }],
-            },
-        )
-        resp.raise_for_status()
-        content = resp.json()["choices"][0]["message"]["content"]
-        return {
-            **json.loads(content),
-            "ms": int((time.perf_counter() - started) * 1000),
-        }
-
-
-def _data_url(image_bytes: bytes) -> str:
-    return "data:image/png;base64," + base64.b64encode(image_bytes).decode()
+    stub = httpx.URL(stub_url)
+    values = {"STRATA_HOST": stub.host, "STRATA_PORT": str(stub.port)}
+    saved = {name: os.environ.get(name) for name in values}
+    os.environ.update(values)
+    return saved
 
 
 def _start_worker(db_path: pathlib.Path, models) -> QueueWorker:
     """The real queue worker running the real pipeline against the stubs."""
     ocr = OcrClient(base_url=models.ocr.base_url)
-    structurer = _HttpStructurer(models.structurer.base_url)
+    structurer = Structurer()
 
     def runner(image_bytes, *, quality_mode=False, worker=""):
         return pipeline.run(
@@ -235,6 +208,7 @@ def _run(workdir: pathlib.Path) -> None:
 
     models = start_fake_models()
     _log("model stubs", f"ocr {models.ocr.base_url}, structurer {models.structurer.base_url}")
+    strata = _strata_env(models.structurer.base_url)
     app = _App(create_app(db_path=db_path))
     worker = None
     try:
@@ -251,6 +225,11 @@ def _run(workdir: pathlib.Path) -> None:
             worker.stop()
         app.stop()
         models.shutdown()
+        for name, value in strata.items():
+            if value is None:
+                os.environ.pop(name, None)
+            else:
+                os.environ[name] = value
 
 
 def main() -> int:

@@ -37,9 +37,9 @@ from app import auth, config, contract, db, pipeline  # noqa: E402
 from app.main import create_app  # noqa: E402
 from app.ocr_client import OcrClient  # noqa: E402
 from app.queue_worker import QueueWorker  # noqa: E402
+from app.structurer import Structurer  # noqa: E402
 from app.validator import validate  # noqa: E402
 from scripts.fake_models import default_dirs, start_fake_models  # noqa: E402
-from scripts.smoke_e2e import _HttpStructurer  # noqa: E402
 
 WORKER = "demo"
 MISMATCH_FIXTURE = "fis_market_foto"  # tampered total -> the discrepancy panel
@@ -178,7 +178,7 @@ def _model_runner(models):
     """The real pipeline pointed at the stub servers; the queue worker and
     the admin quality-rerun route share this one runner."""
     ocr = OcrClient(base_url=models.ocr.base_url)
-    structurer = _HttpStructurer(models.structurer.base_url)
+    structurer = Structurer(base_url=models.structurer.base_url)
 
     def runner(image_bytes, *, quality_mode=False, worker=""):
         return pipeline.run(
