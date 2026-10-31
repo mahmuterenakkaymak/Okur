@@ -25,7 +25,7 @@
 
 ## M2 — Worker PWA
 
-- [ ] T19 | M2 | app/keys_cli.py: python -m app.keys add/list/revoke with worker name, printing the plaintext key exactly once with a copy warning | accept: .venv\Scripts\python -m pytest tests/test_keys_cli.py -q
+- [x] T19 | M2 | app/keys_cli.py: python -m app.keys add/list/revoke with worker name, printing the plaintext key exactly once with a copy warning | accept: .venv\Scripts\python -m pytest tests/test_keys_cli.py -q
 - [ ] T20 | M2 | app/routes_worker.py: GET /api/me/jobs returning the key-scoped lite list (job_id, status, client_ref, received_at, thumbnail_url, verdict, toplam) with total, GET /api/me/jobs/{id} returning the full envelope plus image_url, and authenticated thumbnail and image serving that 404s for other workers' jobs | accept: .venv\Scripts\python -m pytest tests/test_routes_worker.py -q
 - [ ] T21 | M2 | PWA shell at /app: index.html with Turkish strings, manifest.webmanifest (name, icons, standalone, theme color), sw.js caching the shell for offline read, inline SVG icon, installable and reachable from the app factory | accept: .venv\Scripts\python -m pytest tests/test_pwa_shell.py -q
 - [ ] T22 | M2 | static/app/capture.js: getUserMedia preview and freeze with graceful fallback to a file input with capture attribute, camera permission denial path, JPEG encoding at a max edge length from config; export createCapture for node tests | accept: node --test tests/js/capture.test.js
