@@ -37,6 +37,7 @@ against it directly:
 
 ```powershell
 .venv/Scripts/python run.py --no-browser
+$env:OCR_ACCEPTANCE_KEY = "ocrk_<a live worker key>"
 .venv/Scripts/python scripts/acceptance.py --base-url http://127.0.0.1:8090
 ```
 
@@ -128,10 +129,14 @@ than 5 s is usually a huge photo, not a slow model — `IMAGE_MAX_EDGE` (1600) a
 ## Daily checks
 
 ```powershell
+$env:OCR_ACCEPTANCE_KEY = "ocrk_<a live worker key>"
 .venv/Scripts/python scripts/acceptance.py --base-url http://127.0.0.1:8090
 ```
 
 One command, one table, nonzero exit on any FAIL: contract validation, a
 deliberate KDV mismatch, 401 and 429, idempotent `client_ref`, export row parity.
-Beyond it, three things tell you the machine is healthy: the Durum page is all
-green, `failed` jobs are at or near zero, and `data/` is still growing.
+The checks upload through the worker door, so they need a live worker key —
+`--api-key` says so on the command line instead, and only a `serve_demo` stack is
+keyless, because only it answers `/demo/config.json`. Beyond it, three things
+tell you the machine is healthy: the Durum page is all green, `failed` jobs are
+at or near zero, and `data/` is still growing.

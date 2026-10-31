@@ -2,12 +2,13 @@
 
 --demo boots the demo stack (real app, real auth, real queue, fake model stubs)
 on an ephemeral port; without it the same checks run against an instance that
-is already up, reading the worker key off its /demo/config.json. Each check
-prints one row of a table as it finishes and the run exits 1 when any row is
-FAIL, so the operator, run.py and CI gate on one command.
+is already up, whose worker key comes from --api-key or OCR_ACCEPTANCE_KEY (only
+a demo instance still hands one out over /demo/config.json). Each check prints
+one row of a table as it finishes and the run exits 1 when any row is FAIL, so
+the operator, run.py and CI gate on one command.
 
     .venv/Scripts/python scripts/acceptance.py --demo
-    .venv/Scripts/python scripts/acceptance.py --base-url http://127.0.0.1:8090
+    .venv/Scripts/python scripts/acceptance.py --base-url http://127.0.0.1:8090 --api-key ocrk_…
 """
 from __future__ import annotations
 
@@ -415,14 +416,24 @@ def _boot_demo() -> tuple[Instance, Callable[[], None]]:
     return Instance(serve_demo._url(server), api_key), teardown
 
 
-def _live(base_url: str) -> Instance:
-    """An instance that is already up; its key is the one the PWA handshake reads."""
+def _live(base_url: str, api_key: str) -> Instance:
+    """An instance that is already up, keyed the way the operator keyed it.
+
+    A real deployment has no /demo/config.json — only serve_demo serves one —
+    so --api-key/OCR_ACCEPTANCE_KEY is the way in and the demo endpoint is the
+    fallback that keeps a bare --base-url working against a demo stack.
+    """
+    if api_key:
+        return Instance(base_url, api_key)
     try:
         resp = httpx.get(f"{base_url}/demo/config.json", timeout=10.0)
         resp.raise_for_status()
         return Instance(base_url, resp.json()["api_key"])
     except (httpx.HTTPError, KeyError, ValueError) as exc:
-        raise CheckError(f"{base_url} has no /demo/config.json to read a key from: {exc}")
+        raise CheckError(
+            f"{base_url} has no /demo/config.json to read a key from and no "
+            f"--api-key (or OCR_ACCEPTANCE_KEY) was given: {exc}"
+        )
 
 
 def _attempt(check, inst: Instance) -> tuple[bool, str]:
@@ -462,6 +473,11 @@ def main(argv=None) -> int:
         default=config.app_base_url(),
         help="an instance that is already up (default: %(default)s)",
     )
+    parser.add_argument(
+        "--api-key",
+        default=config.env_str("OCR_ACCEPTANCE_KEY"),
+        help="worker key for --base-url (default: $OCR_ACCEPTANCE_KEY, else the demo handshake)",
+    )
     args = parser.parse_args(argv)
     started = time.monotonic()
     target = "a booted demo instance" if args.demo else args.base_url
@@ -469,7 +485,9 @@ def main(argv=None) -> int:
     print(f"{'check'.ljust(WIDTH)}  result  detail", flush=True)
     rows: list[tuple[str, bool, str]] = []
     try:
-        inst, teardown = _boot_demo() if args.demo else (_live(args.base_url), None)
+        inst, teardown = (
+            _boot_demo() if args.demo else (_live(args.base_url, args.api_key), None)
+        )
     except Exception as exc:  # nothing to check until the app answers
         _row(rows, "instance up", False, str(exc))
         return _summary(rows, started)
