@@ -1,0 +1,59 @@
+{
+ "header": {
+  "isim": "BILGIN MARKETLER ANONIM SIRKETI",
+  "vergi_dairesi": "KIZILAY",
+  "vergi_no": "1234567890"
+ },
+ "meta": {
+  "tarih": "28.10.2026",
+  "saat": "14:32",
+  "no": "A2-998877",
+  "tip": "gider"
+ },
+ "items": [
+  {
+   "ad": "Tam buğday ekmeği",
+   "miktar": 2,
+   "birim_fiyat": 15.0,
+   "toplam": 30.0
+  },
+  {
+   "ad": "Süt %3,5 yağ 1L",
+   "miktar": 3,
+   "birim_fiyat": 42.5,
+   "toplam": 127.5
+  },
+  {
+   "ad": "Zeytinyağı 1L",
+   "miktar": 1,
+   "birim_fiyat": 285.0,
+   "toplam": 285.0
+  },
+  {
+   "ad": "Yumurta 15li",
+   "miktar": 1,
+   "birim_fiyat": 95.0,
+   "toplam": 95.0
+  },
+  {
+   "ad": "Beyaz peynir 600g",
+   "miktar": 1,
+   "birim_fiyat": 178.9,
+   "toplam": 178.9
+  },
+  {
+   "ad": "Çay 1kg",
+   "miktar": 2,
+   "birim_fiyat": 165.0,
+   "toplam": 330.0
+  }
+ ],
+ "totals": {
+  "ara_toplam": 1046.4,
+  "iskonto": 52.32,
+  "kdv": 198.82,
+  "kdv_orani": 0.2,
+  "toplam": 1192.9
+ },
+ "para_birimi": "TRY"
+}

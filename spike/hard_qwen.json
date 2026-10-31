@@ -1,0 +1,26 @@
+[
+ {
+  "fixture": "el_yazisi_liste",
+  "sec": 13.4,
+  "hit": 5,
+  "total": 5,
+  "miss": [],
+  "raw": "ALISVERIS LISTESI\n2 kg domates\n1 paket makarna\n3 kutu süt\n500 gr kayisi\ntemizlik bezi"
+ },
+ {
+  "fixture": "el_yazisi_not",
+  "sec": 6.9,
+  "hit": 7,
+  "total": 7,
+  "miss": [],
+  "raw": "Sevgili Eren,\nToplanti yarin saat 14:30'da,\nlutfen satici raporlarini ve\nmusteri listesini getir.\nAksama kadar imzalamayi unutma!\nSaygilar, - Murat"
+ },
+ {
+  "fixture": "fis_kotu_cekim",
+  "sec": 18.4,
+  "hit": 8,
+  "total": 8,
+  "miss": [],
+  "raw": "Here is the table extracted from the receipt:\n\n| Item              | Amount     |\n|-------------------|------------|\n| Kuru gida         | 120,00     |\n| Temizlik          | 85,50      |\n| Icacak            | 64,00      |\n| ARA TOPLAM        | 269,50     |\n| KDV %20           | 53,90      |\n| GENEL TOPLAM      | 323,40     |\n\n**Additional Information:**\n- Store: HER SEY MARKET LTD STI\n- Address: Cumburiyet Cad 88/B Kadikoy\n- Date & Time: 02.11.2026 19:05\n- VAT ID (VKN): 5556667778"
+ }
+]

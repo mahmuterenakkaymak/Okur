@@ -1,0 +1,26 @@
+[
+ {
+  "fixture": "el_yazisi_liste",
+  "sec": 0.5,
+  "hit": 5,
+  "total": 5,
+  "miss": [],
+  "raw": "ALISVERIS LISTESI\n2 kg domates\n1 paket makarna\n3 kutu süt\n500 gr kayisi\ntemizlik bezi"
+ },
+ {
+  "fixture": "el_yazisi_not",
+  "sec": 0.8,
+  "hit": 7,
+  "total": 7,
+  "miss": [],
+  "raw": "Sevgili Eren, Toplantı yarın saat 14:30'da, Lutfen satici raporlarini ve Musteri listesini getir. Aksama kadar imzalamayı unutmalı. Saygilar, - Murat"
+ },
+ {
+  "fixture": "fis_kotu_cekim",
+  "sec": 1.8,
+  "hit": 8,
+  "total": 8,
+  "miss": [],
+  "raw": "<fcel>HER SEY MARKET LTD STI<lcel><nl><fcel>Cunhuriyet Cad 88/B Kadikoy<lcel><nl><fcel>Kuru gida<fcel>120,00<nl><fcel>Temizlik<fcel>85,50<nl><fcel>Icacak<fcel>64,00<nl><fcel>ARA TOPLAM<fcel>269,50<nl><fcel>KDV X20<fcel>53,90<nl><fcel>GENEL TOPLAM<fcel>323,40<nl><fcel>02.11.2026 19:05 VKN 5556667778<lcel><nl>"
+ }
+]

@@ -1,0 +1,56 @@
+[
+ {
+  "fixture": "fis_benzin_clean",
+  "sec": 22.8,
+  "hit": 5,
+  "total": 5,
+  "miss": [],
+  "chars": 343,
+  "raw": "AKPET AKARYAKIT VE GIDA LTD. STI.\nE-5 Karayuzu Umranıyesyer Istanbul\nTel: 0216 555 44 33\nSIRA ADI\nMIKTAR\nFIYAT\nTUTAR\n01 Kurşunsuz 95 (litre)\n32.47\n53,19\n1.727,08\nARA TOPLAM\n1.727,08\nISKONTO\n0,00\nKDV %20\n345,42\nGENEL TOPLAM\n2.072,50 TL\nTESEKKUR EDERIZ / SAYGILARIMIZLA\n30.10.2026 08:15\nSAYA:112233\nVKN 9876543210\nVD UMRANIYE\nBelge No: B5-112233"
+ },
+ {
+  "fixture": "fis_benzin_foto",
+  "sec": 22.1,
+  "hit": 5,
+  "total": 5,
+  "miss": [],
+  "chars": 344,
+  "raw": "AKPET AKARYAKIT VE GIDA LTD. STI.\nE-5 Karayuzu Umranıyesyer Istanbul\nTel: 0216 555 44 33\nSIRA ADI\nMIKTAR\nFIYAT\nTUTAR\n01 Kursunsuz 95 (litre)\n32.47\n53,19\n1.727,08\nARA TOPLAM\n1.727,08\nISKONTO\n0,00\nKDV %20\n345,42\nGENEL TOPLAM\n2.072,50 TL\nTESEKKUR EDERIZ / SAYGILARIMIZLA\n30.10.2026 08:15\nSAYA:112233\nVKN 9876543210\nVD UMRA NIYE\nBelge No: B5-112233"
+ },
+ {
+  "fixture": "fis_market_clean",
+  "sec": 34.0,
+  "hit": 12,
+  "total": 12,
+  "miss": [],
+  "chars": 494,
+  "raw": "BILGIN MARKETLER ANONIM SIRKETI\nAtaturk Cad. No:45 Kizilay / ANKARA\nTel: 0312 456 78 90\nSIRA ADI\nMIKTAR\nFIYAT\nTUTAR\n01 Tam buğday ekmeği\n2\n15,00\n30,00\n02 Süt %3,5 yağ 1L\n3\n42,50\n127,50\n03 Zeytinyağı 1L\n1\n285,00\n285,00\n04 Yumurta 15li\n1\n95,00\n95,00\n05 Beyaz peynir 600g\n1\n178,90\n178,90\n06 Çay 1kg\n2\n165,00\n330,00\nARA TOPLAM\n1.046,40\nISKONTO\n-52,32\nKDV %20\n198,82\nGENEL TOPLAM\n1.192,90 TL\nTESEKKUR EDERIZ / SAYGILARIMIZLA\n28.10.2026 14:32\nSAYA:004512\nVKN 1234567890\nVD KIZILAY\nBelge No: A2-998877"
+ },
+ {
+  "fixture": "fis_market_foto",
+  "sec": 33.9,
+  "hit": 12,
+  "total": 12,
+  "miss": [],
+  "chars": 494,
+  "raw": "BILGIN MARKETLER ANONIM SIRKETI\nAtaturk Cad. No:45 Kizilay / ANKARA\nTel: 0312 456 78 90\nSIRA ADI\nMIKTAR\nFIYAT\nTUTAR\n01 Tam buğday ekmeği\n2 15,00 30,00\n02 Süt %3,5 yağ 1L\n3 42,50 127,50\n03 Zeytinyağı 1L\n1 285,00 285,00\n04 Yumurta 15li\n1 95,00 95,00\n05 Beyaz peynir 600g\n1 178,90 178,90\n06 Çay 1kg\n2 165,00 330,00\nARA TOPLAM\n1.046,40\nISKONTO\n-52,32\nKDV %20\n198,82\nGENEL TOPLAM\n1.192,90 TL\nTESEKKUR EDERIZ / SAYGILARIMIZLA\n28.10.2026 14:32 SAYA:004512\nVKN 1234567890 VD KIZILAY\nBelge No: A2-998877"
+ },
+ {
+  "fixture": "fis_restoran_clean",
+  "sec": 43.6,
+  "hit": 11,
+  "total": 11,
+  "miss": [],
+  "chars": 499,
+  "raw": "LEZZET DUNYASI GIDA TURIZM INS. LTD. STI.\nKulumbuklu Mah. Gazipaşa Cad. No:12 Antalya\nTel: 0242 310 20 10\nSIRA ADI\nMIKTAR\nFIYAT\nTUTAR\n01 Adana kebir porsiyon\n2\n240,00\n480,00\n02 Ayran 300ml\n2\n35,00\n70,00\n03 İçli köfte (adet)\n6\n45,00\n270,00\n04 Künefe\n1\n180,00\n180,00\n05 Su 500ml\n3\n15,00\n45,00\n06 Limonata\n1\n65,00\n65,00\nARA TOPLAM\n1.110,00\nISKONTO\n0,00\nKDV %10\n111,00\nGENEL TOPLAM\n1.221,00 TL\nTESEKKUR EDERIZ / SAYGILARIMIZLA\n25.10.2026 21:47\nSAYA:778899\nVKN 4567891230\nVD MURATPAŞA\nBelge No: C1-445566"
+ },
+ {
+  "fixture": "fis_restoran_foto",
+  "sec": 37.5,
+  "hit": 11,
+  "total": 11,
+  "miss": [],
+  "chars": 499,
+  "raw": "LEZZET DUNYASI GIDA TURIZM INS. LTD. STI.\nKulumbuklu Mah. Gazipaşa Cad. No:12 Antalya\nTel: 0242 310 20 10\nSIRA ADI\nMIKTAR\nFIYAT\nTUTAR\n01 Adana kebir porsiyon\n2 240,00 480,00\n02 Ayran 300ml\n2 35,00 70,00\n03 İçli köfte (adet)\n6 45,00 270,00\n04 Künefe\n1 180,00 180,00\n05 Su 500ml\n3 15,00 45,00\n06 Limonata\n1 65,00 65,00\nARA TOPLAM\n1.110,00\nISKONTO\n0,00\nKDV %10\n111,00\nGENEL TOPLAM\n1.221,00 TL\nTESEKKUR EDERIZ / SAYGILARIMIZLA\n25.10.2026 21:47 SAYA:778899\nVKN 4567891230 VD MURATPAŞA\nBelge No: C1-445566"
+ }
+]

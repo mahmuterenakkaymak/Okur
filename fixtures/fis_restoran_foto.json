@@ -1,0 +1,59 @@
+{
+ "header": {
+  "isim": "LEZZET DUNYASI GIDA TURIZM INS. LTD. STI.",
+  "vergi_dairesi": "MURATPAŞA",
+  "vergi_no": "4567891230"
+ },
+ "meta": {
+  "tarih": "25.10.2026",
+  "saat": "21:47",
+  "no": "C1-445566",
+  "tip": "gider"
+ },
+ "items": [
+  {
+   "ad": "Adana kebir porsiyon",
+   "miktar": 2,
+   "birim_fiyat": 240.0,
+   "toplam": 480.0
+  },
+  {
+   "ad": "Ayran 300ml",
+   "miktar": 2,
+   "birim_fiyat": 35.0,
+   "toplam": 70.0
+  },
+  {
+   "ad": "İçli köfte (adet)",
+   "miktar": 6,
+   "birim_fiyat": 45.0,
+   "toplam": 270.0
+  },
+  {
+   "ad": "Künefe",
+   "miktar": 1,
+   "birim_fiyat": 180.0,
+   "toplam": 180.0
+  },
+  {
+   "ad": "Su 500ml",
+   "miktar": 3,
+   "birim_fiyat": 15.0,
+   "toplam": 45.0
+  },
+  {
+   "ad": "Limonata",
+   "miktar": 1,
+   "birim_fiyat": 65.0,
+   "toplam": 65.0
+  }
+ ],
+ "totals": {
+  "ara_toplam": 1110.0,
+  "iskonto": 0.0,
+  "kdv": 111.0,
+  "kdv_orani": 0.1,
+  "toplam": 1221.0
+ },
+ "para_birimi": "TRY"
+}

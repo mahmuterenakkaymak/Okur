@@ -1,0 +1,56 @@
+[
+ {
+  "fixture": "fis_benzin_clean",
+  "sec": 4.1,
+  "hit": 5,
+  "total": 5,
+  "miss": [],
+  "chars": 730,
+  "raw": "<fcel>AKPET AKARYAKIT VE GIDA LTD. STI.<lcel><lcel><lcel><lcel><nl><ecel><fcel>E-5 Karayuzu Umraniyesyer Istanbul\\nTel: 0216 555 44 33<lcel><lcel><lcel><nl><fcel>SIRA ADI<fcel>MIKTAR<fcel>FIYAT<fcel>TUTAR<ecel><nl><fcel>01 Kurşunsuz 95 (litre)<lcel><fcel>32.47<fcel>53,19<fcel>1.727,08<nl><fcel>ARA TOPLAM<lcel><lcel><fcel>1.727,08<lcel><nl><fcel>ISKONTO<lcel><lcel><fcel>0,00<lcel><nl><fcel>KDV %20<lcel><lcel><fcel>345,42<lcel><nl><fcel>GENEL TOPLAM<lcel><lcel><fcel>2.072,50<fcel>TL<nl><ecel><fcel>TESEKKUR EDERIZ / SAYGILARIMIZLA<lcel><lcel><lcel><nl><ecel><fcel>30.10.2026 08:15 SAYA:112233<lcel><lcel><lcel><nl><ecel><fcel>VKN 9876543210 VD UMRANIYE<lcel><lcel><lcel><nl><ecel><fcel>Belge No: B5-112233<lcel><lcel><lcel><nl>"
+ },
+ {
+  "fixture": "fis_benzin_foto",
+  "sec": 3.9,
+  "hit": 5,
+  "total": 5,
+  "miss": [],
+  "chars": 731,
+  "raw": "<fcel>AKPET AKARYAKIT VE GIDA LTD. STI. E-S Karayuzu Umraniyesyer Istanbul Tel: 0216 555 44 33<lcel><lcel><lcel><lcel><nl><fcel>SIRA ADI<fcel>MIKTAR<fcel>FIYAT<fcel>TUTAR<lcel><nl><fcel>01 Kurşunsuz 95 (litre)<lcel><lcel><fcel>32.47<fcel>53,19<nl><fcel>ARA TOPLAM<lcel><lcel><lcel><fcel>1.727,08<nl><fcel>ISKONTO<lcel><lcel><lcel><fcel>1.727,08<nl><fcel>KDV %20<lcel><lcel><lcel><fcel>0,00<nl><fcel>GENEL TOPLAM<lcel><lcel><lcel><fcel>345,42<nl><ecel><lcel><lcel><lcel><fcel>2.072,50 TL<nl><fcel>TESEKKUR EDERIZ / SAYGILARIMIZLA<lcel><lcel><lcel><lcel><nl><fcel>30.10.2026 08:15 SAYA:112233<lcel><lcel><lcel><lcel><nl><fcel>VKN 9876543210 VD UMRANIYE<lcel><lcel><lcel><lcel><nl><fcel>Belge No: B5-112233<lcel><lcel><lcel><lcel><nl>"
+ },
+ {
+  "fixture": "fis_market_clean",
+  "sec": 6.1,
+  "hit": 12,
+  "total": 12,
+  "miss": [],
+  "chars": 968,
+  "raw": "<fcel>BILGIN MARKETLER ANONIM SIRKETI<lcel><lcel><lcel><nl><fcel>Ataturk Cad. No:45 Kizilay / ANKARA<lcel><lcel><lcel><nl><fcel>Tel: 0312 456 78 90<lcel><lcel><lcel><nl><fcel>SIRA ADI<fcel>MIKTAR<fcel>FIYAT<fcel>TUTAR<nl><fcel>01 Tam buğday ekmeği<ecel><ecel><fcel>2 15,00 30,00<nl><fcel>02 Süt %3,5 yağ 1L<ecel><ecel><fcel>3 42,50 127,50<nl><fcel>03 Zeytinyağı 1L<ecel><ecel><fcel>1 285,00 285,00<nl><fcel>04 Yumurta 15li<ecel><ecel><fcel>1 95,00 95,00<nl><fcel>05 Beyaz peynir 600g<ecel><ecel><fcel>1 178,90 178,90<nl><fcel>06 Çay 1kg<ecel><ecel><fcel>2 165,00 330,00<nl><fcel>ARA TOPLAM<ecel><ecel><fcel>1.046,40<nl><fcel>ISKONTO<ecel><ecel><fcel>-52,32<nl><fcel>KDV %20<ecel><ecel><fcel>198,82<nl><fcel>GENEL TOPLAM<ecel><ecel><fcel>1.192,90 TL<nl><fcel>TESEKKUR EDERIZ / SAYGILARIMIZLA<lcel><lcel><lcel><nl><fcel>28.10.2026 14:32 SAYA:004512<lcel><lcel><lcel><nl><fcel>VKN 1234567890 VD KIZILAY<lcel><lcel><lcel><nl><fcel>Belge No: A2-998877<lcel><lcel><lcel><nl>"
+ },
+ {
+  "fixture": "fis_market_foto",
+  "sec": 6.0,
+  "hit": 12,
+  "total": 12,
+  "miss": [],
+  "chars": 942,
+  "raw": "<fcel>BILGIN MARKETLER ANONIM SIRKETI<lcel><lcel><lcel><nl><fcel>Ataturk Cad. No:45 Kizilay / ANKARA\\nTel: 0312 456 78 90<lcel><lcel><lcel><nl><fcel>SIRA ADI<fcel>MIKTAR<fcel>FIYAT<fcel>TUTAR<nl><fcel>01 Tam buğday ekmeği<ecel><ecel><fcel>2 15,00 30,00<nl><fcel>02 Süt %3,5 yağ 1L<ecel><ecel><fcel>3 42,50 127,50<nl><fcel>03 Zeytinyağı 1L<ecel><ecel><fcel>1 285,00 285,00<nl><fcel>04 Yumurta 15li<ecel><ecel><fcel>1 95,00 95,00<nl><fcel>05 Beyaz peynir 600g<ecel><ecel><fcel>1 178,90 178,90<nl><fcel>06 Çay 1kg<ecel><ecel><fcel>2 165,00 330,00<nl><fcel>ARA TOPLAM<ecel><ecel><fcel>1.046,40<nl><fcel>ISKONTO<ecel><ecel><fcel>-52,32<nl><fcel>KDV %20<ecel><ecel><fcel>198,82<nl><fcel>GENEL TOPLAM<ecel><ecel><fcel>1.192,90 TL<nl><fcel>TESEKKUR EDERIZ / SAYGILARIMIZLA<lcel><lcel><lcel><nl><fcel>28.10.2026 14:32 SAYA:004512<lcel><lcel><lcel><nl><fcel>VKN 1234567890 VD KIZILAY<lcel><lcel><lcel><nl><fcel>Belge No: A2-998877<lcel><lcel><lcel><nl>"
+ },
+ {
+  "fixture": "fis_restoran_clean",
+  "sec": 5.7,
+  "hit": 11,
+  "total": 11,
+  "miss": [],
+  "chars": 959,
+  "raw": "<fcel>LEZZET DUNYASI GIDA TURIZM INS. LTD. STI.<lcel><lcel><lcel><nl><fcel>Kulumbuklu Mah. Gazipasa Cad. No:12 Antalya<lcel><lcel><lcel><nl><fcel>Tel: 0242 310 20 10<lcel><lcel><lcel><nl><fcel>SIRA ADI<fcel>MIKTAR<fcel>FIYAT<fcel>TUTAR<nl><fcel>01 Adana kebir porsiyon<fcel>240,00<fcel>480,00<ecel><nl><fcel>02 Ayran 300ml<fcel>2<fcel>35,00<fcel>70,00<nl><fcel>03 İçli köfte (adet)<fcel>6<fcel>45,00<fcel>270,00<nl><fcel>04 Künefe<fcel>1<fcel>180,00<fcel>180,00<nl><fcel>05 Su 500ml<fcel>3<fcel>15,00<fcel>45,00<nl><fcel>06 Limonata<fcel>1<fcel>65,00<fcel>65,00<nl><fcel>ARA TOPLAM<fcel>1.110,00<lcel><lcel><nl><fcel>ISKONTO<fcel>0,00<lcel><lcel><nl><fcel>KDV %10<fcel>111,00<lcel><lcel><nl><fcel>GENEL TOPLAM<fcel>1.221,00<fcel>TL<lcel><nl><fcel>TESEKKUR EDERIZ / SAYGILARIMIZLA<lcel><lcel><lcel><nl><fcel>25.10.2026 21:47 SAYA:778899<lcel><lcel><lcel><nl><fcel>VKN 4567891230 VD MURATPAŞA<lcel><lcel><lcel><nl><fcel>Belge No: C1-445566<lcel><lcel><lcel><nl>"
+ },
+ {
+  "fixture": "fis_restoran_foto",
+  "sec": 5.8,
+  "hit": 11,
+  "total": 11,
+  "miss": [],
+  "chars": 973,
+  "raw": "<fcel>LEZZET DUNYASI GIDA TURIZM INS. LTD. STI.<lcel><lcel><lcel><nl><fcel>Kulumbuklu Mah. Gazipasa Cad. No:12 Antalya<lcel><lcel><lcel><nl><fcel>Tel: 0242 310 20 10<lcel><lcel><lcel><nl><fcel>SIRA ADI<fcel>MIKTAR<fcel>FIYAT<fcel>TUTAR<nl><fcel>01 Adana kebir porsiyon<ecel><ecel><fcel>2 240,00 480,00<nl><fcel>02 Ayran 300ml<ecel><ecel><fcel>2 35,00 70,00<nl><fcel>03 İçli köfte (adet)<ecel><ecel><fcel>6 45,00 270,00<nl><fcel>04 Künefe<ecel><ecel><fcel>1 180,00 180,00<nl><fcel>05 Su 500ml<ecel><ecel><fcel>3 15,00 45,00<nl><fcel>06 Limonata<ecel><ecel><fcel>1 65,00 65,00<nl><fcel>ARA TOPLAM<ecel><ecel><fcel>1.110,00<nl><fcel>ISKONTO<ecel><ecel><fcel>0,00<nl><fcel>KDV %10<ecel><ecel><fcel>111,00<nl><fcel>GENEL TOPLAM<ecel><ecel><fcel>1.221,00 TL<nl><fcel>TESEKKUR EDERIZ / SAYGILARIMIZLA<lcel><lcel><lcel><nl><fcel>25.10.2026 21:47 SAYA:778899<lcel><lcel><lcel><nl><fcel>VKN 4567891230 VD MURATPAŞA<lcel><lcel><lcel><nl><fcel>Belge No: C1-445566<lcel><lcel><lcel><nl>"
+ }
+]

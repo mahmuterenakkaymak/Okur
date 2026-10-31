@@ -1,0 +1,19 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Runtime data (images = personal data, KVKK) — never commit
+data/
+
+# Real receipts (private, not committed per brief §6)
+fixtures_real/
+
+# Model weights and llama.cpp binaries (multi-GB, re-downloadable)
+models/
+vendor/
+
+# Local env / editor
+.env
+.hybrid/

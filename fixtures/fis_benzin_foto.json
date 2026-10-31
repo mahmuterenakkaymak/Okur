@@ -1,0 +1,29 @@
+{
+ "header": {
+  "isim": "AKPET AKARYAKIT VE GIDA LTD. STI.",
+  "vergi_dairesi": "UMRANIYE",
+  "vergi_no": "9876543210"
+ },
+ "meta": {
+  "tarih": "30.10.2026",
+  "saat": "08:15",
+  "no": "B5-112233",
+  "tip": "gider"
+ },
+ "items": [
+  {
+   "ad": "Kurşunsuz 95 (litre)",
+   "miktar": 32.47,
+   "birim_fiyat": 53.19,
+   "toplam": 1727.08
+  }
+ ],
+ "totals": {
+  "ara_toplam": 1727.08,
+  "iskonto": 0.0,
+  "kdv": 345.42,
+  "kdv_orani": 0.2,
+  "toplam": 2072.5
+ },
+ "para_birimi": "TRY"
+}
