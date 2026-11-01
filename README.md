@@ -28,6 +28,7 @@ worker runs three stages and answers with one frozen JSON envelope:
 Receipt images and the SQLite database live under `data/`, which is gitignored:
 they are personal data (KVKK) and never leave this machine. Backups, key
 rotation, logs, model paths and VRAM are in [`OPERATIONS.md`](OPERATIONS.md).
+Turkish quick start for Eren: [`HIZLI-BASLANGIC.md`](HIZLI-BASLANGIC.md).
 
 ## Quickstart
 
