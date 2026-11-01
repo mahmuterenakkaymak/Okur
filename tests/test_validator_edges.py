@@ -149,3 +149,82 @@ def test_empty_items_with_printed_totals_stays_unreadable():
     assert report["verdict"] == "unreadable"
     assert report["fields"] == []
     assert report["actual"]["toplam"] == 120.0
+
+
+# T69: KDV dahildir. A Turkish retail receipt prints VAT-inclusive line prices,
+# so the item sum is the gross total (82,55) and the printed KDV (82,55 x 8/108
+# = 6,11) comes out of it instead of being added to it.
+KDV_DAHIL = {
+    "items": [
+        {"ad": "Birşah 500g yoğurt", "miktar": 1, "birim_fiyat": 9.9, "toplam": 9.9},
+        {"ad": "Kruvasan 55g", "miktar": 1, "birim_fiyat": 3.5, "toplam": 3.5},
+        {"ad": "Milk Ten 200g kaymak", "miktar": 1, "birim_fiyat": 15.9, "toplam": 15.9},
+        {"ad": "Kızılay 6x200 ml", "miktar": 1, "birim_fiyat": 10.5, "toplam": 10.5},
+        {"ad": "CP sosis 500g", "miktar": 1, "birim_fiyat": 14.9, "toplam": 14.9},
+        {"ad": "Waffle 252g", "miktar": 1, "birim_fiyat": 5.95, "toplam": 5.95},
+        {"ad": "Milk Ten 300g labne", "miktar": 1, "birim_fiyat": 12.75, "toplam": 12.75},
+        {"ad": "Xroll çilek 142g", "miktar": 1, "birim_fiyat": 4.25, "toplam": 4.25},
+        {"ad": "Meze rus salatası", "miktar": 1, "birim_fiyat": 4.9, "toplam": 4.9},
+    ],
+    "totals": {
+        "ara_toplam": 82.55,
+        "iskonto": 0.0,
+        "kdv": 6.11,
+        "kdv_orani": 0.08,
+        "toplam": 82.55,
+    },
+}
+
+
+def test_kdv_dahil_receipt_validates_ok():
+    report = validator.validate(copy.deepcopy(KDV_DAHIL))
+    assert report["verdict"] == "ok", report["fields"]
+    assert report["fields"] == []
+    assert report["expected"] == {
+        "ara_toplam": 82.55,
+        "iskonto": 0.0,
+        "kdv": 6.11,
+        "toplam": 82.55,
+    }
+    assert report["actual"] == report["expected"]
+
+
+def test_kdv_dahil_ara_toplam_may_be_printed_net_of_the_tax():
+    data = copy.deepcopy(KDV_DAHIL)
+    data["totals"]["ara_toplam"] = 76.44  # 82,55 gross - 6,11 tax
+    assert validator.validate(data)["verdict"] == "ok"
+
+
+def test_kdv_dahil_wrong_printed_toplam_still_mismatches():
+    data = copy.deepcopy(KDV_DAHIL)
+    data["totals"]["toplam"] = 80.0
+    report = validator.validate(data)
+    assert report["verdict"] == "mismatch"
+    # the inclusive base is the closer one, so it names the fields; the
+    # exclusive one would also blame totals.kdv, which the receipt matches.
+    assert report["fields"] == ["totals.toplam"]
+    assert report["expected"]["toplam"] == 82.55
+
+
+def test_kdv_dahil_wrong_printed_kdv_still_mismatches():
+    data = copy.deepcopy(KDV_DAHIL)
+    data["totals"]["kdv"] = 9.0
+    report = validator.validate(data)
+    assert report["verdict"] == "mismatch"
+    assert report["fields"] == ["totals.kdv"]
+    assert report["expected"]["kdv"] == 6.11
+
+
+def test_kdv_haric_receipt_keeps_the_exclusive_expected_block():
+    data = {
+        "items": [line_item()],
+        "totals": {"ara_toplam": 85.0, "kdv": 17.0, "kdv_orani": 0.2, "toplam": 102.0},
+    }
+    report = validator.validate(data)
+    assert report["verdict"] == "ok", report["fields"]
+    assert report["expected"] == {
+        "ara_toplam": 85.0,
+        "iskonto": 0.0,
+        "kdv": 17.0,
+        "toplam": 102.0,
+    }

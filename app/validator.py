@@ -4,10 +4,13 @@ validate() recomputes line totals, ara toplam, single- and mixed-rate KDV and
 genel toplam from items[] and compares each printed value with the recomputed
 one at 0.01 tolerance, so a misread digit surfaces as a mismatch naming the
 offending field (items[2].toplam, totals.kdv) instead of a silently wrong
-total. Pure function: no I/O, no mutation of the input.
+total. A single-rate receipt is tried on both KDV bases — KDV harici (tax added
+to the item sum) and KDV dahildir (tax inside it) — and the closer one names the
+fields. Pure function: no I/O, no mutation of the input.
 """
 from __future__ import annotations
 
+from collections import namedtuple
 from collections.abc import Mapping
 from typing import Any
 
@@ -15,6 +18,8 @@ from app import contract
 
 TOLERANCE = 0.01
 _EPS = 1e-9  # keeps a printed 0.01 kurus drift inside tolerance despite float noise
+
+_Base = namedtuple("_Base", "ara_toplam kdv toplam")
 
 
 def validate(result: Mapping[str, Any] | contract.Result) -> dict[str, Any]:
@@ -49,31 +54,19 @@ def validate(result: Mapping[str, Any] | contract.Result) -> dict[str, Any]:
     # trusted as a chain input and never flagged on its own; a negative one is
     # the printed "52,32-" form, so its magnitude reduces the base.
     iskonto = abs(printed.iskonto)
-    matrah = ara_toplam - iskonto
-    if printed.kdv_orani > 0:
-        kdv = round(matrah * printed.kdv_orani, 2)
-    else:
-        # ASSUMPTION: mixed-rate receipts have no single kdv_orani, so the
-        # structurer emits 0 and the printed kdv is trusted as a chain input;
-        # the toplam = matrah + kdv check below still ties it to the base.
-        kdv = printed.kdv
-    toplam = matrah + kdv
+    base = min(_bases(ara_toplam, iskonto, printed), key=lambda b: _distance(b, printed))
 
-    for name, expected in (
-        ("ara_toplam", ara_toplam),
-        ("kdv", kdv),
-        ("toplam", toplam),
-    ):
-        if not _close(getattr(printed, name), expected):
+    for name in ("ara_toplam", "kdv", "toplam"):
+        if not _close(getattr(printed, name), getattr(base, name)):
             fields.append(f"totals.{name}")
 
     return contract.Validation(
         verdict="ok" if not fields else "mismatch",
         expected=contract.TotalsBlock(
-            ara_toplam=round(ara_toplam, 2),
+            ara_toplam=round(base.ara_toplam, 2),
             iskonto=iskonto,
-            kdv=kdv,
-            toplam=round(toplam, 2),
+            kdv=base.kdv,
+            toplam=round(base.toplam, 2),
         ),
         actual=contract.TotalsBlock(
             ara_toplam=printed.ara_toplam,
@@ -83,6 +76,32 @@ def validate(result: Mapping[str, Any] | contract.Result) -> dict[str, Any]:
         ),
         fields=fields,
     ).model_dump()
+
+
+def _bases(gross: float, iskonto: float, printed: contract.Totals) -> list[_Base]:
+    """Expected blocks per KDV base, exclusive first so it wins a tie."""
+    matrah = gross - iskonto
+    if printed.kdv_orani <= 0:
+        # ASSUMPTION: mixed-rate receipts have no single kdv_orani, so the
+        # structurer emits 0 and the printed kdv is trusted as a chain input;
+        # the toplam = matrah + kdv line still ties it to the base.
+        return [_Base(gross, printed.kdv, matrah + printed.kdv)]
+
+    exclusive = round(matrah * printed.kdv_orani, 2)
+    # ASSUMPTION: a KDV dahildir receipt prints VAT-inclusive line prices, so
+    # the item sum is the gross total and the tax comes back out of it; its ara
+    # toplam is printed both as that gross and as the net under the tax.
+    inclusive = round(matrah * printed.kdv_orani / (1.0 + printed.kdv_orani), 2)
+    return [
+        _Base(gross, exclusive, matrah + exclusive),
+        _Base(gross, inclusive, matrah),
+        _Base(matrah - inclusive, inclusive, matrah),
+    ]
+
+
+def _distance(base: _Base, printed: contract.Totals) -> float:
+    """How far a base sits from the printed totals; 0 means it reproduces them."""
+    return sum(abs(getattr(printed, name) - getattr(base, name)) for name in base._fields)
 
 
 def _close(actual: float, expected: float) -> bool:
