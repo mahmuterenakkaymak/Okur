@@ -22,7 +22,7 @@ from pydantic import ValidationError
 
 from app import config, contract
 
-MAX_TOKENS = 1500
+MAX_TOKENS = 2500
 
 PROMPT = """Bir fişin görselini ve o görselden çıkarılmış OCR metnini aşağısı gibi tek bir JSON nesnesine çevir:
 {"header":{"isim":"","vergi_dairesi":"","vergi_no":""},\
@@ -96,6 +96,10 @@ class Structurer:
             }],
             "max_tokens": MAX_TOKENS,
             "temperature": 0,
+            # Strata is a reasoning model: left on, it spends the whole budget on
+            # reasoning_content and answers content=null, so every real receipt
+            # reads as unreadable. This is the flag that turns it off.
+            "chat_template_kwargs": {"enable_thinking": False},
         }
         start = time.perf_counter()
         try:

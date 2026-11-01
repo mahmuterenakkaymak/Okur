@@ -112,6 +112,18 @@ def test_uses_strata_model_by_default():
     assert seen[0]["max_tokens"] == MAX_TOKENS
 
 
+def test_thinking_is_disabled_for_the_reasoning_model():
+    seen = []
+
+    def handler(request):
+        seen.append(json.loads(request.read()))
+        return chat_ok()(request)
+
+    make(handler).structure(OCR_TEXT, IMAGE)
+    assert seen[0]["chat_template_kwargs"] == {"enable_thinking": False}
+    assert seen[0]["max_tokens"] == MAX_TOKENS == 2500
+
+
 def test_quality_mode_routes_to_unsloth():
     assert config.unsloth_port() == 8888
     seen = []
@@ -238,6 +250,18 @@ def test_totals_of_the_wrong_shape_raises_unreadable():
     broken["totals"] = "1192,90 TL"
     with pytest.raises(UnreadableError):
         structure(chat_ok(json.dumps(broken, ensure_ascii=False)))
+
+
+def test_answer_of_only_thoughts_is_unreadable_not_a_crash():
+    def handler(request):
+        return httpx.Response(200, json={"choices": [{"message": {
+            "content": None,
+            "reasoning_content": "Kullanıcı fişteki firma adını soruyor. "
+                                 "Görseli dikkatlice inceleyeyim.",
+        }}]})
+
+    with pytest.raises(UnreadableError):
+        structure(handler)
 
 
 def test_unreadable_reason_reaches_the_caller():
