@@ -69,7 +69,8 @@ def _resolve_backend(backend: str | None) -> str:
     """backend=None reads config; an unknown value is today's path: strata.
 
     config.structurer_include_image() is deliberately not read here: the flag
-    decides *whether* a request carries the image, which __init__ applies.
+    decides *whether* a request carries the image, which __init__ applies to
+    the backend resolved right here.
     """
     value = (config.structurer_backend() if backend is None else backend)
     value = value.strip().lower()
@@ -108,11 +109,10 @@ class Structurer:
         # STRUCTURER_INCLUDE_IMAGE=0 speaks to the small brain only (PLAN run-2
         # R11): that leg reads PROMPT + OCR text. Strata and quality mode always
         # see the receipt, exactly as before the flag existed.
-        # ASSUMPTION: "the small backend" is the brain this box deploys —
-        # config.structurer_backend(), the single resolver (R1) — so a backend=
-        # that pins a server for one call keeps today's whole request.
-        deployed_small = self.uses_small_brain and config.structurer_backend() == "small"
-        self.sends_image = not deployed_small or config.structurer_include_image()
+        # ASSUMPTION: "the small backend" (R11) is the backend this call resolved
+        # to — self.backend — not the one config deploys, so a backend= or
+        # base_url= pinned to the brain obeys the flag too.
+        self.sends_image = not self.uses_small_brain or config.structurer_include_image()
         self.timeout = config.structurer_timeout() if timeout is None else timeout
         self._client = httpx.Client(transport=transport, timeout=self.timeout)
 

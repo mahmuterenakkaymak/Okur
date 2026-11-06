@@ -441,10 +441,15 @@ def test_every_backend_sends_the_same_body(kwargs):
     assert body["chat_template_kwargs"] == {"enable_thinking": False}
 
 
-def test_include_image_is_not_read_yet(monkeypatch):
+def test_include_image_is_read_when_the_client_is_built(monkeypatch):
+    """Read once, at build time, from the backend this client resolved to."""
     monkeypatch.setenv("STRUCTURER_INCLUDE_IMAGE", "false")
-    _, body = route(backend="small")
-    assert [p["type"] for p in body["messages"][0]["content"]] == ["text", "image_url"]
+    seen, handler = capture()
+    client = make(handler, backend="small")
+    monkeypatch.setenv("STRUCTURER_INCLUDE_IMAGE", "1")
+    assert client.sends_image is False
+    client.structure(OCR_TEXT, IMAGE)
+    assert [p["type"] for p in content(seen[0][1])] == ["text"]
 
 
 # --- include_image: the deployed small brain alone reads text-only (T82) ---
@@ -513,9 +518,9 @@ def test_include_image_off_never_touches_strata_or_quality_mode(monkeypatch, kwa
     ]
 
 
-def test_a_pinned_backend_is_a_one_off_call_the_switch_does_not_reach(monkeypatch):
-    """The switch is about the configured brain; backend= only pins a server."""
+def test_a_pinned_backend_is_the_switch_speaks_too(monkeypatch):
+    """The flag follows the resolved backend, not the one config deploys (T100)."""
     monkeypatch.setenv("STRUCTURER_INCLUDE_IMAGE", "0")
-    assert [p["type"] for p in content(route(backend="small")[1])] == ["text", "image_url"]
+    assert [p["type"] for p in content(route(backend="small")[1])] == ["text"]
     monkeypatch.setenv("STRUCTURER_BACKEND", "small")
     assert [p["type"] for p in content(route()[1])] == ["text"]
