@@ -129,6 +129,7 @@ def test_check_marks_are_green_on_a_console_and_plain_when_redirected(monkeypatc
         def isatty(self):
             return True
 
+    monkeypatch.delenv("NO_COLOR", raising=False)
     monkeypatch.setattr(sys, "stdout", Console())
     assert run._green("OCR ✓") == f"{run.GREEN}OCR ✓{run.RESET}"
     monkeypatch.setenv("NO_COLOR", "1")
