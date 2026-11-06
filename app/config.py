@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import os
 import pathlib
+from urllib.parse import urlparse
 
 from dotenv import load_dotenv
 
@@ -49,6 +50,19 @@ def env_float(name: str, default: float) -> float:
         return float(raw)
     except ValueError:
         return default
+
+
+def env_bool(name: str, default: bool) -> bool:
+    """1/true/yes/on and 0/false/no/off; anything else keeps the default."""
+    raw = _raw(name)
+    if raw is None:
+        return default
+    value = raw.lower()
+    if value in ("1", "true", "yes", "on"):
+        return True
+    if value in ("0", "false", "no", "off"):
+        return False
+    return default
 
 
 def env_path(name: str, default: str | os.PathLike[str]) -> pathlib.Path:
@@ -156,6 +170,49 @@ def unsloth_model() -> str:
     # ASSUMPTION: server-side model labels for stage 2 are not fixed by the
     # contract; both are env-overridable and only echoed into meta.model.
     return env_str("UNSLOTH_MODEL", "Qwen3.8-27B")
+
+
+# --- stage 2 backends: small brain (llama.cpp) vs Strata ---
+DEFAULT_STRUCTURER_BACKEND = "strata"  # flips to "small" at the M8 cutover
+SMALL_BRAIN_PORT = 8100
+
+
+def structurer_backend() -> str:
+    """Which stage-2 brain runs: "small" or "strata". Empty, whitespace or an
+    unknown value reads as the default — which lives here, nowhere else."""
+    value = env_str("STRUCTURER_BACKEND").lower()
+    return value if value in ("small", "strata") else DEFAULT_STRUCTURER_BACKEND
+
+
+def small_brain_base_url() -> str:
+    return env_str("SMALL_BRAIN_BASE_URL", _base_url("127.0.0.1", SMALL_BRAIN_PORT))
+
+
+def small_brain_port() -> int:
+    """Port of the small brain, read off its base url so one env value moves
+    the launcher and the client together; junk or no port means 8100."""
+    try:
+        return urlparse(small_brain_base_url()).port or SMALL_BRAIN_PORT
+    except ValueError:
+        return SMALL_BRAIN_PORT
+
+
+def small_brain_model() -> str:
+    return env_str("SMALL_BRAIN_MODEL", "Qwen3-VL-4B-Instruct")
+
+
+def structurer_include_image() -> bool:
+    """Send the receipt image to stage 2 too. Only the small backend asks."""
+    return env_bool("STRUCTURER_INCLUDE_IMAGE", True)
+
+
+def stage2_model(quality_mode: bool) -> str:
+    """The model that will actually run — the single source of meta.model."""
+    if quality_mode:
+        return unsloth_model()
+    if structurer_backend() == "small":
+        return small_brain_model()
+    return strata_model()
 
 
 # --- HTTP timeouts (seconds) ---

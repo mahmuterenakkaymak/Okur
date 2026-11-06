@@ -11,6 +11,8 @@ OWN_PREFIXES = (
     "OCR_",
     "STRATA_",
     "UNSLOTH_",
+    "SMALL_BRAIN_",
+    "STRUCTURER_",
     "PROBE_",
     "STARTUP_",
     "ADMIN_",
@@ -153,6 +155,76 @@ def test_model_paths_point_at_the_spike_ggufs():
     assert config.ocr_model_path().name == "PaddleOCR-VL-1.6-GGUF.gguf"
     assert config.ocr_mmproj_path().name == "PaddleOCR-VL-1.6-GGUF-mmproj.gguf"
     assert config.llama_server_path() == config.ROOT / "vendor" / "llama" / "llama-server.exe"
+
+
+def test_stage2_backend_defaults_to_strata():
+    assert config.structurer_backend() == "strata"
+    assert config.DEFAULT_STRUCTURER_BACKEND == "strata"
+
+
+def test_small_brain_defaults():
+    assert config.small_brain_base_url() == "http://127.0.0.1:8100"
+    assert config.small_brain_port() == 8100
+    assert isinstance(config.small_brain_port(), int)
+    assert config.small_brain_model() == "Qwen3-VL-4B-Instruct"
+    assert config.structurer_include_image() is True
+
+
+def test_stage2_model_names_the_running_brain(monkeypatch):
+    assert config.stage2_model(False) == config.strata_model() == "strata"
+    assert config.stage2_model(True) == config.unsloth_model() == "Qwen3.8-27B"
+    set_env(monkeypatch, STRUCTURER_BACKEND="small")
+    assert config.stage2_model(False) == config.small_brain_model()
+    # quality mode always escalates to Unsloth, whatever the backend says
+    assert config.stage2_model(True) == config.unsloth_model()
+
+
+def test_stage2_model_follows_model_env_overrides(monkeypatch):
+    set_env(monkeypatch, STRATA_MODEL="strata-80b", UNSLOTH_MODEL="qwen-27b")
+    assert config.stage2_model(False) == "strata-80b"
+    assert config.stage2_model(True) == "qwen-27b"
+    set_env(monkeypatch, STRUCTURER_BACKEND="small", SMALL_BRAIN_MODEL="vl-4b-iq4")
+    assert config.stage2_model(False) == "vl-4b-iq4"
+    assert config.stage2_model(True) == "qwen-27b"
+
+
+def test_backend_env_override_is_case_insensitive(monkeypatch):
+    set_env(monkeypatch, STRUCTURER_BACKEND="SMALL")
+    assert config.structurer_backend() == "small"
+    set_env(monkeypatch, STRUCTURER_BACKEND="Strata")
+    assert config.structurer_backend() == "strata"
+
+
+def test_small_brain_base_url_override_carries_the_port(monkeypatch):
+    set_env(monkeypatch, SMALL_BRAIN_BASE_URL="http://10.0.0.5:9111/v1")
+    assert config.small_brain_base_url() == "http://10.0.0.5:9111/v1"
+    assert config.small_brain_port() == 9111
+
+
+def test_include_image_truthy_and_falsy_values(monkeypatch):
+    for value in ("0", "false", "FALSE", " no ", "off"):
+        set_env(monkeypatch, STRUCTURER_INCLUDE_IMAGE=value)
+        assert config.structurer_include_image() is False, value
+    for value in ("1", "true", "Yes", "on"):
+        set_env(monkeypatch, STRUCTURER_INCLUDE_IMAGE=value)
+        assert config.structurer_include_image() is True, value
+
+
+def test_stage2_keys_treat_whitespace_as_unset(monkeypatch):
+    set_env(monkeypatch, STRUCTURER_BACKEND="   ", SMALL_BRAIN_BASE_URL="  ", SMALL_BRAIN_MODEL="")
+    assert config.structurer_backend() == config.DEFAULT_STRUCTURER_BACKEND
+    assert config.small_brain_base_url() == "http://127.0.0.1:8100"
+    assert config.small_brain_model() == "Qwen3-VL-4B-Instruct"
+
+
+def test_stage2_keys_fall_back_on_junk_values(monkeypatch):
+    set_env(monkeypatch, STRUCTURER_BACKEND="q8", SMALL_BRAIN_BASE_URL="http://brain:abc")
+    assert config.structurer_backend() == config.DEFAULT_STRUCTURER_BACKEND
+    assert config.small_brain_port() == 8100
+    set_env(monkeypatch, SMALL_BRAIN_BASE_URL="not a url")
+    assert config.small_brain_port() == 8100
+    set_env(monkeypatch, STRUCTURER_INCLUDE_IMAGE="maybe")
+    assert config.structurer_include_image() is True
 
 
 def test_key_prefix_shape():
