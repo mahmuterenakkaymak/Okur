@@ -201,7 +201,7 @@ main {
   margin: 0 0 .2rem; font-size: 1rem;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.detay-kimlik .not { font-variant-numeric: tabular-nums; }
+.detay-kimlik .not { font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 .detay-govde { flex: 1; overflow-y: auto; padding: 1.1rem 1.2rem; }
 .detay-bekleme { padding: 1.6rem 0; margin: 0; text-align: center; font-size: .9rem; color: #b9bcc4; }
 .detay-icerik {
@@ -313,6 +313,13 @@ main {
 @media (max-width: 52rem) {
   .detay-icerik { grid-template-columns: minmax(0,1fr); }
   .detay-gorsel { position: static; }
+}
+/* Aşama süreleri is the header's longest line: on a phone the identity takes the
+   whole width and the chip and Kapat step below it, instead of the summary being
+   squeezed into a column no wrap can save. */
+@media (max-width: 30rem) {
+  .detay-ust { flex-wrap: wrap; }
+  .detay-kimlik { flex: 1 1 100%; }
 }
 
 /* --- anahtarlar --- */

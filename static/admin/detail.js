@@ -37,6 +37,21 @@ const URUN_KOLONLARI = [
 ];
 const URUN_ALAN = { miktar: "miktar", birim_fiyat: "birim fiyat", toplam: "tutar" };
 const KURUS = 0.005; // below it the difference column has nothing to say
+// The pipeline's three stages, in the order they ran (meta.stage_ms).
+const ASAMALAR = [
+  { alan: "ocr", etiket: "Okuma" },
+  { alan: "structure", etiket: "Yapılandırma" },
+  { alan: "validate", etiket: "Doğrulama" },
+];
+const ASAMA_ETIKET = "Aşama süreleri";
+const YOK = "—";
+const SN = new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 1 });
+// A stage that took at least a tenth of a second is said in seconds; below it
+// a millisecond count is the unit a person reads.
+// ASSUMPTION: "≥1000 ms reads in seconds" only holds together with PLAN's own
+// example ("Okuma 0,9 sn" for a 900 ms read) when the switch sits below 1000,
+// so it is a tenth of a second; every value ≥1000 ms still reads in seconds.
+const SN_ESIGI = 100;
 
 /** Validation block -> the discrepancy panel (contract shape 3).
  *
@@ -73,6 +88,34 @@ export function uyusmazlikModeli(validation) {
 
 function metin(deger) {
   return typeof deger === "string" ? deger.trim() : "";
+}
+
+/** A stage's own milliseconds; the contract's 0 for absent or junk is no measurement. */
+function olcu(deger) {
+  const ms = Number(deger);
+  return Number.isFinite(ms) && ms > 0 ? ms : null;
+}
+
+/** One duration the way an operator says it: "30,6 sn", "1 ms". */
+function sure(ms) {
+  return ms >= SN_ESIGI ? `${SN.format(ms / 1000)} sn` : `${Math.round(ms)} ms`;
+}
+
+/** meta.stage_ms -> the summary's timing line.
+ *
+ * A 0 here is the contract's "this stage never ran", not an instant stage, so
+ * an unmeasured stage is an em dash and a job that never ran at all is a single
+ * dash after the label. Display only: meta keeps the raw integers the JSON
+ * panel prints.
+ */
+export function asamaSureleri(meta) {
+  const asama = meta?.stage_ms;
+  const olculen = ASAMALAR.map(({ alan }) => olcu(asama?.[alan]));
+  if (!olculen.some((ms) => ms !== null)) return `${ASAMA_ETIKET} ${YOK}`;
+  const sureler = olculen.map(
+    (ms, i) => `${ASAMALAR[i].etiket} ${ms === null ? YOK : sure(ms)}`,
+  );
+  return `${ASAMA_ETIKET} ${YOK} ${sureler.join(" · ")}`;
 }
 
 const FARK_TOPLAMLAR = [
@@ -141,6 +184,7 @@ export function createFisDetay({ onDuzeltme = () => {} } = {}) {
   const dialog = document.getElementById("fis-detay");
   const baslik = document.getElementById("detay-baslik");
   const ozet = document.getElementById("detay-ozet");
+  const asama = document.getElementById("detay-asama");
   const durumEtiket = document.getElementById("detay-dogrulama");
   const hata = document.getElementById("detay-hata");
   const bekleme = document.getElementById("detay-bekleniyor");
@@ -375,6 +419,8 @@ export function createFisDetay({ onDuzeltme = () => {} } = {}) {
     ]
       .filter(Boolean)
       .join(" · ");
+    asama.textContent = asamaSureleri(env.meta);
+    asama.hidden = false;
 
     const etiket = VERDICT[env.validation?.verdict] || {
       etiket: DURUM[env.status] || "—",
@@ -425,6 +471,7 @@ export function createFisDetay({ onDuzeltme = () => {} } = {}) {
     icerik.hidden = true;
     baslik.textContent = "Fiş detayı";
     ozet.textContent = "Yükleniyor…";
+    asama.hidden = true; // the previous receipt's timings are not this job's
     durumEtiket.hidden = true;
     kayitDurumu("");
     onayKutusu.hidden = true;
