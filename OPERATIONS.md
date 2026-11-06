@@ -146,8 +146,8 @@ on 2 GB writes on 2026-11-06, which is why the rows carry mirrors at all.
 
 ### Start, check, and the wait
 
-`STRUCTURER_BACKEND=small` makes the brain stage 2; an empty or unknown value keeps
-the default in `app/config.py`. `python run.py` then spawns it and waits on
+`STRUCTURER_BACKEND=small`, the configured default, makes the brain stage 2; an empty
+or unknown value keeps it. `python run.py` then spawns it and waits on
 `GET http://127.0.0.1:8100/v1/models` — the same probe the Durum page runs, so
 `curl.exe http://127.0.0.1:8100/v1/models` answers the same question by hand: a JSON
 model list means stage 2 is alive, a refused connection means
@@ -161,6 +161,19 @@ load reads ≈90 s on a slow disk (more with a `-ngl` swap), which is past its `
 default. A first `OCR ✗ 60 sn içinde hazır olmadı` on such a disk is not a broken
 model: put `STARTUP_WAIT_S=120` in `.env` and start again.
 
+### Latency — 45 s per receipt
+
+A CPU box buys parity with time: stage 1 reads a receipt in 1–5 s, stage 2 then takes
+16–31 s to structure it (`spike/SMALL_BRAIN_BAKEOFF.md`), so plan on **30–45 s per
+receipt** end to end and budget 45 s whenever the queue is not empty. That fits every
+timeout the app sets — `STRUCTURER_TIMEOUT_S` (120) is the ceiling for stage 2 alone —
+and the phone is tuned to the same budget: a 45 s wait reads as "Yapılandırılıyor"
+progress in Turkish, not as an error, and a job is only called stuck when the queue
+has clearly stalled. What it means for a shift: one worker thread, so 10 receipts
+drain in ~7–8 minutes, and a lunch rush is a latency problem and never a crash. Every
+contract field is identical to a Strata run — only `meta.model` and the wall clock
+differ, and `stage_ms.structure` is where the 30 s shows up.
+
 ### Port 8100 is taken
 
 `run.py` bind-probes before it spawns, so the conflict is named instead of losing the
@@ -173,11 +186,47 @@ it in the order that loses nothing:
 3. Or move the brain: `SMALL_BRAIN_BASE_URL=http://127.0.0.1:8101` moves the bind and
    the client together.
 
+### Rollback — one line
+
+`STRUCTURER_BACKEND` defaults to `small`; a box that has Strata running switches back
+to it with one line in `.env` and a restart. Nothing else is part of the rollback —
+the same database, images, keys and `/v1` answer throughout:
+
+```env
+STRUCTURER_BACKEND=strata
+```
+
+```powershell
+.venv/Scripts/python run.py --stop
+.venv/Scripts/python run.py --no-browser
+```
+
+From the next submission on, jobs queue for Strata, `meta.model` says `strata`, and
+the roll-call waits on `:8080` instead of binding `:8100`. The brain stays installed
+and idle: its line still prints, but a blocked one is a note rather than a
+requirement, and the job receipts in flight on the small brain are unaffected.
+
+### Uninstall
+
+The brain is three files in one folder and nothing else: no registry keys, no service,
+nothing inside the repo. Stop the stack, then delete the directory — the one the
+installer wrote to, which is `OCR_SMALL_BRAIN_DIR` or `%LOCALAPPDATA%\ocr-small-brain`:
+
+```powershell
+.venv/Scripts/python run.py --stop
+Remove-Item -Recurse -Force "$env:LOCALAPPDATA\ocr-small-brain"
+```
+
+`data/` survives it untouched — receipts, jobs, keys and logs are the deployment, and
+no brain install or uninstall reads them. The next `python run.py` prints
+`Small brain ✗ model dosyaları yok`: install it again, or move stage 2 to Strata with
+the one line above.
+
 ### Env reference
 
 | `.env` name | Default | What it moves |
 | --- | --- | --- |
-| `STRUCTURER_BACKEND` | the default in `app/config.py` (`strata` today) | which brain stage 2 runs: `small` is this box's `:8100`, `strata` is `STRATA_HOST:STRATA_PORT`; empty or junk keeps the default |
+| `STRUCTURER_BACKEND` | `small` — the default lives in `app/config.py`, nowhere else | which brain stage 2 runs: `small` is this box's `:8100`, `strata` is `STRATA_HOST:STRATA_PORT`; empty or junk keeps the default |
 | `SMALL_BRAIN_BASE_URL` | `http://127.0.0.1:8100` | the brain's host and port; a host that is not this box means the brain runs elsewhere and `run.py` spawns no child |
 | `SMALL_BRAIN_MODEL` | `Qwen3-VL-4B-Instruct` | the label that lands in `meta.model` — say what really serves |
 | `OCR_SMALL_BRAIN_DIR` | `%LOCALAPPDATA%\ocr-small-brain` | install dir: the installer writes here, the launcher reads here |

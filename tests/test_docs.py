@@ -333,3 +333,75 @@ def test_operations_says_the_status_strata_key_is_the_configured_stage2_brain():
     body = section(OPERATIONS, "Small brain")
     for detail in ["`strata`", "Contract 9", "STRUCTURER_BACKEND"]:
         assert detail in body
+
+
+# --- T93: the cutover story, told the way config really is ---------------------
+
+# ASSUMPTION: a doc states its backend default in the words "`STRUCTURER_BACKEND`
+# defaults to `x`", so this test can read the sentence out instead of guessing
+# which bare "small" or "strata" in a paragraph was meant as the default.
+_BACKEND_DEFAULT = re.compile(r"`STRUCTURER_BACKEND` defaults to `(\w+)`")
+
+
+@pytest.mark.parametrize(
+    "doc, prefix", [("README.md", "Quickstart"), ("OPERATIONS.md", "Small brain")]
+)
+def test_the_default_backend_the_docs_quote_is_configs_default(doc, prefix, monkeypatch):
+    monkeypatch.delenv("STRUCTURER_BACKEND", raising=False)
+    quoted = _BACKEND_DEFAULT.findall(section(DOCS[doc], prefix))
+    assert quoted == [config.structurer_backend()], f"{doc} quotes {quoted}"
+
+
+def test_readme_quickstart_makes_the_cpu_brain_the_thing_you_install_first(monkeypatch):
+    monkeypatch.delenv("STRUCTURER_BACKEND", raising=False)
+    body = section(README, "Quickstart")
+    for detail in [
+        "CPU",
+        "install_small_brain.ps1",
+        "Strata is the optional upgrade",
+        "STRUCTURER_BACKEND=strata",
+    ]:
+        assert detail in body
+    assert "install_small_brain.ps1" in body.split("Strata is the optional upgrade")[0], (
+        "the quick start must install the small brain before offering Strata"
+    )
+
+
+def test_readme_troubleshooting_names_both_small_brain_cross_lines(monkeypatch):
+    monkeypatch.delenv("SMALL_BRAIN_BASE_URL", raising=False)
+    body = section(README, "Troubleshooting")
+    for detail in [
+        "Small brain \u2717 model dosyalar\u0131 yok",
+        f"Small brain \u2717 port {config.small_brain_port()} dolu",
+        "install_small_brain.ps1",
+        "run.py --stop",
+        "SMALL_BRAIN_BASE_URL",
+    ]:
+        assert detail in body
+
+
+def test_operations_small_brain_gives_the_one_line_rollback(monkeypatch):
+    monkeypatch.delenv("STRUCTURER_BACKEND", raising=False)
+    body = section(OPERATIONS, "Small brain")
+    rollback = {"small": "strata", "strata": "small"}[config.structurer_backend()]
+    assert f"STRUCTURER_BACKEND={rollback}\n```" in body, "the rollback is one env line"
+    assert "run.py --stop" in body  # and the restart that applies it
+
+
+def test_operations_small_brain_says_how_to_uninstall_it():
+    body = section(OPERATIONS, "Small brain")
+    for detail in [
+        "Uninstall",
+        "ocr-small-brain",
+        "`OCR_SMALL_BRAIN_DIR`",
+        "run.py --stop",
+        "`data/` survives",
+    ]:
+        assert detail in body
+
+
+def test_operations_small_brain_states_the_latency_budget(monkeypatch):
+    monkeypatch.delenv("STRUCTURER_TIMEOUT_S", raising=False)
+    body = section(OPERATIONS, "Small brain")
+    assert "30\u201345 s" in body
+    assert f"`STRUCTURER_TIMEOUT_S` ({config.structurer_timeout():.0f})" in body

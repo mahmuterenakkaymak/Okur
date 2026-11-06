@@ -1,7 +1,8 @@
 # OCR API — Field-Capture Receipt OCR
 
 Local-first receipt OCR: a worker photographs a receipt on a phone, the pipeline
-returns contract v1 JSON in seconds. `PLAN.md` holds the architecture,
+returns contract v1 JSON — 1–5 s of OCR plus a ~30–45 s structuring pass on a
+cpu-only box, seconds when stage 2 runs on a GPU. `PLAN.md` holds the architecture,
 `CONTRACT.md` the integrator contract, `PROJECT_BRIEF.md` the requirements.
 
 ## What it is
@@ -12,9 +13,10 @@ worker runs three stages and answers with one frozen JSON envelope:
 1. **OCR** — PaddleOCR-VL-1.6 through llama.cpp `llama-server` on `:8081`,
    on CPU by default (`OCR_NGL=0`), so it never competes with Strata for VRAM.
 2. **Structuring** — the stage-2 brain turns the raw text into contract v1
-   `result`: Strata on `:8080`, or the small brain — Qwen3-VL-4B on CPU, `:8100`,
-   zero VRAM — whichever `STRUCTURER_BACKEND` names; `mode: "quality"` routes the
-   same job to Unsloth Studio on `:8888`. `meta.model` says which one answered.
+   `result`: the small brain by default — Qwen3-VL-4B on CPU, `:8100`, zero VRAM —
+   or Strata on `:8080`, whichever `STRUCTURER_BACKEND` names; `mode: "quality"`
+   routes the same job to Unsloth Studio on `:8888`. `meta.model` says which one
+   answered.
 3. **Validation** — pure Python (`app/validator.py`) recomputes every line total,
    ara toplam, iskonto and KDV from `items[]` and compares them with what the
    model claimed. The LLM never owns a number: `validation.verdict` is `ok`,
@@ -42,6 +44,20 @@ uv venv .venv --python 3.12
 uv pip install --python .venv/Scripts/python.exe fastapi "uvicorn[standard]" httpx pydantic jsonschema openpyxl pillow python-dotenv python-multipart pytest
 ```
 
+The stack is CPU-only out of the box: `STRUCTURER_BACKEND` defaults to `small`, so
+stage 2 is the small brain on `127.0.0.1:8100` — no GPU, no CUDA, no second
+machine. Install that brain first, once, before the first start (≈3.1 GB into
+`%LOCALAPPDATA%\ocr-small-brain\`):
+
+```powershell
+.\scripts\install_small_brain.ps1          # downloads what is missing
+.\scripts\install_small_brain.ps1 -Check   # what is installed, what is not
+```
+
+Strata is the optional upgrade behind that switch, never a requirement:
+`STRUCTURER_BACKEND=strata` in `.env` plus a restart moves stage 2 to it — the
+rollback, in one line ([`OPERATIONS.md`](OPERATIONS.md) → Small brain).
+
 Then write `.env` at the root (gitignored; every name is read in `app/config.py`):
 
 ```env
@@ -66,8 +82,8 @@ One key per worker, printed exactly once:
 
 Start everything — `llama-server`, the stage-2 brain, uvicorn and the queue worker —
 and the admin UI opens itself once the roll-call is all green: every child on
-`/health`, the stage-2 brains on their model listing (Strata runs outside this
-launcher):
+`/health`, the stage-2 brain on its model listing (Strata, when it is stage 2,
+runs outside this launcher):
 
 ```powershell
 .venv/Scripts/python run.py
@@ -95,7 +111,7 @@ Checks, smallest first:
 Stage 2 does not need a GPU or a second machine. A second `llama-server` on
 `127.0.0.1:8100` serves Qwen3-VL-4B-Instruct (IQ4_XS, ≈2.1 GB) with its F16 vision
 projector, on CPU, asking the card for nothing: stages 1 and 2 plus the app on one
-box with ~4 GB free RAM. Install it, then say stage 2 is yours:
+box with ~4 GB free RAM. It is stage 2 out of the box — install it and start:
 
 ```powershell
 .\scripts\install_small_brain.ps1          # downloads what is missing
@@ -104,10 +120,11 @@ box with ~4 GB free RAM. Install it, then say stage 2 is yours:
 
 Files go to `%LOCALAPPDATA%\ocr-small-brain\` (`OCR_SMALL_BRAIN_DIR` moves them),
 every download is checked against the `sha256` in `scripts\small_brain_manifest.json`,
-and a stalled Hugging Face CDN falls back to `hf-mirror.com`.
+and a stalled Hugging Face CDN falls back to `hf-mirror.com`. Nothing has to be
+configured; this is what the default already says:
 
 ```env
-STRUCTURER_BACKEND=small
+STRUCTURER_BACKEND=small   # the default; =strata is the rollback
 ```
 
 `python run.py` then starts the brain as its own child and waits on
@@ -238,7 +255,9 @@ the model server's own output are files under `data/logs/` (see
 | `eksik <path>` lines at startup | a model or the `llama-server` binary is missing | fix `LLAMA_SERVER` / `OCR_MODEL` / `OCR_MMPROJ` / `OCR_CHAT_TEMPLATE` in `.env`, or download the files |
 | `OCR ✗ 60 sn içinde hazır olmadı` | llama-server never answered `/health` | read `data/logs/ocr.log`; a slow disk or a huge `-ngl` swap needs a bigger `STARTUP_WAIT_S` |
 | `Uygulama ✗ …` | uvicorn never answered `/health` | read `data/logs/app.log`; a missing `ADMIN_TOKEN` is not one of these, the app boots without it |
-| `Strata ✗ …` | stage 2 never answered `/v1/models` — `run.py` waits for it, it never starts it | start Strata on `127.0.0.1:8080` (`STRATA_HOST`/`STRATA_PORT`), then run `python run.py` again |
+| `Strata ✗ …` | stage 2 never answered `/v1/models` — with `STRUCTURER_BACKEND=strata`; `run.py` waits for Strata, it never starts it | start Strata on `127.0.0.1:8080` (`STRATA_HOST`/`STRATA_PORT`), then run `python run.py` again |
+| `Small brain ✗ model dosyaları yok` | the brain is not installed; the line names the directory it looked in (`OCR_SMALL_BRAIN_DIR`) | run `.\scripts\install_small_brain.ps1`, confirm with `-Check`. Until then the app serves, but every job that reaches stage 2 fails with "small brain not installed" — while the brain is stage 2 that ✗ also exits 1 |
+| `Small brain ✗ port 8100 dolu` | something already listens on the brain's port; the line names the pid and image holding it | `python run.py --stop` first — the launcher's own child is the usual holder; else find it with `netstat -ano` + `findstr :8100`, or move the brain with `SMALL_BRAIN_BASE_URL` |
 | `401 unauthorized` from `/v1`, or the PWA's "API anahtarı çalışmıyor" card | the key is wrong or revoked | `.venv/Scripts/python -m app.keys_cli list`, then issue a fresh key |
 | `429 rate_limited` | this key's token bucket is empty | obey `Retry-After`; raise `RATE_LIMIT_CAPACITY` / `RATE_LIMIT_REFILL_PER_S` only if the real load says so |
 | `413 payload_too_large` | the photo is over `MAX_UPLOAD_MB` (15) | retake closer, or raise the cap knowing what it costs the model |
