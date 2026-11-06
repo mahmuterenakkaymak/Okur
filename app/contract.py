@@ -11,6 +11,7 @@ discrepancy rather than the contract guessing.
 from __future__ import annotations
 
 import json
+import warnings
 from collections.abc import Mapping
 from typing import Annotated, Any, Literal, Self
 
@@ -46,11 +47,24 @@ def _to_rate(value: object) -> object:
     return 0.0 if rate is None else rate
 
 
+def _to_ms(value: object) -> object:
+    # A stage timing that is absent or not a number is 0 — a view would rather
+    # show "—" than guess where the time went. A negative one is a bad clock.
+    number = numbers.parse_number(value)
+    return 0 if number is None else max(0, int(number))
+
+
+def _to_stages(value: object) -> object:
+    """A meta block written by something else may hold anything for stage_ms."""
+    return value if isinstance(value, Mapping) else {}
+
+
 Status = Annotated[_STATUS, BeforeValidator(_lowered)]
 Verdict = Annotated[_VERDICT, BeforeValidator(_lowered)]
 Text = Annotated[str, BeforeValidator(_to_text)]
 Amount = Annotated[float, BeforeValidator(_to_amount)]
 Rate = Annotated[float, BeforeValidator(_to_rate)]
+Ms = Annotated[int, BeforeValidator(_to_ms)]
 
 
 class _Model(BaseModel):
@@ -126,6 +140,25 @@ class Validation(_Model):
     fields: list[Text] = Field(default_factory=list)
 
 
+# The contract's own noun for stage 3 is "validate", which shadows pydantic's
+# deprecated BaseModel.validate; renaming a frozen contract field to hush a
+# warning would cost integrators more than the warning costs anyone.
+with warnings.catch_warnings():
+    warnings.filterwarnings(
+        "ignore", 'Field name "validate" in "StageMs"', UserWarning
+    )
+
+    class StageMs(_Model):
+        """One run's per-stage milliseconds; a stage that never ran reads 0."""
+
+        ocr: Ms = 0
+        structure: Ms = 0
+        validate: Ms = 0
+
+
+StageBlock = Annotated[StageMs, BeforeValidator(_to_stages)]
+
+
 class JobMeta(_Model):
     worker: Text = ""
     captured_at: str | None = None
@@ -134,6 +167,8 @@ class JobMeta(_Model):
     total_ms: int = 0
     model: Text = ""
     quality_mode: bool = False
+    # Additive: total_ms stays the whole-run number, this is a breakdown of it.
+    stage_ms: StageBlock = Field(default_factory=StageMs)
 
 
 class JobEnvelope(_Model):

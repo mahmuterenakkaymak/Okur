@@ -121,6 +121,7 @@ def seed_jobs(conn, *, key_id: int, images_dir: str | os.PathLike[str]) -> list[
             )
         else:
             result = _result_for(name)
+            ocr_ms, total_ms = 900 + 137 * index, 1900 + 263 * index
             db.update_job(
                 conn,
                 job["id"],
@@ -128,8 +129,17 @@ def seed_jobs(conn, *, key_id: int, images_dir: str | os.PathLike[str]) -> list[
                 validation_json=validate(result),
                 meta_json={
                     "worker": WORKER,
-                    "ocr_ms": 900 + 137 * index,
-                    "total_ms": 1900 + 263 * index,
+                    "ocr_ms": ocr_ms,
+                    "total_ms": total_ms,
+                    # ASSUMPTION: "every seeded job" is every job that finished
+                    # a run — stage 2 is what is left of the total, stage 3 a
+                    # couple of milliseconds — while the queued, running and
+                    # failed jobs have no stage times to show, as in life.
+                    "stage_ms": {
+                        "ocr": ocr_ms,
+                        "structure": total_ms - ocr_ms - 2,
+                        "validate": 2,
+                    },
                     "model": config.strata_model(),
                     "quality_mode": False,
                 },

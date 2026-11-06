@@ -39,12 +39,15 @@ def run(
     ocr = OcrClient() if ocr is None else ocr
     structurer = _default_structurer(quality_mode) if structurer is None else structurer
     started = time.perf_counter()
+    # meta.stage_ms: stage 1 and 2 report their own ms, stage 3 gets this
+    # module's clock (below), and total_ms stays the whole-run number.
+    stages = {"ocr": 0, "structure": 0, "validate": 0}
 
     try:
         seen = ocr.transcribe(image_bytes, quality_mode=quality_mode)
     except OcrError as exc:
-        return _bundle(worker, 0, started, quality_mode, _line(1, exc))
-    ocr_ms = _ms(seen.get("ms"))
+        return _bundle(worker, stages, started, quality_mode, _line(1, exc))
+    stages["ocr"] = _ms(seen.get("ms"))
 
     # ASSUMPTION: UnreadableError is the model's own verdict on the receipt, so
     # the job completes done with that verdict and the reason in okunamayan;
@@ -55,20 +58,25 @@ def run(
     except UnreadableError as exc:
         return _bundle(
             worker,
-            ocr_ms,
+            stages,
             started,
             quality_mode,
             "",
             contract.Result(okunamayan=[_reason(exc)]),
         )
     except Exception as exc:
-        return _bundle(worker, ocr_ms, started, quality_mode, _line(2, exc))
+        return _bundle(worker, stages, started, quality_mode, _line(2, exc))
+    # Stage 2 times itself — the HTTP call is the stage — and a stage that died
+    # on the way reported no ms, so it reads 0 rather than the whole run.
+    stages["structure"] = _ms(
+        structured.get("ms") if isinstance(structured, dict) else None
+    )
 
     # Parsing through the contract is what keeps arithmetic out of the model's
     # hands: it keeps only result fields, so a smuggled validation block or
     # verdict in the model payload never reaches the job.
     result = contract.Result.parse(structured if isinstance(structured, dict) else {})
-    return _bundle(worker, ocr_ms, started, quality_mode, "", result)
+    return _bundle(worker, stages, started, quality_mode, "", result)
 
 
 def _default_structurer(quality_mode: bool) -> Any:
@@ -82,23 +90,29 @@ def _default_structurer(quality_mode: bool) -> Any:
 
 def _bundle(
     worker: str,
-    ocr_ms: int,
+    stages: dict[str, int],
     started: float,
     quality_mode: bool,
     error: str,
     result: contract.Result | None = None,
 ) -> dict[str, Any]:
     result = contract.Result() if result is None else result
+    clock = time.perf_counter()
+    validation = validator.validate(result)
+    # Stage 3 is the validator's own clock: microseconds of arithmetic, but it
+    # is the one stage nobody else times, so the breakdown stays honest.
+    stages["validate"] = _ms((time.perf_counter() - clock) * 1000)
     meta = contract.JobMeta(
         worker=worker,
-        ocr_ms=ocr_ms,
+        ocr_ms=stages["ocr"],
         total_ms=int((time.perf_counter() - started) * 1000),
         model=config.stage2_model(quality_mode),
         quality_mode=quality_mode,
+        stage_ms=stages,
     )
     return {
         "result": result.model_dump(),
-        "validation": validator.validate(result),
+        "validation": validation,
         "meta": meta.model_dump(),
         "error": error,
     }

@@ -81,6 +81,9 @@
           "title": "Received At",
           "type": "string"
         },
+        "stage_ms": {
+          "$ref": "#/$defs/StageMs"
+        },
         "total_ms": {
           "default": 0,
           "title": "Total Ms",
@@ -153,6 +156,28 @@
         }
       },
       "title": "Result",
+      "type": "object"
+    },
+    "StageMs": {
+      "description": "One run's per-stage milliseconds; a stage that never ran reads 0.",
+      "properties": {
+        "ocr": {
+          "default": 0,
+          "title": "Ocr",
+          "type": "integer"
+        },
+        "structure": {
+          "default": 0,
+          "title": "Structure",
+          "type": "integer"
+        },
+        "validate": {
+          "default": 0,
+          "title": "Validate",
+          "type": "integer"
+        }
+      },
+      "title": "StageMs",
       "type": "object"
     },
     "Totals": {

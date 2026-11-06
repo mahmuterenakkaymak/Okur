@@ -147,6 +147,17 @@ Provenance and timings.
 | `total_ms` | `int` | `0` |
 | `model` | `str` | `""` |
 | `quality_mode` | `bool` | `false` |
+| `stage_ms` | `StageMs` | `{}` |
+
+## `meta.stage_ms`
+
+Milliseconds per stage; a stage that never ran reads 0. `total_ms` is the whole run, so it is never the sum of these three.
+
+| Field | Type | Default |
+| --- | --- | --- |
+| `ocr` | `int` | `0` |
+| `structure` | `int` | `0` |
+| `validate` | `int` | `0` |
 
 ## Verdicts
 

@@ -143,6 +143,18 @@ class QueueWorker:
             if value is not None
         }
         meta = {**stored, **fresh, "received_at": job["created_at"]}
+        # stage_ms is meta's one nested block, so T52's rule runs one level
+        # down: a stored stage the fresh bundle does not report keeps its
+        # number instead of reading 0 on the detail page.
+        # ASSUMPTION: a stage block that is not an object is no block at all,
+        # never an exception in the worker thread.
+        stages: dict[str, Any] = {}
+        for source in (stored, fresh):
+            block = source.get("stage_ms")
+            if isinstance(block, dict):
+                stages.update(block)
+        if stages:
+            meta["stage_ms"] = stages
         if bundle.get("error"):
             db.set_status(conn, job["id"], "failed", error=str(bundle["error"]))
         else:

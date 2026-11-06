@@ -106,6 +106,9 @@ _SECTIONS: list[tuple[str, type, str]] = [
      "The four amounts the validator recomputes (expected) versus what the "
      "model printed (actual)."),
     ("`meta`", contract.JobMeta, "Provenance and timings."),
+    ("`meta.stage_ms`", contract.StageMs,
+     "Milliseconds per stage; a stage that never ran reads 0. `total_ms` is the "
+     "whole run, so it is never the sum of these three."),
 ]
 
 
