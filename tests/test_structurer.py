@@ -445,3 +445,77 @@ def test_include_image_is_not_read_yet(monkeypatch):
     monkeypatch.setenv("STRUCTURER_INCLUDE_IMAGE", "false")
     _, body = route(backend="small")
     assert [p["type"] for p in body["messages"][0]["content"]] == ["text", "image_url"]
+
+
+# --- include_image: the deployed small brain alone reads text-only (T82) ---
+
+
+IMAGE_DATA_URL = "data:image/jpeg;base64," + base64.b64encode(IMAGE).decode()
+
+
+def content(body):
+    return body["messages"][0]["content"]
+
+
+def test_include_image_off_sends_the_small_brain_prompt_plus_text_only(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "small")
+    monkeypatch.setenv("STRUCTURER_INCLUDE_IMAGE", "0")
+    url, body = route()
+    assert url == f"{config.small_brain_base_url()}/v1/chat/completions"
+    assert content(body) == [{"type": "text", "text": PROMPT + OCR_TEXT}]
+
+
+@pytest.mark.parametrize("value", ["0", "false", "no"])
+def test_any_falsy_switch_silences_the_image_on_the_small_brain(monkeypatch, value):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "small")
+    monkeypatch.setenv("STRUCTURER_INCLUDE_IMAGE", value)
+    assert [p["type"] for p in content(route()[1])] == ["text"]
+
+
+@pytest.mark.parametrize("value", ["1", "true"])
+def test_include_image_on_keeps_the_small_brain_multimodal(monkeypatch, value):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "small")
+    monkeypatch.setenv("STRUCTURER_INCLUDE_IMAGE", value)
+    assert content(route()[1]) == [
+        {"type": "text", "text": PROMPT + OCR_TEXT},
+        {"type": "image_url", "image_url": {"url": IMAGE_DATA_URL}},
+    ]
+
+
+def test_include_image_off_changes_nothing_else_in_the_small_request(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "small")
+    url_with_image, with_image = route()
+    monkeypatch.setenv("STRUCTURER_INCLUDE_IMAGE", "0")
+    url, body = route()
+    assert url == url_with_image
+    assert {k: v for k, v in body.items() if k != "messages"} == {
+        k: v for k, v in with_image.items() if k != "messages"
+    }
+    assert body["model"] == config.small_brain_model()
+    assert body["max_tokens"] == MAX_TOKENS
+    assert body["temperature"] == 0
+    assert body["chat_template_kwargs"] == {"enable_thinking": False}
+    assert body["messages"][0]["role"] == "user"
+    assert [p["type"] for p in content(with_image)] == ["text", "image_url"]
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [{}, {"backend": "strata"}, {"quality_mode": True}, {"backend": "small", "quality_mode": True}],
+)
+def test_include_image_off_never_touches_strata_or_quality_mode(monkeypatch, kwargs):
+    """Flag off, request unchanged: Strata and Unsloth still read the receipt."""
+    today = route(**kwargs)
+    monkeypatch.setenv("STRUCTURER_INCLUDE_IMAGE", "0")
+    assert route(**kwargs) == today
+    assert [p["image_url"]["url"] for p in content(today[1]) if p["type"] == "image_url"] == [
+        IMAGE_DATA_URL
+    ]
+
+
+def test_a_pinned_backend_is_a_one_off_call_the_switch_does_not_reach(monkeypatch):
+    """The switch is about the configured brain; backend= only pins a server."""
+    monkeypatch.setenv("STRUCTURER_INCLUDE_IMAGE", "0")
+    assert [p["type"] for p in content(route(backend="small")[1])] == ["text", "image_url"]
+    monkeypatch.setenv("STRUCTURER_BACKEND", "small")
+    assert [p["type"] for p in content(route()[1])] == ["text"]

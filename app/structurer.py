@@ -69,7 +69,7 @@ def _resolve_backend(backend: str | None) -> str:
     """backend=None reads config; an unknown value is today's path: strata.
 
     config.structurer_include_image() is deliberately not read here: the flag
-    decides *whether* the small backend sends the image, and that is M7's work.
+    decides *whether* a request carries the image, which __init__ applies.
     """
     value = (config.structurer_backend() if backend is None else backend)
     value = value.strip().lower()
@@ -105,21 +105,26 @@ class Structurer:
         # Only this request can meet a brain that was never installed: Strata
         # and quality mode's Unsloth are separate servers in separate places.
         self.uses_small_brain = self.backend == "small" and not quality_mode
+        # STRUCTURER_INCLUDE_IMAGE=0 speaks to the small brain only (PLAN run-2
+        # R11): that leg reads PROMPT + OCR text. Strata and quality mode always
+        # see the receipt, exactly as before the flag existed.
+        # ASSUMPTION: "the small backend" is the brain this box deploys —
+        # config.structurer_backend(), the single resolver (R1) — so a backend=
+        # that pins a server for one call keeps today's whole request.
+        deployed_small = self.uses_small_brain and config.structurer_backend() == "small"
+        self.sends_image = not deployed_small or config.structurer_include_image()
         self.timeout = config.structurer_timeout() if timeout is None else timeout
         self._client = httpx.Client(transport=transport, timeout=self.timeout)
 
     def structure(self, ocr_text: str, image_bytes: bytes) -> dict[str, Any]:
         """Contract-shaped result plus elapsed ms; UnreadableError on junk output."""
-        data_url = "data:image/jpeg;base64," + base64.b64encode(image_bytes).decode()
+        parts = [{"type": "text", "text": PROMPT + (ocr_text or "")}]
+        if self.sends_image:
+            data_url = "data:image/jpeg;base64," + base64.b64encode(image_bytes).decode()
+            parts.append({"type": "image_url", "image_url": {"url": data_url}})
         body = {
             "model": self.model,
-            "messages": [{
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": PROMPT + (ocr_text or "")},
-                    {"type": "image_url", "image_url": {"url": data_url}},
-                ],
-            }],
+            "messages": [{"role": "user", "content": parts}],
             "max_tokens": MAX_TOKENS,
             "temperature": 0,
             # Strata is a reasoning model: left on, it spends the whole budget on
