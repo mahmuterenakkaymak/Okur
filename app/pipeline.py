@@ -93,7 +93,7 @@ def _bundle(
         worker=worker,
         ocr_ms=ocr_ms,
         total_ms=int((time.perf_counter() - started) * 1000),
-        model=config.unsloth_model() if quality_mode else config.strata_model(),
+        model=config.stage2_model(quality_mode),
         quality_mode=quality_mode,
     )
     return {

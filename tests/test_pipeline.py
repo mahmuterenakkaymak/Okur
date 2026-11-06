@@ -241,3 +241,27 @@ def test_unreadable_path_keeps_quality_mode_in_meta():
     bundle, _, _ = run(quality_mode=True, ocr=FakeOcr(error=OcrError("down")))
     assert bundle["meta"]["quality_mode"] is True
     assert bundle["meta"]["model"] == config.unsloth_model()
+
+
+# --- meta.model names the brain that actually ran (config.stage2_model) ---
+
+
+def test_meta_names_strata_while_the_default_backend_is_strata(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
+    bundle, _, _ = run()
+    assert bundle["meta"]["model"] == config.strata_model()
+
+
+def test_meta_names_the_small_brain_on_the_small_backend(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "small")
+    monkeypatch.setenv("SMALL_BRAIN_MODEL", "Qwen3-VL-4B-Instruct")
+    bundle, _, _ = run()
+    assert bundle["meta"]["model"] == config.small_brain_model() == "Qwen3-VL-4B-Instruct"
+    assert bundle["meta"]["model"] != config.strata_model()
+
+
+def test_quality_mode_names_unsloth_even_on_the_small_backend(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "small")
+    bundle, _, _ = run(quality_mode=True)
+    assert bundle["meta"]["model"] == config.unsloth_model()
+    assert bundle["meta"]["model"] != config.small_brain_model()
