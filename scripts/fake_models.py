@@ -171,7 +171,12 @@ def _image_bytes(data_url: str) -> bytes:
 
 
 def _model_id(role: str) -> str:
-    return config.ocr_model_name() if role == "ocr" else config.strata_model()
+    """The model this role answers as — stage 2 is whichever backend resolves.
+
+    ASSUMPTION: one stub server serves one stage-2 route at a time and quality
+    mode is not run through it, so the resolved non-quality model is its id.
+    """
+    return config.ocr_model_name() if role == "ocr" else config.stage2_model(False)
 
 
 class _Handler(BaseHTTPRequestHandler):
