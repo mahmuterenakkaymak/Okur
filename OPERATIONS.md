@@ -100,15 +100,90 @@ multi-GB, re-downloadable.
 | `OCR_CTX` | `4096` | context slots for stage 1 |
 | `OCR_NGL` | `0` | GPU layers; 0 = CPU (see VRAM notes) |
 
-Stages 2 and 3 have no files to place: this app never loads a model, it posts
+Strata and Unsloth have no files to place: this app never loads a model, it posts
 to `STRATA_HOST:STRATA_PORT` (`127.0.0.1:8080`) and, for `mode: "quality"`, to
-`UNSLOTH_HOST:UNSLOTH_PORT` (`127.0.0.1:8888`). `OCR_MODEL_NAME`, `STRATA_MODEL`
-and `UNSLOTH_MODEL` are labels only — they are echoed into `meta.model` and
-should say what is actually serving.
+`UNSLOTH_HOST:UNSLOTH_PORT` (`127.0.0.1:8888`). The small brain — stage 2's CPU
+option, its own section below — is the one model this machine keeps, and it keeps it
+outside the repo. `OCR_MODEL_NAME`, `STRATA_MODEL` and `UNSLOTH_MODEL` are labels
+only — they are echoed into `meta.model` and should say what is actually serving.
 
 Ports an operator cares about: `8090` app (`APP_HOST`/`APP_PORT`), `8081` OCR
-(`OCR_HOST`/`OCR_PORT`), plus the two stage-2 servers above. All four listen on
-loopback; Tailscale is the only thing that reaches the outside.
+(`OCR_HOST`/`OCR_PORT`), `8100` small brain (`SMALL_BRAIN_BASE_URL`), plus the two
+stage-2 servers above. All of them listen on loopback; Tailscale is the only thing
+that reaches the outside.
+
+## Small brain — stage 2 on a CPU-only box
+
+Stage 2 has a second shape: the same `llama-server` binary as stage 1, serving
+Qwen3-VL-4B-Instruct (IQ4_XS, ≈2.1 GB) and its F16 vision projector (≈0.8 GB) on
+`127.0.0.1:8100`, spawned and stopped by `run.py` as its own child. That is the
+minimum-hardware deployment — both stages and the app on one box, no second machine,
+no GPU in the loop; the measurements are in `spike/SMALL_BRAIN_BAKEOFF.md`.
+
+| | |
+| --- | --- |
+| Minimum hardware | CPU only — no GPU, no CUDA, no driver. **~4 GB free RAM** for the brain (model + 8k context + one image at 1024 vision tokens) on top of what stage 1 already wants; a laptop i5 runs it, it is not fast |
+| VRAM | zero — the launcher always starts it with `-ngl 0`, so whatever the card holds is untouched (VRAM notes) |
+| Install dir | `%LOCALAPPDATA%\ocr-small-brain\` — `llama\llama-server.exe`, `models\Qwen3-VL-4B-Instruct-IQ4_XS.gguf`, `models\mmproj-F16.gguf`; `OCR_SMALL_BRAIN_DIR` moves the whole thing, and none of it ever lands in the repo |
+| Port | `8100` on loopback, taken from `SMALL_BRAIN_BASE_URL` — the launcher binds it and the client posts to it, one env value for both |
+| Files missing | the roll-call prints `Small brain ✗ model dosyaları yok` with the install command and the directory it looked in, the app still starts, and a job that reaches stage 2 fails with "small brain not installed" |
+
+### Install
+
+```powershell
+.\scripts\install_small_brain.ps1          # downloads what is missing, leaves what is installed alone
+.\scripts\install_small_brain.ps1 -Check   # installed/missing report, always exit 0
+.\scripts\install_small_brain.ps1 -Force   # re-download every row
+```
+
+Everything to download is one row of `scripts\small_brain_manifest.json`:
+`{id, url, mirror_url?, dest, sha256, size_bytes}`, where `dest` is always relative to
+the install dir. Each download lands on a `<dest>.part` temp file and moves into place
+only after its byte count and its `sha256` match the manifest, so a half-downloaded
+GGUF never becomes an installed model. The primary CDN is tried once more before the
+script falls back to the row's `hf-mirror.com` mirror — Hugging Face's own CDN stalled
+on 2 GB writes on 2026-11-06, which is why the rows carry mirrors at all.
+
+### Start, check, and the wait
+
+`STRUCTURER_BACKEND=small` makes the brain stage 2; an empty or unknown value keeps
+the default in `app/config.py`. `python run.py` then spawns it and waits on
+`GET http://127.0.0.1:8100/v1/models` — the same probe the Durum page runs, so
+`curl.exe http://127.0.0.1:8100/v1/models` answers the same question by hand: a JSON
+model list means stage 2 is alive, a refused connection means
+`data/logs/small-brain.log` says why. Contract 9 froze the status payload's key names,
+so the `strata` key reports whichever stage-2 brain is configured — the small brain on
+`8100` while `STRUCTURER_BACKEND=small`, Strata otherwise — and a CPU-only Durum page
+is green instead of permanently red.
+
+The startup wait is shared: `STARTUP_WAIT_S` applies to every service, and a cold OCR
+load reads ≈90 s on a slow disk (more with a `-ngl` swap), which is past its `60`
+default. A first `OCR ✗ 60 sn içinde hazır olmadı` on such a disk is not a broken
+model: put `STARTUP_WAIT_S=120` in `.env` and start again.
+
+### Port 8100 is taken
+
+`run.py` bind-probes before it spawns, so the conflict is named instead of losing the
+race: `Small brain ✗ port 8100 dolu`, with the pid and image name of the holder. Free
+it in the order that loses nothing:
+
+1. `python run.py --stop` — the launcher's own child is the usual holder.
+2. `netstat -ano | findstr :8100`, then stop that pid — a second llama-server or a
+   leftover from a crash is not ours to track.
+3. Or move the brain: `SMALL_BRAIN_BASE_URL=http://127.0.0.1:8101` moves the bind and
+   the client together.
+
+### Env reference
+
+| `.env` name | Default | What it moves |
+| --- | --- | --- |
+| `STRUCTURER_BACKEND` | the default in `app/config.py` (`strata` today) | which brain stage 2 runs: `small` is this box's `:8100`, `strata` is `STRATA_HOST:STRATA_PORT`; empty or junk keeps the default |
+| `SMALL_BRAIN_BASE_URL` | `http://127.0.0.1:8100` | the brain's host and port; a host that is not this box means the brain runs elsewhere and `run.py` spawns no child |
+| `SMALL_BRAIN_MODEL` | `Qwen3-VL-4B-Instruct` | the label that lands in `meta.model` — say what really serves |
+| `OCR_SMALL_BRAIN_DIR` | `%LOCALAPPDATA%\ocr-small-brain` | install dir: the installer writes here, the launcher reads here |
+| `SMALL_BRAIN_SERVER` / `SMALL_BRAIN_MODEL_FILE` / `SMALL_BRAIN_MMPROJ` | `<dir>\llama\llama-server.exe`, `<dir>\models\<gguf>`, `<dir>\models\mmproj-F16.gguf` | the three installed files, one env name each; `small_brain_ready()` is the check that all three exist |
+| `STRUCTURER_INCLUDE_IMAGE` | `true` | small backend only: send the photo next to the OCR text; `0`/`false`/`no` is text-only. Strata and quality mode always send the image |
+| `STARTUP_WAIT_S` | `60` | seconds the roll-call waits per service — see the cold-load note above |
 
 ## VRAM notes
 
@@ -119,7 +194,7 @@ runs on CPU by default and never asks the GPU for anything.
 | --- | --- |
 | Stage 1 default | `-ngl 0` → CPU, ~2 GB VRAM, 1–5 s per receipt (`spike/REPORT.md`: 1.0–5.3 s average, measured against Strata holding 31.4/32 GB) |
 | `OCR_NGL` | GPU layers for llama-server; raise it only when Strata is off or the card genuinely has room, and re-measure before trusting it |
-| Stage 2 | a separate process this app only calls over HTTP — its VRAM is Strata's or Unsloth Studio's problem, not the app's |
+| Stage 2 | a separate process this app only calls over HTTP — its VRAM is Strata's or Unsloth Studio's problem, not the app's; the small brain is that process too, and `-ngl 0` keeps it out of the card entirely |
 | Live reading | admin → Durum shows used/total MB from `nvidia-smi` next to queue depth, amber past 90 %; on a CPU-only box it reads unavailable, which is a fact and not an error |
 
 Two consequences worth remembering: OCR throughput is CPU-bound, so a queue

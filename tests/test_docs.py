@@ -9,6 +9,7 @@ must not start a server, create a key or touch the tailnet.
 from __future__ import annotations
 
 import importlib.util
+import json
 import pathlib
 import re
 
@@ -27,6 +28,8 @@ _FENCE = re.compile(r"^```(\w*)\n(.*?)^```", re.S | re.M)
 _TRAILING_COMMENT = re.compile(r"\s+#.*$")
 _ENV_ASSIGN = re.compile(r"^([A-Z][A-Z0-9_]*)=", re.M)
 _SCRIPT_MENTION = re.compile(r"scripts[/\\]([\w.-]+\.(?:py|ps1))")
+_BACKTICKED_ENV = re.compile(r"`([A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+)`")
+MANIFEST = json.loads((ROOT / "scripts" / "small_brain_manifest.json").read_text(encoding="utf-8"))
 _PS_FLAG = re.compile(r"^-(\w+)$")
 
 
@@ -242,3 +245,91 @@ def test_operations_documents_the_configured_port(port: str, monkeypatch):
     monkeypatch.delenv(port, raising=False)
     value = getattr(config, port.lower())()
     assert str(value) in OPERATIONS
+
+
+# --- small brain: stage 2 on a CPU-only box ----------------------------------
+
+# ASSUMPTION: an env name is "quoted" when a doc puts it in backticks; it is then
+# held to the same rule as the .env blocks — app/config.py must really read it.
+def test_every_backticked_env_name_in_the_docs_is_one_config_reads():
+    names = {n for text in DOCS.values() for n in _BACKTICKED_ENV.findall(text)}
+    assert names, "the docs quote no env name"
+    unknown = sorted(n for n in names if f'"{n}"' not in CONFIG_SOURCE)
+    assert not unknown, f"the docs quote {unknown}, which app/config.py never reads"
+
+
+def test_readme_small_brain_section_installs_the_brain_and_checks_it(monkeypatch):
+    monkeypatch.delenv("SMALL_BRAIN_BASE_URL", raising=False)
+    body = section(README, "Small brain")
+    for detail in [
+        "install_small_brain.ps1",
+        "STRUCTURER_BACKEND",
+        f"http://127.0.0.1:{config.small_brain_port()}/v1/models",
+        "OPERATIONS.md",
+    ]:
+        assert detail in body
+
+
+def test_operations_small_brain_gives_the_hardware_and_the_manifest_model_size():
+    body = section(OPERATIONS, "Small brain")
+    for detail in ["CPU", "4 GB", "VRAM"]:
+        assert detail in body
+    model = next(r for r in MANIFEST if r["dest"].endswith(".gguf") and "mmproj" not in r["dest"])
+    assert f"{model['size_bytes'] / 1024**3:.1f} GB" in body
+
+
+def test_operations_small_brain_documents_the_installer_and_its_guarantees():
+    body = section(OPERATIONS, "Small brain")
+    for detail in [
+        "install_small_brain.ps1",
+        "-Check",
+        "-Force",
+        "OCR_SMALL_BRAIN_DIR",
+        "sha256",
+        "hf-mirror.com",
+    ]:
+        assert detail in body
+
+
+def test_operations_small_brain_names_the_port_and_every_way_to_free_it(monkeypatch):
+    monkeypatch.delenv("SMALL_BRAIN_BASE_URL", raising=False)
+    body = section(OPERATIONS, "Small brain")
+    for detail in [
+        f"http://127.0.0.1:{config.small_brain_port()}/v1/models",
+        f"port {config.small_brain_port()}",
+        "run.py --stop",
+        "netstat",
+    ]:
+        assert detail in body
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "STRUCTURER_BACKEND",
+        "SMALL_BRAIN_BASE_URL",
+        "SMALL_BRAIN_MODEL",
+        "OCR_SMALL_BRAIN_DIR",
+        "SMALL_BRAIN_SERVER",
+        "SMALL_BRAIN_MODEL_FILE",
+        "SMALL_BRAIN_MMPROJ",
+        "STRUCTURER_INCLUDE_IMAGE",
+    ],
+)
+def test_operations_small_brain_reference_lists_env_names_config_actually_reads(name: str):
+    assert f"`{name}`" in section(OPERATIONS, "Small brain")
+    assert f'"{name}"' in CONFIG_SOURCE
+
+
+def test_operations_notes_the_cold_ocr_load_against_the_shared_startup_wait(monkeypatch):
+    monkeypatch.delenv("STARTUP_WAIT_S", raising=False)
+    body = section(OPERATIONS, "Small brain")
+    assert "STARTUP_WAIT_S" in body
+    assert str(config.startup_wait_s()) in body
+    assert "90" in body  # OCR's measured cold load, past the default wait
+
+
+def test_operations_says_the_status_strata_key_is_the_configured_stage2_brain():
+    body = section(OPERATIONS, "Small brain")
+    for detail in ["`strata`", "Contract 9", "STRUCTURER_BACKEND"]:
+        assert detail in body

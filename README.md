@@ -11,8 +11,10 @@ worker runs three stages and answers with one frozen JSON envelope:
 
 1. **OCR** — PaddleOCR-VL-1.6 through llama.cpp `llama-server` on `:8081`,
    on CPU by default (`OCR_NGL=0`), so it never competes with Strata for VRAM.
-2. **Structuring** — Strata on `:8080` turns the raw text into contract v1
-   `result`; `mode: "quality"` routes the same job to Unsloth Studio on `:8888`.
+2. **Structuring** — the stage-2 brain turns the raw text into contract v1
+   `result`: Strata on `:8080`, or the small brain — Qwen3-VL-4B on CPU, `:8100`,
+   zero VRAM — whichever `STRUCTURER_BACKEND` names; `mode: "quality"` routes the
+   same job to Unsloth Studio on `:8888`. `meta.model` says which one answered.
 3. **Validation** — pure Python (`app/validator.py`) recomputes every line total,
    ara toplam, iskonto and KDV from `items[]` and compares them with what the
    model claimed. The LLM never owns a number: `validation.verdict` is `ok`,
@@ -60,9 +62,10 @@ One key per worker, printed exactly once:
 .venv/Scripts/python -m app.keys_cli add ayse
 ```
 
-Start everything — `llama-server`, uvicorn and the queue worker — and the admin
-UI opens itself once the roll-call is all green: the two children on `/health`,
-Strata (started outside this launcher) on its model listing:
+Start everything — `llama-server`, the stage-2 brain, uvicorn and the queue worker —
+and the admin UI opens itself once the roll-call is all green: every child on
+`/health`, the stage-2 brains on their model listing (Strata runs outside this
+launcher):
 
 ```powershell
 .venv/Scripts/python run.py
@@ -84,6 +87,32 @@ Checks, smallest first:
 .venv/Scripts/python scripts/smoke_e2e.py
 .venv/Scripts/python scripts/acceptance.py --demo
 ```
+
+## Small brain — stage 2 on a CPU-only box
+
+Stage 2 does not need a GPU or a second machine. A second `llama-server` on
+`127.0.0.1:8100` serves Qwen3-VL-4B-Instruct (IQ4_XS, ≈2.1 GB) with its F16 vision
+projector, on CPU, asking the card for nothing: stages 1 and 2 plus the app on one
+box with ~4 GB free RAM. Install it, then say stage 2 is yours:
+
+```powershell
+.\scripts\install_small_brain.ps1          # downloads what is missing
+.\scripts\install_small_brain.ps1 -Check   # what is installed, what is not
+```
+
+Files go to `%LOCALAPPDATA%\ocr-small-brain\` (`OCR_SMALL_BRAIN_DIR` moves them),
+every download is checked against the `sha256` in `scripts\small_brain_manifest.json`,
+and a stalled Hugging Face CDN falls back to `hf-mirror.com`.
+
+```env
+STRUCTURER_BACKEND=small
+```
+
+`python run.py` then starts the brain as its own child and waits on
+`GET http://127.0.0.1:8100/v1/models`; that is also the hand check — a JSON model list
+means stage 2 is alive, a refused connection means `data/logs/small-brain.log` says
+why. Hardware numbers, a busy port 8100, the `SMALL_BRAIN_*` reference and the
+cold-load `STARTUP_WAIT_S` note: [`OPERATIONS.md`](OPERATIONS.md) → Small brain.
 
 ## PWA install
 
@@ -214,7 +243,7 @@ the model server's own output are files under `data/logs/` (see
 | Job sits in `queued` | nothing is draining the queue | the worker lives in `run.py` — start it with `python run.py`, not with a bare uvicorn |
 | `Only images are accepted` / `image is empty` | the upload is not a decodable image | check the camera app's output format; `MAX_UPLOAD_MB` says 413, this says the bytes are not a picture |
 | Certificate error on the phone | HTTPS is not up, or Tailscale is off | `.\scripts\tailscale_serve.ps1 -Status`, then reconnect the phone's Tailscale |
-| `could not bind … address already in use` | a port is taken | `python run.py --stop` first, or move ports with `--app-port` / `--ocr-port` |
+| `could not bind … address already in use` | a port is taken — for `8100` the roll-call names the pid and image holding it | `python run.py --stop` first, or move ports with `--app-port` / `--ocr-port` (the brain moves with `SMALL_BRAIN_BASE_URL`) |
 | `verdict: mismatch` on clean-looking receipts | the printed total and the recomputed one disagree — usually a discount line the OCR missed | open the job in `/admin`, compare expected vs actual, correct the field; the correction re-runs the validator |
 | `verdict: unreadable` | stage 2 could not produce schema-valid JSON | re-shoot, or rerun the job in quality mode from `/admin` |
 
