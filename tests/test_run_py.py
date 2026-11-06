@@ -1,6 +1,6 @@
 """run.py: the launcher's commands, health gate, pid/log bookkeeping and --stop.
 
-The two servers are faked at the spawn seam (a launcher test must not need a
+The three servers are faked at the spawn seam (a launcher test must not need a
 GGUF or a free port); everything else — argument building, the pid and log
 files, process liveness and killing, the exit codes — is the real thing.
 """
@@ -20,6 +20,7 @@ from app import config
 OWN_PREFIXES = (
     "APP_", "OCR_", "STRATA_", "UNSLOTH_", "LLAMA_", "PROBE_",
     "STARTUP_", "DATA_DIR", "DB_PATH",
+    "SMALL_BRAIN_", "STRUCTURER_BACKEND",
 )
 
 
@@ -34,7 +35,7 @@ def flag_value(command: list[str], flag: str) -> str:
     return command[command.index(flag) + 1]
 
 
-# --- the two command lines ---
+# --- the three command lines ---
 
 
 def test_ocr_command_serves_the_gguf_with_mmproj_and_chat_template():
@@ -69,12 +70,38 @@ def test_app_command_serves_the_app_factory_with_uvicorn():
     assert flag_value(run.app_command(), "--port") == "8090"
 
 
+def test_small_brain_command_serves_its_gguf_as_a_second_llama_server():
+    command = run.small_brain_command()
+    assert command[0] == str(config.small_brain_server_path())
+    assert flag_value(command, "-m") == str(config.small_brain_model_path())
+    assert flag_value(command, "--mmproj") == str(config.small_brain_mmproj_path())
+    assert "--no-webui" in command
+
+
+def test_small_brain_command_fits_a_cpu_only_box_and_one_receipt_image():
+    command = run.small_brain_command()
+    assert flag_value(command, "--host") == "127.0.0.1"
+    assert flag_value(command, "--port") == "8100"
+    assert flag_value(command, "-c") == "8192"
+    assert flag_value(command, "-ngl") == "0"
+    assert flag_value(command, "--image-min-tokens") == "1024"
+    assert flag_value(command, "--image-max-tokens") == "1024"
+    assert flag_value(command, "--temp") == "0"
+
+
+def test_small_brain_command_moves_with_the_base_url_the_app_will_call(monkeypatch):
+    monkeypatch.setenv("SMALL_BRAIN_BASE_URL", "http://127.0.0.1:9100")
+    assert flag_value(run.small_brain_command(), "--port") == "9100"
+
+
 # --- where the launcher keeps its bookkeeping ---
 
 
 def test_pids_and_logs_live_under_the_data_dir():
     assert run.pid_path("ocr") == config.data_dir() / "ocr.pid"
+    assert run.pid_path("small-brain") == config.data_dir() / "small-brain.pid"
     assert run.log_path("app") == config.data_dir() / "logs" / "app.log"
+    assert run.log_path("small-brain") == config.data_dir() / "logs" / "small-brain.log"
 
 
 def test_spawn_appends_the_child_output_to_its_own_log():
@@ -126,12 +153,13 @@ def track(name: str, pid: int) -> None:
 
 
 def test_stop_kills_the_tracked_processes_and_clears_their_pid_files(capsys):
-    app, ocr = sleep_child(), sleep_child()
+    app, ocr, brain = sleep_child(), sleep_child(), sleep_child()
     track("app", app.pid)
     track("ocr", ocr.pid)
+    track("small-brain", brain.pid)
 
     assert run.stop() == 0
-    for name, child in (("app", app), ("ocr", ocr)):
+    for name, child in (("app", app), ("ocr", ocr), ("small-brain", brain)):
         child.wait(timeout=10)
         assert run._alive(child.pid) is False
         assert not run.pid_path(name).exists()
@@ -239,7 +267,7 @@ def launcher(monkeypatch):
     monkeypatch.setattr(run, "QueueWorker", FakeWorker)
     def fake_wait(children):
         state["tracked"] = {
-            name: run.pid_path(name).read_text() for name in ("app", "ocr")
+            name: run.pid_path(name).read_text() for name in run.SERVICES
         }
 
     monkeypatch.setattr(run, "_wait_for_children", fake_wait)
@@ -249,18 +277,18 @@ def launcher(monkeypatch):
 
 def test_start_tracks_pids_starts_the_worker_and_reports_the_admin_url(launcher, capsys):
     assert run.start(8081, 8090, browser=True) == 0
-    assert {name for name, _, _ in launcher.spawned} == {"ocr", "app"}
+    assert {name for name, _, _ in launcher.spawned} == {"ocr", "app", "small-brain"}
     assert launcher.tracked == {
         name: str(pid) for name, pid in launcher.children.items()
     }
     assert (FakeWorker.started, FakeWorker.stopped) == (1, 1)
     out = capsys.readouterr().out
-    # D7 roll-call: OCR, Strata and Uygulama, though only two are children
-    assert out.count("✓") == 3
+    # D7 roll-call: OCR, Strata, Small brain and Uygulama, though only three are children
+    assert out.count("✓") == 4
     assert "http://127.0.0.1:8090/admin" in out
     assert launcher.opened == ["http://127.0.0.1:8090/admin"]
     assert sorted(launcher.killed) == sorted(launcher.children.values())
-    assert not run.pid_path("ocr").exists() and not run.pid_path("app").exists()
+    assert all(run.pid_path(name).exists() is False for name in run.SERVICES)
 
 
 def test_no_browser_starts_the_same_stack_without_opening_one(launcher):
@@ -279,7 +307,18 @@ def test_start_names_the_log_and_the_retry_command_when_a_service_never_heals(
     assert "python run.py" in out
     assert launcher.opened == []
     assert sorted(launcher.killed) == sorted(launcher.children.values())
-    assert not run.pid_path("ocr").exists() and not run.pid_path("app").exists()
+    assert all(run.pid_path(name).exists() is False for name in run.SERVICES)
+
+
+def test_ctrl_c_stops_the_small_brain_with_the_rest_of_the_stack(launcher, monkeypatch):
+    def interrupted(children):
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(run, "_wait_for_children", interrupted)
+
+    assert run.start(8081, 8090, browser=False) == 0
+    assert launcher.killed == [launcher.children[name] for name in run.SERVICES]
+    assert not run.pid_path("small-brain").exists()
 
 
 def test_start_refuses_before_spawning_when_a_model_file_is_missing(launcher, monkeypatch, capsys):

@@ -1,10 +1,10 @@
 """D7: the launcher's roll-call.
 
 One green ✓ line per service as it turns healthy, in the order PLAN names
-(OCR, Strata, Uygulama), the admin UI only once all three are up, and a ✗ that
-names the log to read (or, for Strata, the process to start) plus the retry
-command. Children, health gate, worker and browser stay faked at the same seams
-tests/test_run_py.py uses; the roll-call itself is the real code.
+(OCR, Strata, Small brain, Uygulama), the admin UI only once all of them are up,
+and a ✗ that names the log to read (or, for Strata, the process to start) plus
+the retry command. Children, health gate, worker and browser stay faked at the
+same seams tests/test_run_py.py uses; the roll-call itself is the real code.
 """
 import os
 import sys
@@ -18,6 +18,7 @@ from app import config, status
 OWN_PREFIXES = (
     "APP_", "OCR_", "STRATA_", "UNSLOTH_", "LLAMA_", "PROBE_",
     "STARTUP_", "DATA_DIR", "DB_PATH",
+    "SMALL_BRAIN_", "STRUCTURER_BACKEND",
 )
 
 
@@ -34,6 +35,11 @@ def lines(text: str) -> list[str]:
 
 def checks(text: str) -> list[str]:
     return [line for line in lines(text) if "✓" in line]
+
+
+def label(check_line: str) -> str:
+    """The service a ✓ line belongs to, before _say's column padding."""
+    return check_line.split("  ")[0]
 
 
 class FakeChild:
@@ -86,14 +92,26 @@ def launcher(monkeypatch):
 # --- what is waited for, and where ---
 
 
-def test_roll_call_reads_ocr_strata_then_the_app_on_their_own_paths(monkeypatch):
+def test_roll_call_reads_ocr_strata_small_brain_then_the_app_there(monkeypatch):
     monkeypatch.setenv("OCR_PORT", "9101")
     monkeypatch.setenv("APP_PORT", "9100")
     assert run.roll_call() == [
         ("ocr", "http://127.0.0.1:9101", run.HEALTH_PATH),
         ("strata", "http://127.0.0.1:8080", status.PROBE_PATH),
+        ("small-brain", "http://127.0.0.1:8100", status.PROBE_PATH),
         ("app", "http://127.0.0.1:9100", run.HEALTH_PATH),
     ]
+
+
+def test_the_small_brain_is_waited_for_whatever_stage_two_is_named(monkeypatch):
+    for backend in ("small", "strata"):
+        monkeypatch.setenv("STRUCTURER_BACKEND", backend)
+        assert ("small-brain", "http://127.0.0.1:8100", status.PROBE_PATH) in run.roll_call()
+
+
+def test_strata_is_only_waited_for_when_it_is_the_stage_two_backend(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "small")
+    assert [name for name, _, _ in run.roll_call()] == ["ocr", "small-brain", "app"]
 
 
 def test_stop_never_touches_strata_that_this_launcher_never_started(launcher, capsys):
@@ -109,9 +127,10 @@ def test_stop_never_touches_strata_that_this_launcher_never_started(launcher, ca
 
 def test_every_healthy_service_gets_its_own_check_line_in_order(launcher, capsys):
     assert run.start(8081, 8090, browser=True) == 0
-    assert [line.split()[0] for line in checks(capsys.readouterr().out)] == [
+    assert [label(line) for line in checks(capsys.readouterr().out)] == [
         "OCR",
         "Strata",
+        "Small brain",
         "Uygulama",
     ]
 
@@ -158,7 +177,8 @@ def test_a_child_that_never_heals_names_its_log_and_the_retry_command(launcher, 
     assert sorted(launcher["killed"]) == sorted(child.pid for _, _, child in launcher["spawned"])
 
 
-def test_a_strata_that_never_answers_names_the_process_to_start(launcher, capsys):
+def test_a_strata_that_never_answers_names_the_process_to_start(launcher, monkeypatch, capsys):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     launcher["down"].add(config.strata_base_url())
 
     assert run.start(8081, 8090, browser=True) == 1
@@ -167,5 +187,26 @@ def test_a_strata_that_never_answers_names_the_process_to_start(launcher, capsys
     assert config.strata_base_url() in out
     assert "python run.py" in out
     assert any(line.startswith("OCR") and "✓" in line for line in lines(out))
+    assert launcher["opened"] == []
+    assert sorted(launcher["killed"]) == sorted(child.pid for _, _, child in launcher["spawned"])
+
+
+def test_a_cpu_only_box_running_the_small_brain_never_waits_for_strata(launcher, monkeypatch, capsys):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "small")
+    launcher["down"].add(config.strata_base_url())
+
+    assert run.start(8081, 8090, browser=True) == 0
+    out = capsys.readouterr().out
+    assert "Strata" not in out
+    assert [label(line) for line in checks(out)] == ["OCR", "Small brain", "Uygulama"]
+
+
+def test_a_small_brain_that_never_heals_names_its_own_log(launcher, capsys):
+    launcher["down"].add(config.small_brain_base_url())
+
+    assert run.start(8081, 8090, browser=True) == 1
+    out = capsys.readouterr().out
+    assert any(line.startswith("Small brain") and "✗" in line for line in lines(out))
+    assert str(run.log_path("small-brain")) in out
     assert launcher["opened"] == []
     assert sorted(launcher["killed"]) == sorted(child.pid for _, _, child in launcher["spawned"])

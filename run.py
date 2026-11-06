@@ -4,14 +4,16 @@
     python run.py --ocr-port 9001 --app-port 9000 --no-browser
     python run.py --stop                                      # stop from anywhere
 
-run.py supervises the two servers this stack needs and nothing else: it never
+run.py supervises the three servers this stack needs and nothing else: it never
 downloads a model or builds a database. llama-server serves the PaddleOCR-VL
 GGUF with -ngl 0 by default (PLAN decision 2: CPU OCR coexists with Strata's
-32 GB, OCR_NGL flips it to GPU), uvicorn serves app.main:create_app. Every
-service then gets its own green ✓ line the moment it turns healthy (PLAN D7):
-the two children on /health, Strata — stage 2, a process this launcher does not
-own — on the model listing. The queue worker thread lives here because the app
-factory does not own it — without it an upload would sit in the queue forever.
+32 GB, OCR_NGL flips it to GPU) and, on 8100, the small brain that runs stage 2
+once STRUCTURER_BACKEND says small; uvicorn serves app.main:create_app. Every service then gets its own
+green ✓ line the moment it turns healthy (PLAN D7): the three children on
+/health, Strata — stage 2 only when STRUCTURER_BACKEND says so, and a process
+this launcher does not own — on the model listing. The queue worker thread lives
+here because the app factory does not own it — without it an upload would sit in
+the queue forever.
 
 Child PIDs go to data/<name>.pid and their output to data/logs/<name>.log, so
 --stop works from another terminal and a failed start names the log to read.
@@ -27,20 +29,32 @@ import subprocess
 import sys
 import time
 import webbrowser
+from urllib.parse import urlparse
 
 import httpx
 
 from app import config, status
 from app.queue_worker import QueueWorker
 
+# the small brain is a receipt-structuring run at most: 8k context, one image
+# at a fixed token budget, and no GPU layers (the box that runs it has none).
+# ASSUMPTION: fixed rather than env-configurable — unlike OCR, it has one job.
+SMALL_BRAIN_CTX = "8192"
+SMALL_BRAIN_IMAGE_TOKENS = "1024"
+
 HEALTH_PATH = "/health"
 POLL_S = 0.25
 TERMINATE_GRACE_S = 5.0
 GREEN, RESET = "\x1b[32m", "\x1b[0m"
 
-# app first: stop feeding the queue before pulling the model server out.
-SERVICES = ("app", "ocr")
-LABELS = {"app": "Uygulama", "ocr": "OCR", "strata": "Strata"}
+# app first: stop feeding the queue before pulling the model servers out.
+SERVICES = ("app", "ocr", "small-brain")
+LABELS = {
+    "app": "Uygulama",
+    "ocr": "OCR",
+    "strata": "Strata",
+    "small-brain": "Small brain",
+}
 
 
 def _say(step: str, detail: str) -> None:
@@ -89,6 +103,29 @@ def ocr_command(ocr_port: int | None = None) -> list[str]:
     ]
 
 
+def small_brain_host() -> str:
+    """Host of the small brain, read off its base url so one env value moves
+    the launcher and the stage-2 client together; junk means loopback."""
+    return urlparse(config.small_brain_base_url()).hostname or "127.0.0.1"
+
+
+def small_brain_command(port: int | None = None) -> list[str]:
+    port = config.small_brain_port() if port is None else port
+    return [
+        str(config.small_brain_server_path()),
+        "-m", str(config.small_brain_model_path()),
+        "--mmproj", str(config.small_brain_mmproj_path()),
+        "--host", small_brain_host(),
+        "--port", str(port),
+        "-c", SMALL_BRAIN_CTX,
+        "-ngl", "0",
+        "--image-min-tokens", SMALL_BRAIN_IMAGE_TOKENS,
+        "--image-max-tokens", SMALL_BRAIN_IMAGE_TOKENS,
+        "--temp", "0",
+        "--no-webui",
+    ]
+
+
 def app_command(app_port: int | None = None) -> list[str]:
     port = config.app_port() if app_port is None else app_port
     return [
@@ -102,15 +139,19 @@ def app_command(app_port: int | None = None) -> list[str]:
 def roll_call() -> list[tuple[str, str, str]]:
     """(name, base_url, health path) in the order the roll-call reads (D7).
 
-    Strata is stage 2 and a separate process (OPERATIONS.md → Model paths), so
-    it is waited for and never spawned: it answers the OpenAI model listing
-    rather than /health, which is what app/status.py probes for every server.
+    Strata is a separate process (OPERATIONS.md → Model paths), so it is waited
+    for and never spawned, and only when it is the configured stage-2 backend —
+    a CPU-only box has no Strata to wait for. The small brain is this launcher's
+    own child, so it is waited for always: a job would die at stage 2 otherwise.
+    Both model servers answer the OpenAI model listing rather than /health,
+    which is what app/status.py probes for every server.
     """
-    return [
-        ("ocr", config.ocr_base_url(), HEALTH_PATH),
-        ("strata", config.strata_base_url(), status.PROBE_PATH),
-        ("app", config.app_base_url(), HEALTH_PATH),
-    ]
+    entries = [("ocr", config.ocr_base_url(), HEALTH_PATH)]
+    if config.structurer_backend() == "strata":
+        entries.append(("strata", config.strata_base_url(), status.PROBE_PATH))
+    entries.append(("small-brain", config.small_brain_base_url(), status.PROBE_PATH))
+    entries.append(("app", config.app_base_url(), HEALTH_PATH))
+    return entries
 
 
 def _spawn(name: str, args: list[str]) -> subprocess.Popen:
@@ -262,7 +303,11 @@ def start(ocr_port: int, app_port: int, browser: bool) -> int:
         _say("ayarlar", ".env: LLAMA_SERVER, OCR_MODEL, OCR_MMPROJ, OCR_CHAT_TEMPLATE")
         return 1
 
-    commands = {"ocr": ocr_command(ocr_port), "app": app_command(app_port)}
+    commands = {
+        "ocr": ocr_command(ocr_port),
+        "app": app_command(app_port),
+        "small-brain": small_brain_command(),
+    }
     children: dict[str, subprocess.Popen] = {}
     worker = None
     try:

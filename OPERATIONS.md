@@ -77,6 +77,7 @@ exact file to read and the retry command.
 | --- | --- |
 | `data/logs/app.log` | uvicorn, plus one request line per request: `POST /v1/jobs 202 41ms job=… worker=ayse`, and the traceback of any 500 |
 | `data/logs/ocr.log` | llama-server: model load, context size, VRAM/CPU placement, per-request timings |
+| `data/logs/small-brain.log` | llama-server (stage 2, port 8100): model load, context size, per-request timings |
 
 Tracebacks never leave the server: a crash logs its stack and answers
 `{"error": {"code": "internal_error", …}}`. Nothing rotates the logs, so
