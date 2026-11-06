@@ -206,7 +206,10 @@ def test_a_cpu_only_box_running_the_small_brain_never_waits_for_strata(launcher,
     assert [label(line) for line in checks(out)] == ["OCR", "Small brain", "Uygulama"]
 
 
-def test_a_small_brain_that_never_heals_names_its_own_log(launcher, capsys):
+def test_a_small_brain_that_never_heals_names_its_own_log(launcher, monkeypatch, capsys):
+    # the brain fails the start only where it runs stage 2; on a Strata box the
+    # same line is a note (tests/test_launcher_backend_note.py).
+    monkeypatch.setenv("STRUCTURER_BACKEND", "small")
     launcher["down"].add(config.small_brain_base_url())
 
     assert run.start(8081, 8090, browser=True) == 1

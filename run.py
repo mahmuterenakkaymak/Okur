@@ -26,6 +26,7 @@ from __future__ import annotations
 import argparse
 import ctypes
 import errno
+import ipaddress
 import os
 import pathlib
 import signal
@@ -115,6 +116,38 @@ def small_brain_host() -> str:
     """Host of the small brain, read off its base url so one env value moves
     the launcher and the stage-2 client together; junk means loopback."""
     return urlparse(config.small_brain_base_url()).hostname or "127.0.0.1"
+
+
+def small_brain_is_local() -> bool:
+    """Whether the small brain's host is this box, and so ours to spawn.
+
+    A SMALL_BRAIN_BASE_URL that names another machine means the brain runs and
+    is started there: a local llama-server asked to bind that address only dies
+    on the way to the health gate. ASSUMPTION: "this box" is loopback or the
+    machine's own name; anything else is somebody else's host.
+    """
+    host = small_brain_host().lower()
+    if host == "localhost":
+        return True
+    try:
+        if host == (socket.gethostname() or "").lower():
+            return True
+    except OSError:
+        pass
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return False
+
+
+def small_brain_is_stage2() -> bool:
+    """Whether the small brain is the stage-2 backend right now.
+
+    Mirror image of the Strata line: as stage 2 a brain that never turns healthy
+    fails the start, since every job would die there; while Strata runs stage 2
+    the brain is a note — its ✗ line prints, the stack serves and exits 0.
+    """
+    return config.structurer_backend() == "small"
 
 
 def small_brain_command(port: int | None = None) -> list[str]:
@@ -241,8 +274,9 @@ def roll_call() -> list[tuple[str, str, str]]:
 
     Strata is a separate process (OPERATIONS.md → Model paths), so it is waited
     for and never spawned, and only when it is the configured stage-2 backend —
-    a CPU-only box has no Strata to wait for. The small brain is this launcher's
-    own child, so it is waited for always: a job would die at stage 2 otherwise.
+    a CPU-only box has no Strata to wait for. The small brain line is there
+    whatever stage 2 runs — its child on a small box, an outer process on any
+    other — but it is a requirement only while it is stage 2 (small_brain_is_stage2).
     Both model servers answer the OpenAI model listing rather than /health,
     which is what app/status.py probes for every server.
     """
@@ -375,15 +409,16 @@ def _wait_for_children(children: dict[str, subprocess.Popen]) -> None:
         time.sleep(0.5)
 
 
-def _failure_help(name: str, base: str) -> None:
+def _failure_help(name: str, base: str, owned: bool) -> None:
     """What to read and what to run again, printed under a ✗ line.
 
-    A child has a log of its own; Strata does not — it is started outside this
-    launcher, so the operator gets the endpoint to start instead.
-    ASSUMPTION: Strata down fails the start as well, since every job would
-    otherwise die at stage 2 behind an admin UI that looks healthy.
+    A child this launcher owns has a log of its own; anything else — Strata, or
+    a small brain whose base url names another machine — is started outside it,
+    so the operator gets the endpoint to start instead.
+    ASSUMPTION: a stage-2 server down fails the start only when it is the
+    configured stage-2 backend, since every job would die there otherwise.
     """
-    if name in SERVICES:
+    if owned:
         _say("log", str(log_path(name)))
     else:
         _say("başlat", f"{LABELS[name]} stage 2 dışarıda çalışır → {base}")
@@ -408,12 +443,17 @@ def start(ocr_port: int, app_port: int, browser: bool) -> int:
         "app": app_command(app_port),
         "small-brain": small_brain_command(),
     }
-    blocked = small_brain_block()
+    # a brain on another machine is waited for like Strata: never spawned here,
+    # nothing is preflighted on this box for it, and its ✗ names the endpoint
+    # rather than a log that stays empty.
+    remote_brain = not small_brain_is_local()
+    blocked = None if remote_brain else small_brain_block()
+    brain_is_stage2 = small_brain_is_stage2()
     children: dict[str, subprocess.Popen] = {}
     worker = None
     try:
         for name in SERVICES:
-            if name == "small-brain" and blocked is not None:
+            if name == "small-brain" and (blocked is not None or remote_brain):
                 # no child, so no pid file either — --stop must not kill a
                 # process this launcher never started.
                 pid_path(name).unlink(missing_ok=True)
@@ -441,8 +481,9 @@ def start(ocr_port: int, app_port: int, browser: bool) -> int:
                 _say(LABELS[name], _green("✓"))
             else:
                 _say(LABELS[name], f"✗ {config.startup_wait_s()} sn içinde hazır olmadı")
-                _failure_help(name, base)
-                return 1
+                _failure_help(name, base, name in children)
+                if name != "small-brain" or brain_is_stage2:
+                    return 1
         url = f"{config.app_base_url()}/admin"
         _say("admin", url)
         _say("durdurmak için", "python run.py --stop")
@@ -453,7 +494,7 @@ def start(ocr_port: int, app_port: int, browser: bool) -> int:
         _wait_for_children(children)
         # ASSUMPTION: "does not claim success" means the ✗ line plus a nonzero
         # exit once the stack ends — the app served receipts the whole time.
-        return 1 if blocked else 0
+        return 1 if blocked and brain_is_stage2 else 0
     except KeyboardInterrupt:
         return 0
     finally:
