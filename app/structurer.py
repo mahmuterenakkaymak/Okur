@@ -49,6 +49,7 @@ _TAGS_RE = re.compile(r"</?(?:think|thinking|thought|reasoning)\b[^>]*>", re.IGN
 _FENCE_RE = re.compile(r"```(?:json|javascript)?\s*(.*?)```", re.IGNORECASE | re.DOTALL)
 _TRAILING_COMMA_RE = re.compile(r",(\s*[}\]])")
 _RESULT_FIELDS = frozenset({"header", "meta", "items", "totals", "para_birimi", "okunamayan"})
+_BACKENDS = frozenset({"small", "strata"})
 
 
 class StructurerError(RuntimeError):
@@ -59,10 +60,22 @@ class UnreadableError(StructurerError):
     """Model output that cannot become a schema-valid contract result."""
 
 
+def _resolve_backend(backend: str | None) -> str:
+    """backend=None reads config; an unknown value is today's path: strata.
+
+    config.structurer_include_image() is deliberately not read here: the flag
+    decides *whether* the small backend sends the image, and that is M7's work.
+    """
+    value = (config.structurer_backend() if backend is None else backend)
+    value = value.strip().lower()
+    return value if value in _BACKENDS else "strata"
+
+
 class Structurer:
     def __init__(
         self,
         quality_mode: bool = False,
+        backend: str | None = None,
         base_url: str | None = None,
         model: str | None = None,
         timeout: float | None = None,
@@ -70,13 +83,18 @@ class Structurer:
     ):
         # ASSUMPTION: quality mode is a stage-2 routing concern (PLAN "stage 2:
         # Strata :8080 (quality mode: Unsloth :8888)"), so it picks the server
-        # here and never reaches structure().
-        server_url, server_model = (
-            (config.unsloth_base_url(), config.unsloth_model())
-            if quality_mode
-            else (config.strata_base_url(), config.strata_model())
-        )
+        # here, wins over the backend, and never reaches structure().
         self.quality_mode = quality_mode
+        self.backend = _resolve_backend(backend)
+        if quality_mode:
+            server_url, server_model = config.unsloth_base_url(), config.unsloth_model()
+        elif self.backend == "small":
+            server_url, server_model = (
+                config.small_brain_base_url(),
+                config.small_brain_model(),
+            )
+        else:
+            server_url, server_model = config.strata_base_url(), config.strata_model()
         self.base_url = server_url if base_url is None else base_url
         self.model = server_model if model is None else model
         self.timeout = config.structurer_timeout() if timeout is None else timeout

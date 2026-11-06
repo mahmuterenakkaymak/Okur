@@ -341,3 +341,107 @@ def test_explicit_base_url_model_and_timeout_override_routing():
     assert client.base_url == "http://model.test:9999"
     assert client.model == "deneme"
     assert client.timeout == 1.5
+
+
+# --- stage-2 backend selection (T71) ---
+
+
+def capture():
+    """(seen, handler): handler records (url, body) per request and answers ok."""
+    seen = []
+
+    def handler(request):
+        seen.append((str(request.url), json.loads(request.read())))
+        return chat_ok()(request)
+
+    return seen, handler
+
+
+def route(**kwargs):
+    """The single (url, body) a client built from kwargs sent."""
+    seen, handler = capture()
+    make(handler, **kwargs).structure(OCR_TEXT, IMAGE)
+    assert len(seen) == 1
+    return seen[0]
+
+
+def test_backend_defaults_to_config_structurer_backend(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "small")
+    assert make().backend == config.structurer_backend() == "small"
+    monkeypatch.setenv("STRUCTURER_BACKEND", "q8")
+    assert make().backend == config.DEFAULT_STRUCTURER_BACKEND == "strata"
+
+
+def test_config_can_select_the_small_backend(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "small")
+    assert route() == (
+        f"{config.small_brain_base_url()}/v1/chat/completions",
+        route(backend="small")[1],
+    )
+
+
+def test_small_backend_sends_the_same_request_to_the_small_brain():
+    url, body = route(backend="small")
+    assert url == f"{config.small_brain_base_url()}/v1/chat/completions"
+    assert body["model"] == config.small_brain_model()
+
+
+def test_small_backend_follows_its_own_env(monkeypatch):
+    monkeypatch.setenv("SMALL_BRAIN_BASE_URL", "http://10.0.0.5:9111")
+    monkeypatch.setenv("SMALL_BRAIN_MODEL", "vl-4b-iq4")
+    assert route(backend="small") == (
+        "http://10.0.0.5:9111/v1/chat/completions",
+        {**route(backend="small")[1], "model": "vl-4b-iq4"},
+    )
+
+
+def test_strata_backend_is_the_default_route():
+    assert route(backend="strata") == route()
+    assert route(backend="strata")[0] == f"{config.strata_base_url()}/v1/chat/completions"
+    assert route(backend="strata")[1]["model"] == config.strata_model()
+
+
+@pytest.mark.parametrize("value", [" SMALL ", "small"])
+def test_backend_names_ignore_case_and_padding(value):
+    assert make(backend=value).backend == "small"
+
+
+@pytest.mark.parametrize("value", ["", "  ", "q8", "strata-80b", "small brain"])
+def test_unknown_backend_falls_back_to_strata(value):
+    url, body = route(backend=value)
+    assert make(backend=value).backend == "strata"
+    assert url == f"{config.strata_base_url()}/v1/chat/completions"
+    assert body["model"] == config.strata_model()
+
+
+def test_quality_mode_beats_the_backend(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "small")
+    for kwargs in ({"quality_mode": True}, {"quality_mode": True, "backend": "small"}):
+        url, body = route(**kwargs)
+        assert url == f"{config.unsloth_base_url()}/v1/chat/completions"
+        assert body["model"] == config.unsloth_model()
+
+
+def test_quality_mode_backend_is_reported_as_strata_when_unset():
+    assert make(quality_mode=True).backend == config.DEFAULT_STRUCTURER_BACKEND
+
+
+@pytest.mark.parametrize(
+    "kwargs", [{}, {"backend": "strata"}, {"backend": "small"}, {"quality_mode": True}]
+)
+def test_every_backend_sends_the_same_body(kwargs):
+    _, body = route(**kwargs)
+    parts = body["messages"][0]["content"]
+    assert [p["text"] for p in parts if p["type"] == "text"] == [PROMPT + OCR_TEXT]
+    assert [p["image_url"]["url"] for p in parts if p["type"] == "image_url"] == [
+        "data:image/jpeg;base64," + base64.b64encode(IMAGE).decode()
+    ]
+    assert body["max_tokens"] == MAX_TOKENS
+    assert body["temperature"] == 0
+    assert body["chat_template_kwargs"] == {"enable_thinking": False}
+
+
+def test_include_image_is_not_read_yet(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_INCLUDE_IMAGE", "false")
+    _, body = route(backend="small")
+    assert [p["type"] for p in body["messages"][0]["content"]] == ["text", "image_url"]
