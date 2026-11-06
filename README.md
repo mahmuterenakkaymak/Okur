@@ -53,7 +53,9 @@ OCR_CHAT_TEMPLATE=models/paddleocr-vl-1.6/chat_template.jinja
 ```
 
 `ADMIN_TOKEN` has no default on purpose — with it unset the admin panel has no
-door at all. Model and binary paths, defaults and where to get the files:
+door at all. The demo is the one exception: `scripts/serve_demo.py` pins
+`ADMIN_TOKEN=demo` and prints it on its boot line, so `/admin` opens on a box
+with no `.env`. Model and binary paths, defaults and where to get the files:
 `OPERATIONS.md` → Model paths.
 
 One key per worker, printed exactly once:

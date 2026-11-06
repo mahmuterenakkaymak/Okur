@@ -42,6 +42,8 @@ from app.validator import validate  # noqa: E402
 from scripts.fake_models import default_dirs, start_fake_models  # noqa: E402
 
 WORKER = "demo"
+# The demo's own admin door: reviewers have no .env, so the token is public.
+ADMIN_TOKEN = "demo"
 MISMATCH_FIXTURE = "fis_market_foto"  # tampered total -> the discrepancy panel
 FAILED_FIXTURE = "fis_kotu_cekim"  # a bad capture that never structured
 LIVE_STATES = {"fis_benzin_clean": "queued", "fis_restoran_foto": "running"}
@@ -249,6 +251,7 @@ def _url(server) -> str:
 def _boot(workdir: pathlib.Path, port: int):
     """Everything up: data dir, seeded db, stubs, app, worker."""
     os.environ["DATA_DIR"] = str(workdir)  # uploaded images land here, not in ./data
+    os.environ["ADMIN_TOKEN"] = ADMIN_TOKEN  # /admin opens with no .env at all
     db_path = workdir / "demo.db"
     conn = db.connect(db_path)
     try:
@@ -277,6 +280,9 @@ def _check(base_url: str, api_key: str) -> None:
         resp = client.get("/admin")
         if resp.status_code not in (200, 404):
             raise DemoError(f"GET /admin -> HTTP {resp.status_code}")
+        resp = client.post("/admin/api/login", json={"token": ADMIN_TOKEN})
+        if resp.status_code != 200:
+            raise DemoError(f"POST /admin/api/login -> HTTP {resp.status_code}")
         resp = client.get("/api/me/jobs", headers={"X-API-Key": api_key})
         if resp.status_code != 200:
             raise DemoError(f"GET /api/me/jobs -> HTTP {resp.status_code}")
@@ -286,7 +292,7 @@ def _check(base_url: str, api_key: str) -> None:
 
 def _review(base_url: str, api_key: str) -> None:
     _log("PWA", f"{base_url}/app — demo key pre-filled, Örnek fiş ready")
-    _log("admin", f"{base_url}/admin")
+    _log("admin", f"{base_url}/admin — token {ADMIN_TOKEN}")
     _log("api key", api_key)
     print("Ctrl+C to stop", flush=True)
     while True:
@@ -300,7 +306,7 @@ def main(argv=None) -> int:
     parser.add_argument(
         "--check",
         action="store_true",
-        help="boot on an ephemeral port, probe /app /admin /api/me/jobs, exit 0",
+        help="boot on an ephemeral port, probe the app, admin login and the PWA, exit 0",
     )
     parser.add_argument("--port", type=int, default=config.app_port())
     args = parser.parse_args(argv)

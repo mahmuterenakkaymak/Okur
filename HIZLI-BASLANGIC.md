@@ -16,7 +16,7 @@ cd C:\Users\PC\Documents\GitHub\ocr-app
 ```
 
 - PWA (çalışan ekranı): http://localhost:8090/app — "Örnek fiş" butonu kameradan bağımsız akışı gösterir
-- Admin: http://localhost:8090/admin — giriş için `.env` içindeki `ADMIN_TOKEN`
+- Admin: http://localhost:8090/admin — giriş için `ADMIN_TOKEN=demo`; demo sunucusu bunu kendi basar, açılış satırında da yazar (`.env` gerekmez)
 - API dokümanı: http://localhost:8090/docs
 
 ## Gerçek hatla çalıştır

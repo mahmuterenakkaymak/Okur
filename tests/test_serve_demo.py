@@ -2,7 +2,8 @@
 
 --check is the gate (real app, real sockets, real queue — the same stack
 visual review runs on), and the seed is what makes every screen reviewable:
-every queue state, every verdict, images on disk, both fixture dirs.
+every queue state, every verdict, images on disk, both fixture dirs. And the
+admin screens open on the pinned demo token, so review needs no developer .env.
 """
 from __future__ import annotations
 
@@ -11,6 +12,7 @@ import pathlib
 import subprocess
 import sys
 
+import httpx
 from fastapi.testclient import TestClient
 
 from app import auth, config, db, validator
@@ -75,6 +77,22 @@ def test_demo_routes_serve_config_and_samples(tmp_path):
     assert resp.headers["content-type"].startswith("image/png")
 
     assert client.get("/demo/samples/olmayan-fis").status_code == 404
+
+
+def test_admin_login_accepts_the_pinned_demo_token(tmp_path):
+    """The demo instance answers /admin to its own token, whatever the shell has."""
+    server, worker, models, _ = serve_demo._boot(tmp_path, 0)
+    try:
+        with httpx.Client(base_url=serve_demo._url(server), timeout=30.0) as client:
+            demo = client.post(
+                "/admin/api/login", json={"token": serve_demo.ADMIN_TOKEN}
+            )
+            other = client.post("/admin/api/login", json={"token": "baska-bir-token"})
+    finally:
+        worker.stop()
+        models.shutdown()
+    assert demo.status_code == 200, demo.text
+    assert other.status_code == 401
 
 
 def test_check_boots_probes_and_exits_zero():
