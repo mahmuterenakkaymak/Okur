@@ -7,9 +7,12 @@ const API = "/admin/api";
 export const PENCERE_MS = 5 * 60 * 1000; // sparkline'ın geriye baktığı pencere
 export const YENILEME_MS = 5000; // kendiliğinden tazeleme; sayfayı yeniden yüklemeye gerek yok
 
-const SERVISLER = [
+export const SERVISLER = [
   { anahtar: "ocr", ad: "OCR", rol: "fiş okuma — aşama 1" },
-  { anahtar: "strata", ad: "Strata", rol: "yapılandırma — aşama 2" },
+  // ASSUMPTION: sözleşme 9'un alanı "hangi beyin" bilgisini taşımadığı (ve yeni
+  // alan uydurulamayacağı) için çip, probe'un kanıtladığı görevi adlandırır:
+  // aşama 2'nin beyni STRUCTURER_BACKEND'ın seçtiğidir (app/status.py stage2_base_url).
+  { anahtar: "strata", ad: "Yapılandırma", rol: "STRUCTURER_BACKEND’ın seçtiği beyin — aşama 2" },
   { anahtar: "unsloth", ad: "Unsloth", rol: "kalite modu" },
 ];
 const KUYRUK = [
