@@ -75,6 +75,8 @@ def structurer_transport(tamper=None):
 def env(tmp_path, monkeypatch):
     """Real app on a temp database with one registered worker key."""
     auth._buckets.clear()
+    # the backend this file describes: meta.model is the Strata id it asserts
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
     path = tmp_path / "ocr.db"
     conn = db.connect(path)

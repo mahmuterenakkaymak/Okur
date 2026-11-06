@@ -20,6 +20,17 @@ from scripts import smoke_e2e as smoke
 FIXTURE_JSON = config.ROOT / "fixtures" / f"{smoke.FIXTURE}.json"
 
 
+@pytest.fixture(autouse=True)
+def small_backend(monkeypatch):
+    """The backend this file describes: stage 2 on the small brain.
+
+    The smoke compares meta.model against whatever backend config resolves, so
+    the envelope names the model that backend runs. tests/test_cutover_backend.py
+    puts the Strata rollback through the same smoke.
+    """
+    monkeypatch.setenv("STRUCTURER_BACKEND", "small")
+
+
 def _envelope() -> dict:
     """A done envelope the smoke has to accept, built from ground truth."""
     truth = json.loads(FIXTURE_JSON.read_text(encoding="utf-8"))
@@ -40,7 +51,7 @@ def _envelope() -> dict:
             "received_at": "2026-10-31T09:00:00.000Z",
             "ocr_ms": 10,
             "total_ms": 20,
-            "model": config.strata_model(),
+            "model": config.stage2_model(False),
             "quality_mode": False,
         },
     }
@@ -56,14 +67,25 @@ def _no_app(self, *args, **kwargs):
     raise smoke.SmokeError("app did not come up")
 
 
-def test_smoke_passes_over_real_http():
-    run = subprocess.run(
+def _run_smoke() -> subprocess.CompletedProcess:
+    return subprocess.run(
         [sys.executable, str(config.ROOT / "scripts" / "smoke_e2e.py")],
         cwd=config.ROOT,
         capture_output=True,
         text=True,
         timeout=180,
     )
+
+
+def test_smoke_passes_over_real_http():
+    run = _run_smoke()
+    assert run.returncode == 0, run.stdout + run.stderr
+    assert "SMOKE OK" in run.stdout
+
+
+def test_the_strata_rollback_passes_the_same_smoke(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
+    run = _run_smoke()
     assert run.returncode == 0, run.stdout + run.stderr
     assert "SMOKE OK" in run.stdout
 

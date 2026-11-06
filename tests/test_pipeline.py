@@ -111,7 +111,8 @@ def test_missing_or_rogue_ms_never_breaks_meta():
     assert bundle["meta"]["ocr_ms"] == 0
 
 
-def test_meta_records_strata_model_and_quality_mode_off():
+def test_meta_records_strata_model_and_quality_mode_off(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     bundle, ocr, _ = run()
     assert bundle["meta"]["model"] == config.strata_model()
     assert bundle["meta"]["quality_mode"] is False
@@ -193,7 +194,8 @@ def test_stage1_failure_short_circuits_before_stage2():
     assert "503" in bundle["error"]
 
 
-def test_stage1_failure_still_returns_a_whole_partial_result():
+def test_stage1_failure_still_returns_a_whole_partial_result(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     bundle, _, _ = run(ocr=FakeOcr(error=OcrError("timeout")))
     assert bundle["result"]["items"] == []
     assert bundle["result"]["header"] == {"isim": "", "vergi_dairesi": "", "vergi_no": ""}
@@ -246,7 +248,7 @@ def test_unreadable_path_keeps_quality_mode_in_meta():
 # --- meta.model names the brain that actually ran (config.stage2_model) ---
 
 
-def test_meta_names_strata_while_the_default_backend_is_strata(monkeypatch):
+def test_meta_names_strata_while_the_backend_is_pinned_to_strata(monkeypatch):
     monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     bundle, _, _ = run()
     assert bundle["meta"]["model"] == config.strata_model()

@@ -57,6 +57,8 @@ def runner(image_bytes, *, quality_mode=False, worker=""):
 @pytest.fixture
 def env(tmp_path, monkeypatch):
     auth._buckets.clear()
+    # the backend this file describes: meta.model is the Strata id it asserts
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
     path = tmp_path / "ocr.db"
     conn = db.connect(path)

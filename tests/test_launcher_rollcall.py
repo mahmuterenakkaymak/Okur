@@ -98,6 +98,7 @@ def launcher(monkeypatch):
 
 
 def test_roll_call_reads_ocr_strata_small_brain_then_the_app_there(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     monkeypatch.setenv("OCR_PORT", "9101")
     monkeypatch.setenv("APP_PORT", "9100")
     assert run.roll_call() == [
@@ -130,7 +131,8 @@ def test_stop_never_touches_strata_that_this_launcher_never_started(launcher, ca
 # --- the green lines ---
 
 
-def test_every_healthy_service_gets_its_own_check_line_in_order(launcher, capsys):
+def test_every_healthy_service_gets_its_own_check_line_in_order(launcher, capsys, monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     assert run.start(8081, 8090, browser=True) == 0
     assert [label(line) for line in checks(capsys.readouterr().out)] == [
         "OCR",

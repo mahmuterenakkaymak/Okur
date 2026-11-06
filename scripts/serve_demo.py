@@ -142,7 +142,7 @@ def seed_jobs(conn, *, key_id: int, images_dir: str | os.PathLike[str]) -> list[
                         "structure": total_ms - ocr_ms - 2,
                         "validate": 2,
                     },
-                    "model": config.strata_model(),
+                    "model": config.stage2_model(False),
                     "quality_mode": False,
                 },
             )

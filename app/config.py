@@ -173,7 +173,9 @@ def unsloth_model() -> str:
 
 
 # --- stage 2 backends: small brain (llama.cpp) vs Strata ---
-DEFAULT_STRUCTURER_BACKEND = "strata"  # flips to "small" at the M8 cutover
+# M8 cutover: a CPU-only box is the default box. STRUCTURER_BACKEND=strata is
+# the rollback and sends exactly the pre-cutover request.
+DEFAULT_STRUCTURER_BACKEND = "small"
 SMALL_BRAIN_PORT = 8100
 
 

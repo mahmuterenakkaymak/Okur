@@ -80,14 +80,20 @@ class _App:
             self._thread.join(timeout=10.0)
 
 
-def _strata_env(stub_url: str) -> dict[str, str | None]:
-    """Move config's stage-2 server onto the stub; hands back what to restore.
+def _stage2_env(stub_url: str) -> dict[str, str | None]:
+    """Move config's stage-2 servers onto the stub; hands back what to restore.
 
-    The shipped client resolves Strata from config, so pointing config at the
-    stub is what puts the real client over a real socket.
+    The shipped client resolves stage 2 from config — the small brain under the
+    default backend, Strata under the STRUCTURER_BACKEND=strata rollback — so
+    pointing both at the stub is what puts the real client over a real socket,
+    whichever brain the smoke is running.
     """
     stub = httpx.URL(stub_url)
-    values = {"STRATA_HOST": stub.host, "STRATA_PORT": str(stub.port)}
+    values = {
+        "STRATA_HOST": stub.host,
+        "STRATA_PORT": str(stub.port),
+        "SMALL_BRAIN_BASE_URL": stub_url,
+    }
     saved = {name: os.environ.get(name) for name in values}
     os.environ.update(values)
     return saved
@@ -195,7 +201,7 @@ def _check(body: dict) -> None:
         raise SmokeError(
             f"job attributed to {meta['worker']!r} / {body['client_ref']!r}"
         )
-    if meta["model"] != config.strata_model() or meta["quality_mode"] is not False:
+    if meta["model"] != config.stage2_model(False) or meta["quality_mode"] is not False:
         raise SmokeError(f"meta reports {meta['model']!r} quality_mode={meta['quality_mode']}")
 
 
@@ -208,7 +214,7 @@ def _run(workdir: pathlib.Path) -> None:
 
     models = start_fake_models()
     _log("model stubs", f"ocr {models.ocr.base_url}, structurer {models.structurer.base_url}")
-    strata = _strata_env(models.structurer.base_url)
+    stage2 = _stage2_env(models.structurer.base_url)
     app = _App(create_app(db_path=db_path))
     worker = None
     try:
@@ -225,7 +231,7 @@ def _run(workdir: pathlib.Path) -> None:
             worker.stop()
         app.stop()
         models.shutdown()
-        for name, value in strata.items():
+        for name, value in stage2.items():
             if value is None:
                 os.environ.pop(name, None)
             else:
