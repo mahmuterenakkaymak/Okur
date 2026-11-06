@@ -400,10 +400,15 @@ export function createFisDetay({ onDuzeltme = () => {} } = {}) {
       // Nothing to correct, so nothing left on screen that could be saved.
       urunleriCiz([]);
       toplamlar.textContent = "";
+      // A job that died names its own reason ("small brain not installed — …");
+      // the reviewer reads the fix from it, so it goes on the line they see.
+      const sebep = typeof env.error === "string" ? env.error.trim() : "";
       bekleme.textContent =
-        env.status === "failed"
-          ? "Bu fiş işlenemedi — ürünler ve toplamlar ancak işlenince burada görünür."
-          : "Bu fiş henüz okunmadı — ürünler ve toplamlar işlenince burada görünür.";
+        env.status === "failed" && sebep
+          ? `Bu fiş işlenemedi — ${sebep}`
+          : env.status === "failed"
+            ? "Bu fiş işlenemedi — ürünler ve toplamlar ancak işlenince burada görünür."
+            : "Bu fiş henüz okunmadı — ürünler ve toplamlar işlenince burada görünür.";
       return;
     }
     urunleriCiz(result.items);

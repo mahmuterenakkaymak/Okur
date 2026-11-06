@@ -65,6 +65,12 @@ function positive(value) {
   return Number.isFinite(number) && number > 0 ? number : 0;
 }
 
+// The job's own one-line reason ("small brain not installed — …"); only a
+// failed job carries it, every other envelope simply has no such field.
+function sebep(job) {
+  return typeof job.error === "string" ? job.error.trim() : "";
+}
+
 /** Which stage a job is in; running advances with the time it has been live. */
 export function stageIdFor(status, elapsedMs = 0, verdict = null) {
   if (status === "failed") return "failed";
@@ -87,6 +93,7 @@ export function statusOf(envelope, { elapsedMs = 0, staleAfterMs = STALE_AFTER_M
   const stage = STAGES[id];
   const finished = TERMINAL[status] === true;
   const stale = !finished && elapsed > positive(staleAfterMs);
+  const reason = sebep(job);
 
   return {
     id,
@@ -95,8 +102,9 @@ export function statusOf(envelope, { elapsedMs = 0, staleAfterMs = STALE_AFTER_M
     finished,
     stale,
     label: stage.label,
-    hint: stale ? STALE_HINT : stage.hint,
+    hint: id === "failed" && reason ? reason : stale ? STALE_HINT : stage.hint,
     progress: stage.progress,
+    reason,
     fields: (validation && Array.isArray(validation.fields) && validation.fields) || [],
     seconds: Math.floor(elapsed / 1000),
   };

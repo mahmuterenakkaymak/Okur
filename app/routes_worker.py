@@ -51,6 +51,10 @@ def get_job(request: Request, job_id: str):
         envelope["image_url"] = (
             f"/api/me/jobs/{row['id']}/image" if row["image_path"] else None
         )
+        # A job that died says why on the worker's failure line; a job with
+        # nothing to explain keeps the contract envelope's own keys.
+        if row["error"]:
+            envelope["error"] = row["error"]
         return envelope
     finally:
         conn.close()

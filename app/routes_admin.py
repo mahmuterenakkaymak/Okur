@@ -424,6 +424,10 @@ def _detay(row: dict) -> dict:
     envelope["image_url"] = (
         f"/admin/api/jobs/{row['id']}/image" if row["image_path"] else None
     )
+    # A failed job carries its own reason into the detail; a job with nothing
+    # to explain carries nothing, so the envelope stays exactly contract v1.
+    if row["error"]:
+        envelope["error"] = row["error"]
     return envelope
 
 

@@ -268,6 +268,9 @@ function sonucGoster(env) {
     .join(" · ");
 
   const uyariSatirlari = [];
+  // A job that died because the server has no brain to call says so itself;
+  // the worker reads that sentence instead of a generic "try again later".
+  if (v.id === "failed" && v.reason) uyariSatirlari.push(v.reason);
   const okunamayan = (Array.isArray(result.okunamayan) ? result.okunamayan : []).filter(
     (parca) => metin(parca),
   );

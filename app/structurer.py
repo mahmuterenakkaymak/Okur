@@ -51,6 +51,11 @@ _TRAILING_COMMA_RE = re.compile(r",(\s*[}\]])")
 _RESULT_FIELDS = frozenset({"header", "meta", "items", "totals", "para_birimi", "okunamayan"})
 _BACKENDS = frozenset({"small", "strata"})
 
+# What a job says when stage 2 has no brain to call (PLAN run-2 R5): the fix is
+# one command, so the sentence names it and lands in the job's error column,
+# the admin detail and the phone's failure line.
+NOT_INSTALLED = "small brain not installed — çalıştırmak için scripts\\install_small_brain.ps1"
+
 
 class StructurerError(RuntimeError):
     """Structuring server failure: timeout, connection error, non-2xx, bad payload."""
@@ -97,6 +102,9 @@ class Structurer:
             server_url, server_model = config.strata_base_url(), config.strata_model()
         self.base_url = server_url if base_url is None else base_url
         self.model = server_model if model is None else model
+        # Only this request can meet a brain that was never installed: Strata
+        # and quality mode's Unsloth are separate servers in separate places.
+        self.uses_small_brain = self.backend == "small" and not quality_mode
         self.timeout = config.structurer_timeout() if timeout is None else timeout
         self._client = httpx.Client(transport=transport, timeout=self.timeout)
 
@@ -123,7 +131,7 @@ class Structurer:
         try:
             resp = self._client.post(f"{self.base_url}/v1/chat/completions", json=body)
         except httpx.HTTPError as exc:
-            raise StructurerError(f"structuring server unreachable: {exc}") from exc
+            raise StructurerError(self._unreachable(exc)) from exc
         ms = int((time.perf_counter() - start) * 1000)
         if resp.status_code != 200:
             raise StructurerError(f"structuring server returned HTTP {resp.status_code}")
@@ -132,6 +140,21 @@ class Structurer:
         except (ValueError, KeyError, IndexError, TypeError) as exc:
             raise StructurerError("malformed structuring response payload") from exc
         return {**self._result(str(content)), "ms": ms}
+
+    def _unreachable(self, exc: httpx.HTTPError) -> str:
+        """Why stage 2 never answered, in the one line the operator reads.
+
+        A refused connection to the small brain on a box with no model files is
+        not an outage but a missing install, so it names the installer; a brain
+        that is installed and merely down keeps today's plain unreachable text.
+        """
+        if (
+            isinstance(exc, (httpx.ConnectError, httpx.ConnectTimeout))
+            and self.uses_small_brain
+            and not config.small_brain_ready()
+        ):
+            return NOT_INSTALLED
+        return f"structuring server unreachable: {exc}"
 
     def _result(self, content: str) -> dict[str, Any]:
         """Extracted JSON through the contract: the check that it is a result."""
