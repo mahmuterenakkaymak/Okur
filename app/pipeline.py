@@ -10,6 +10,7 @@ whole object.
 """
 from __future__ import annotations
 
+import math
 import time
 from typing import Any
 
@@ -39,8 +40,10 @@ def run(
     ocr = OcrClient() if ocr is None else ocr
     structurer = _default_structurer(quality_mode) if structurer is None else structurer
     started = time.perf_counter()
-    # meta.stage_ms: stage 1 and 2 report their own ms, stage 3 gets this
-    # module's clock (below), and total_ms stays the whole-run number.
+    # meta.stage_ms: a stage that answered reports its own ms; a stage that died
+    # and the validator that always runs are timed on this module's clock (below),
+    # because the contract reads a 0 as "this stage never ran". total_ms stays
+    # the whole-run number either way.
     stages = {"ocr": 0, "structure": 0, "validate": 0}
 
     try:
@@ -53,9 +56,15 @@ def run(
     # the job completes done with that verdict and the reason in okunamayan;
     # any other stage-2 failure (dead server, timeout) is an outage, so it stays
     # a failed job with the reason in the error column.
+    # A stage 2 that raises leaves nothing behind to report its own ms, so its
+    # wait is timed here: the row ops review is the unreadable or timed-out
+    # receipt, and "Yapılandırma —" on a stage that ate the whole timeout is a
+    # lie about a stage that ran for 31 seconds.
+    stage_started = time.perf_counter()
     try:
         structured = structurer.structure(str(seen.get("text") or ""), image_bytes)
     except UnreadableError as exc:
+        stages["structure"] = _wait_ms(stage_started)
         return _bundle(
             worker,
             stages,
@@ -65,9 +74,10 @@ def run(
             contract.Result(okunamayan=[_reason(exc)]),
         )
     except Exception as exc:
+        stages["structure"] = _wait_ms(stage_started)
         return _bundle(worker, stages, started, quality_mode, _line(2, exc))
-    # Stage 2 times itself — the HTTP call is the stage — and a stage that died
-    # on the way reported no ms, so it reads 0 rather than the whole run.
+    # An answered stage 2 keeps its own report — the HTTP call is the stage, and
+    # that clock saw the network the pipeline's never saw.
     stages["structure"] = _ms(
         structured.get("ms") if isinstance(structured, dict) else None
     )
@@ -99,9 +109,14 @@ def _bundle(
     result = contract.Result() if result is None else result
     clock = time.perf_counter()
     validation = validator.validate(result)
-    # Stage 3 is the validator's own clock: microseconds of arithmetic, but it
-    # is the one stage nobody else times, so the breakdown stays honest.
-    stages["validate"] = _ms((time.perf_counter() - clock) * 1000)
+    # Stage 3 is timed here because it is the one stage no one else times, and
+    # its work is sub-millisecond: truncated to an int it was always 0, which is
+    # contract 13's "never ran" — on the one stage every receipt goes through.
+    # ASSUMPTION: a run that died in stage 1 or 2 validated nothing but an empty
+    # result, so it keeps reporting no stage 3 and its breakdown names the stage
+    # that actually died.
+    if not error:
+        stages["validate"] = _wait_ms(clock)
     meta = contract.JobMeta(
         worker=worker,
         ocr_ms=stages["ocr"],
@@ -132,6 +147,15 @@ def _reason(exc: BaseException | str) -> str:
     """One short line for a screen from a model's or a stage's complaint."""
     text = " ".join(str(exc).split())
     return text if len(text) <= REASON_MAX_CHARS else text[: REASON_MAX_CHARS - 1].rstrip() + "…"
+
+
+def _wait_ms(started: float) -> int:
+    """Whole milliseconds this clock waited since ``started``, never 0.
+
+    Rounded up rather than truncated: a stage that ran is never the contract's
+    0, however short the wait was.
+    """
+    return max(1, math.ceil((time.perf_counter() - started) * 1000))
 
 
 def _ms(value: Any) -> int:

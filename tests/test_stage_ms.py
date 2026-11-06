@@ -189,15 +189,19 @@ def test_a_stage_that_never_ran_reads_zero():
     assert bundle["meta"]["stage_ms"] == {"ocr": 0, "structure": 0, "validate": 0}
 
 
-def test_a_stage_two_outage_reports_no_stage_two_time():
+def test_a_stage_two_outage_reports_the_measured_wait():
     bundle = pipeline.run(
         IMAGE,
         ocr=FakeOcr(ms=900),
-        structurer=FakeStructurer(error=RuntimeError("down")),
+        structurer=FakeStructurer(sleep=0.06, error=RuntimeError("down")),
     )
-    # Stage 2 died without answering, so it has no ms to report; stage 3 still ran.
-    assert bundle["meta"]["stage_ms"] == {"ocr": 900, "structure": 0, "validate": 0}
-    assert bundle["meta"]["total_ms"] >= 0
+    # Stage 2 died without answering, so it has no ms to report and the pipeline
+    # times the wait it actually waited: a 0 here reads as "never ran".
+    stages = bundle["meta"]["stage_ms"]
+    assert stages["ocr"] == 900
+    assert stages["structure"] >= 50
+    assert stages["validate"] == 0  # a run that died in stage 2 validated nothing
+    assert bundle["meta"]["total_ms"] >= stages["structure"] - 1
 
 
 def test_the_unreadable_path_reports_what_it_measured():
