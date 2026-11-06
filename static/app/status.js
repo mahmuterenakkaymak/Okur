@@ -3,10 +3,13 @@
 // progress bar, and a stale flag once a live job stops moving.
 //
 // ASSUMPTION: the API reports only queued/running/done/failed, so the two
-// running sub-stages are timed off the spike's numbers (OCR 1-5 s on CPU,
-// structuring the slower pass) instead of a server-side stage field.
+// running sub-stages are timed off measured CPU numbers (OCR 1-5 s on CPU,
+// structuring the 30-45 s pass) instead of a server-side stage field.
 
-export const STALE_AFTER_MS = 60000;
+// Elapsed is measured from the phone's own send, so it includes the queue wait,
+// and the server works one receipt at a time: a job behind a few others is
+// normal. The window has to outlast a busy queue, not one receipt.
+export const STALE_AFTER_MS = 300000; // ~7 CPU receipts of 45 s
 export const OCR_BUDGET_MS = 8000;
 
 // id -> what the worker sees; `progress` feeds the bar, `hint` the line below it.
@@ -23,7 +26,8 @@ export const STAGES = {
   },
   structuring: {
     label: "Yapılandırılıyor",
-    hint: "Ürünler, tutarlar ve KDV yerlerine yerleştiriliyor.",
+    hint:
+      "Ürünler, tutarlar ve KDV yerlerine yerleştiriliyor. En uzun adım bu; yarım dakikayı bulması normal, fiş hâlâ işlemde.",
     progress: 0.7,
   },
   verified: {

@@ -165,3 +165,52 @@ test("stageIdFor is the same mapping on its own", () => {
   assert.equal(stageIdFor("done", 0, "ok"), "verified");
   assert.equal(stageIdFor("failed", 0, "ok"), "failed");
 });
+
+// --- the CPU-box latency (T92) ---
+
+test("a normal 30-45 s CPU receipt is never sold as stuck", () => {
+  for (const ms of [30000, 35000, 45000]) {
+    const view = statusOf(envelope("running"), { elapsedMs: ms });
+    assert.equal(view.label, "Yapılandırılıyor");
+    assert.equal(view.stale, false, `${ms} ms is one receipt, not an outage`);
+    assert.doesNotMatch(view.hint, /uzun sürüyor/);
+  }
+});
+
+test("the stale window is queue-safe, not one receipt long", () => {
+  // A job's elapsed counts its wait behind the receipt ahead of it; a queue of
+  // several normal CPU receipts is still healthy.
+  assert.ok(STALE_AFTER_MS >= 45000 * 5, "a busy queue outlasts the old 60 s");
+  assert.equal(statusOf(envelope("running"), { elapsedMs: 45000 * 3 }).stale, false);
+  assert.equal(statusOf(envelope("queued"), { elapsedMs: 45000 * 5 }).stale, false);
+  assert.equal(statusOf(envelope("running"), { elapsedMs: STALE_AFTER_MS + 1 }).stale, true);
+});
+
+test("the Yapılandırılıyor hint says a long wait is the CPU box working", () => {
+  const hint = STAGES.structuring.hint;
+
+  assert.match(hint, /yerlerine yerleştiriliyor/, "still says what is happening");
+  assert.match(hint, /dakika/, "names the wait");
+  assert.match(hint, /normal|hâlâ işlemde/, "and calls it expected");
+  assert.doesNotMatch(hint, /hata|uyuşmuyor|okunamadı|tekrar dene/, "no error wording");
+  assert.equal(statusOf(envelope("running"), { elapsedMs: 40000 }).hint, hint);
+});
+
+test("only that one hint moved; the rest of the copy is untouched", () => {
+  assert.deepEqual(
+    PIPELINE.map((id) => [id, STAGES[id].label, STAGES[id].progress]),
+    [
+      ["queued", "Sırada", 0.05],
+      ["ocr", "Okunuyor", 0.35],
+      ["structuring", "Yapılandırılıyor", 0.7],
+      ["verified", "Doğrulandı", 1],
+    ],
+  );
+  assert.equal(STAGES.queued.hint, "Fiş sunucuya ulaştı, sırasını bekliyor.");
+  assert.equal(STAGES.ocr.hint, "Fişin üzerindeki yazılar okunuyor.");
+  assert.equal(STAGES.verified.hint, "Tutarlar fişle karşılaştırıldı, her şey tutuyor.");
+  assert.equal(STAGES.mismatch.hint, "Bazı tutarlar fişle uyuşmuyor, bir göz at.");
+  assert.equal(STAGES.unreadable.hint, "Bu fiş okunamadı, ışığı ayarlayıp bir kez daha çek.");
+  assert.equal(STAGES.done.hint, "Fiş işlendi.");
+  assert.equal(STAGES.failed.hint, "Bu fiş işlenemedi, tekrar deneyebilirsin.");
+});
