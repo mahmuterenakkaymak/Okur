@@ -30,9 +30,10 @@ $ManifestPath = Join-Path $PSScriptRoot "small_brain_manifest.json"
 $MirrorHost = "hf-mirror.com"
 # ASSUMPTION: 2 = birincil CDN'ın ilk denemesi + bir tekrarı; ayna ancak ondan sonra.
 $PrimaryAttempts = 2
-# ASSUMPTION: manifest dest'leri app/config.py'nin baktığı üç yoldur. Qwen dosyasının
-# HF deposundaki adı Qwen3-VL-4B-Instruct-IQ4_XS.gguf; buraya config'in aradığı
-# (UD-IQ4_XS) adla iner, böylece python run.py onu bulur.
+# ASSUMPTION: manifest dest'leri app/config.py'nin baktığı üç yoldur. Qwen dosyası HF
+# deposunda hangi adla yayınlanıyorsa (Qwen3-VL-4B-Instruct-IQ4_XS.gguf) o adla iner;
+# yeniden adlandırma yoktur, böylece python run.py onu bulur ve dosya içinde
+# olmadığı bir quant'ı adında taşımaz.
 
 function Get-InstallDir {
     if ($env:OCR_SMALL_BRAIN_DIR) { return $env:OCR_SMALL_BRAIN_DIR }

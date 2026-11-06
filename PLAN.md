@@ -219,7 +219,7 @@ numbers `0.0`, arrays `[]`, `para_birimi: "TRY"`, `quality_mode: false`,
 # Run 2 — Small brain: the CPU structurer (Qwen3-VL-4B), M5–M8
 
 Brief: `PROJECT_BRIEF_SMALL_BRAIN.md`. Stage 2 stops depending on the 80B Strata
-box: extraction runs locally on **Qwen3-VL-4B-Instruct UD-IQ4_XS** behind a
+box: extraction runs locally on **Qwen3-VL-4B-Instruct IQ4_XS** behind a
 CPU-only llama.cpp `llama-server` on **127.0.0.1:8100** (`-ngl 0 -c 8192
 --image-min-tokens 1024 --image-max-tokens 1024 --temp 0`), ≈4 GB RAM, zero VRAM,
 30.6 s/receipt mean, 45 s budget. Bake-off (`spike/SMALL_BRAIN_BAKEOFF.md`): 5/6

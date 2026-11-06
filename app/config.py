@@ -203,9 +203,10 @@ def small_brain_model() -> str:
 
 # where scripts/install_small_brain.ps1 installs to (R7: never into the repo)
 DEFAULT_SMALL_BRAIN_DIR_NAME = "ocr-small-brain"
-# ASSUMPTION: file names follow the unsloth HF repo layout (UD-IQ4_XS quant plus
-# its F16 mmproj); the manifest (T80) and the env vars below can point elsewhere.
-DEFAULT_SMALL_BRAIN_MODEL_FILE = "Qwen3-VL-4B-Instruct-UD-IQ4_XS.gguf"
+# The installed name is the name the manifest URL serves — the IQ4_XS quant the
+# bake-off measured, never a renamed variant; the manifest and the env vars below
+# can point elsewhere.
+DEFAULT_SMALL_BRAIN_MODEL_FILE = "Qwen3-VL-4B-Instruct-IQ4_XS.gguf"
 DEFAULT_SMALL_BRAIN_MMPROJ_FILE = "mmproj-F16.gguf"
 
 
