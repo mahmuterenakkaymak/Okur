@@ -1,0 +1,1683 @@
+{
+ "batchImportData": {
+  "app/config.py": [],
+  "app/contract.py": [
+   "app/__init__.py",
+   "app/config.py",
+   "app/numbers.py"
+  ],
+  "app/ocr_client.py": [
+   "app/__init__.py",
+   "app/config.py"
+  ],
+  "app/pipeline.py": [
+   "app/__init__.py",
+   "app/config.py",
+   "app/contract.py",
+   "app/ocr_client.py",
+   "app/structurer.py",
+   "app/validator.py"
+  ],
+  "app/queue_worker.py": [
+   "app/__init__.py",
+   "app/config.py",
+   "app/db.py",
+   "app/pipeline.py"
+  ],
+  "app/structurer.py": [
+   "app/__init__.py",
+   "app/config.py",
+   "app/contract.py"
+  ],
+  "scripts/fake_models.py": [
+   "app/__init__.py",
+   "app/config.py"
+  ],
+  "scripts/serve_demo.py": [
+   "app/__init__.py",
+   "app/auth.py",
+   "app/config.py",
+   "app/contract.py",
+   "app/db.py",
+   "app/main.py",
+   "app/ocr_client.py",
+   "app/pipeline.py",
+   "app/queue_worker.py",
+   "app/structurer.py",
+   "app/validator.py",
+   "scripts/fake_models.py"
+  ],
+  "scripts/smoke_e2e.py": [
+   "app/__init__.py",
+   "app/auth.py",
+   "app/config.py",
+   "app/contract.py",
+   "app/db.py",
+   "app/main.py",
+   "app/ocr_client.py",
+   "app/pipeline.py",
+   "app/queue_worker.py",
+   "app/structurer.py",
+   "scripts/fake_models.py"
+  ],
+  "spike/probe_stage2.py": [
+   "app/__init__.py",
+   "app/config.py",
+   "app/ocr_client.py",
+   "app/structurer.py"
+  ],
+  "spike/probe_thinking.py": [
+   "app/__init__.py",
+   "app/config.py"
+  ],
+  "spike/probe_thinking2.py": [
+   "app/__init__.py",
+   "app/config.py",
+   "app/structurer.py"
+  ],
+  "spike/probe_thinking3.py": [
+   "app/__init__.py",
+   "app/config.py"
+  ],
+  "tests/test_config.py": [
+   "app/__init__.py",
+   "app/config.py"
+  ],
+  "tests/test_contract.py": [
+   "app/__init__.py",
+   "app/contract.py"
+  ],
+  "tests/test_fake_models.py": [
+   "app/__init__.py",
+   "app/config.py",
+   "app/ocr_client.py",
+   "scripts/fake_models.py"
+  ],
+  "tests/test_integration_m1.py": [
+   "app/__init__.py",
+   "app/auth.py",
+   "app/config.py",
+   "app/contract.py",
+   "app/db.py",
+   "app/main.py",
+   "app/ocr_client.py",
+   "app/pipeline.py",
+   "app/queue_worker.py",
+   "app/structurer.py",
+   "scripts/fake_models.py"
+  ],
+  "tests/test_ocr_client.py": [
+   "app/__init__.py",
+   "app/config.py",
+   "app/ocr_client.py"
+  ],
+  "tests/test_pipeline.py": [
+   "app/__init__.py",
+   "app/config.py",
+   "app/contract.py",
+   "app/ocr_client.py",
+   "app/pipeline.py"
+  ],
+  "tests/test_smoke_real_structurer.py": [
+   "app/__init__.py",
+   "app/config.py"
+  ],
+  "tests/test_structurer.py": [
+   "app/__init__.py",
+   "app/config.py",
+   "app/structurer.py"
+  ],
+  "tests/test_tailscale.py": [
+   "app/__init__.py",
+   "app/config.py"
+  ],
+  "tests/test_unreadable_survives.py": [
+   "app/__init__.py",
+   "app/config.py",
+   "app/contract.py",
+   "app/db.py",
+   "app/pipeline.py",
+   "app/queue_worker.py",
+   "app/structurer.py"
+  ]
+ },
+ "neighborMap": {
+  "app/config.py": [
+   {
+    "path": "app/auth.py",
+    "batchIndex": 1,
+    "symbols": [
+     "generate_key",
+     "hash_key",
+     "create_key",
+     "verify",
+     "revoke_key",
+     "authorize",
+     "_take_token",
+     "admin_configured",
+     "admin_token_ok",
+     "start_session",
+     "session_ok",
+     "end_session"
+    ]
+   },
+   {
+    "path": "app/db.py",
+    "batchIndex": 1,
+    "symbols": [
+     "_now",
+     "connect",
+     "_migrate",
+     "list_keys",
+     "create_job",
+     "get_job",
+     "find_job_by_client_ref",
+     "list_jobs",
+     "queue_depth",
+     "update_job",
+     "set_status",
+     "_check_columns",
+     "_update",
+     "add_correction",
+     "log_event"
+    ]
+   },
+   {
+    "path": "app/main.py",
+    "batchIndex": 1,
+    "symbols": [
+     "create_app",
+     "_connect",
+     "_add_auth_middleware",
+     "_add_admin_guard",
+     "_add_upload_cap",
+     "_add_security_headers",
+     "_add_request_logging",
+     "_configure_request_log",
+     "_log_request",
+     "_job_id",
+     "_error",
+     "_add_error_envelope",
+     "_code_for",
+     "_mount_static",
+     "_describe_contract"
+    ]
+   },
+   {
+    "path": "app/routes_admin.py",
+    "batchIndex": 6,
+    "symbols": [
+     "LoginBody",
+     "CorrectionBody",
+     "KeyBody",
+     "login",
+     "logout",
+     "session",
+     "list_jobs",
+     "get_job",
+     "correct_job",
+     "rerun_job",
+     "get_image",
+     "export_jobs",
+     "list_keys",
+     "create_key",
+     "revoke_key",
+     "service_status",
+     "_connect",
+     "_runner",
+     "_job",
+     "_detay",
+     "_metin",
+     "_uyari",
+     "_yol",
+     "_kayit",
+     "_duzelt",
+     "_satir",
+     "_json",
+     "_iso_gun",
+     "_pencere_gunu",
+     "_pencerede",
+     "_fold",
+     "_terimler",
+     "_icerir",
+     "_sirala",
+     "_session_response",
+     "_issue_cookie"
+    ]
+   },
+   {
+    "path": "app/routes_jobs.py",
+    "batchIndex": 6,
+    "symbols": [
+     "create_job",
+     "list_jobs",
+     "get_job",
+     "_connect",
+     "too_large_message",
+     "_require_image",
+     "_strip_exif",
+     "_envelope",
+     "_clean_iso",
+     "_bad_field"
+    ]
+   },
+   {
+    "path": "app/routes_worker.py",
+    "batchIndex": 6,
+    "symbols": [
+     "list_jobs",
+     "get_job",
+     "get_thumbnail",
+     "get_image",
+     "_connect",
+     "_own_job",
+     "_image_path",
+     "_lite",
+     "_thumbnail"
+    ]
+   },
+   {
+    "path": "app/status.py",
+    "batchIndex": 7,
+    "symbols": [
+     "probe_service",
+     "vram_info",
+     "probe_all"
+    ]
+   },
+   {
+    "path": "run.py",
+    "batchIndex": 7,
+    "symbols": [
+     "_say",
+     "_green",
+     "pid_path",
+     "log_path",
+     "required_files",
+     "ocr_command",
+     "app_command",
+     "roll_call",
+     "_spawn",
+     "wait_healthy",
+     "_alive",
+     "_wait_gone",
+     "_terminate",
+     "_tracked",
+     "stop",
+     "_wait_for_children",
+     "_failure_help",
+     "start",
+     "main"
+    ]
+   },
+   {
+    "path": "scripts/acceptance.py",
+    "batchIndex": 4,
+    "symbols": [
+     "CheckError",
+     "Instance",
+     "check_contract",
+     "check_verdict_ok",
+     "check_tampered_kdv",
+     "check_auth",
+     "check_idempotent",
+     "check_export_parity",
+     "check_validator_edges",
+     "_variant",
+     "_issue_key",
+     "_expect",
+     "_ok",
+     "_body",
+     "_reason",
+     "_csv_rows",
+     "_xlsx_rows",
+     "_exact",
+     "_boot_demo",
+     "_live",
+     "_attempt",
+     "_row",
+     "_summary",
+     "main"
+    ]
+   },
+   {
+    "path": "scripts/gen_contract_doc.py",
+    "batchIndex": 4,
+    "symbols": [
+     "_type_name",
+     "_default",
+     "_table",
+     "doc_text",
+     "_write",
+     "main"
+    ]
+   },
+   {
+    "path": "tests/test_acceptance.py",
+    "batchIndex": 4,
+    "symbols": [
+     "_instance",
+     "_envelope",
+     "_response",
+     "_export_row",
+     "test_acceptance_passes_against_a_booted_demo",
+     "test_main_exits_nonzero_when_a_check_fails",
+     "test_main_reports_an_unreachable_instance_without_a_traceback",
+     "test_an_envelope_outside_contract_v1_fails",
+     "test_verdict_check_fails_when_the_validator_disagrees",
+     "test_verdict_check_fails_on_amounts_outside_ground_truth",
+     "test_validator_edge_suite_passes_as_written",
+     "test_validator_edge_suite_fails_when_the_validator_stops_recomputing",
+     "test_export_readers_see_the_rows_the_app_writes",
+     "test_parity_fails_when_a_selected_row_is_missing_from_the_file"
+    ]
+   },
+   {
+    "path": "tests/test_auth.py",
+    "batchIndex": 1,
+    "symbols": [
+     "conn",
+     "test_generate_key_shape",
+     "test_generate_key_prefix_and_length_come_from_config",
+     "test_generated_keys_are_unique",
+     "test_hash_key_is_sha256_hex",
+     "test_create_key_returns_id_and_plaintext_once",
+     "test_create_key_stores_only_the_hash",
+     "test_create_key_gives_each_worker_its_own_key",
+     "test_verify_returns_identity_without_the_hash",
+     "test_verify_rejects_missing_unknown_or_malformed_keys",
+     "test_verify_rejects_tampered_key",
+     "test_verify_finds_one_key_among_many",
+     "test_verify_compares_only_hashes",
+     "test_revoke_stops_verification_immediately",
+     "test_revoke_keeps_the_row_for_job_history",
+     "test_revoke_reports_unknown_and_already_revoked"
+    ]
+   },
+   {
+    "path": "tests/test_captured_at_survives.py",
+    "batchIndex": 1,
+    "symbols": [
+     "jpeg",
+     "FakeOcr",
+     "FakeStructurer",
+     "runner",
+     "env",
+     "submit",
+     "process",
+     "meta_of",
+     "test_captured_at_survives_the_worker_into_the_get",
+     "test_the_list_view_reports_it_too",
+     "test_a_rerun_keeps_captured_at_and_refreshes_the_pipeline_meta",
+     "test_captured_at_stays_null_when_it_was_never_sent"
+    ]
+   },
+   {
+    "path": "tests/test_contract_export.py",
+    "batchIndex": 4,
+    "symbols": [
+     "_result_schema",
+     "test_fixtures_present",
+     "test_committed_schema_is_byte_stable_regeneration",
+     "test_schema_text_is_deterministic",
+     "test_regeneration_rewrites_identical_bytes",
+     "test_schema_root_is_job_envelope",
+     "test_fixture_parses_as_valid_result",
+     "test_doc_tables_cover_every_contract_field",
+     "test_doc_covers_verdicts_endpoints_and_versioning"
+    ]
+   },
+   {
+    "path": "tests/test_db.py",
+    "batchIndex": 1,
+    "symbols": [
+     "conn",
+     "make_key",
+     "test_connect_enables_wal_and_foreign_keys",
+     "test_connect_creates_missing_parent_dirs",
+     "test_default_path_comes_from_config",
+     "test_memory_database_works_without_wal",
+     "test_schema_has_all_four_tables",
+     "test_migrations_are_idempotent_across_reopens",
+     "test_create_job_defaults",
+     "test_job_row_matches_queue_contract",
+     "test_get_job_missing_returns_none",
+     "test_find_job_by_client_ref",
+     "test_client_ref_unique_per_key_nulls_free",
+     "test_update_job_serializes_json_fields",
+     "test_update_job_rejects_bad_columns",
+     "test_transitions_stamp_timestamps",
+     "test_started_at_survives_rerun",
+     "test_set_status_carries_updates_in_one_call",
+     "test_failed_transition_stores_error",
+     "test_set_status_rejects_unknown_status_and_missing_job",
+     "test_list_jobs_filters_and_orders_newest_first",
+     "test_log_event",
+     "test_corrections_row_roundtrip"
+    ]
+   },
+   {
+    "path": "tests/test_docs.py",
+    "batchIndex": 7,
+    "symbols": [
+     "headings",
+     "section",
+     "code_lines",
+     "repo_path",
+     "python_commands",
+     "powershell_commands",
+     "env_names",
+     "test_readme_has_every_required_section",
+     "test_operations_has_every_required_section",
+     "test_what_it_is_names_the_stages_and_who_owns_the_arithmetic",
+     "test_integrator_guide_points_at_contract_md_and_the_openapi_ui",
+     "test_pwa_install_section_installs_from_the_app_url_and_sets_the_key",
+     "test_troubleshooting_answers_the_status_codes_the_app_gives_out",
+     "test_operations_backups_cover_everything_under_data",
+     "test_key_rotation_covers_the_worker_keys_and_the_admin_token",
+     "test_log_section_names_the_files_the_launcher_actually_writes",
+     "test_vram_notes_keep_stage_one_on_the_cpu",
+     "test_readme_hands_the_operator_to_operations",
+     "test_documented_python_command_names_something_real",
+     "test_documented_flags_are_flags_the_script_parses",
+     "test_documented_powershell_command_and_its_parameters_exist",
+     "test_every_script_the_docs_name_is_in_the_repo",
+     "test_documented_env_names_are_ones_config_reads",
+     "test_operations_documents_the_configured_model_path",
+     "test_operations_documents_the_configured_port"
+    ]
+   },
+   {
+    "path": "tests/test_launcher_rollcall.py",
+    "batchIndex": 7,
+    "symbols": [
+     "isolated_data",
+     "lines",
+     "checks",
+     "FakeChild",
+     "FakeWorker",
+     "launcher",
+     "test_roll_call_reads_ocr_strata_then_the_app_on_their_own_paths",
+     "test_stop_never_touches_strata_that_this_launcher_never_started",
+     "test_every_healthy_service_gets_its_own_check_line_in_order",
+     "test_the_admin_ui_opens_only_after_the_last_service_turned_green",
+     "test_check_marks_are_green_on_a_console_and_plain_when_redirected",
+     "test_check_marks_stay_plain_text_in_a_redirected_run",
+     "test_a_child_that_never_heals_names_its_log_and_the_retry_command",
+     "test_a_strata_that_never_answers_names_the_process_to_start"
+    ]
+   },
+   {
+    "path": "tests/test_quality_rerun.py",
+    "batchIndex": 4,
+    "symbols": [
+     "kalite_bundle",
+     "env",
+     "yeni_sonuc",
+     "rerun",
+     "v1",
+     "detay",
+     "calisan_detay",
+     "yonetici_satiri",
+     "calisan_satiri",
+     "bes_yuzey",
+     "test_quality_rerun_replaces_the_result_and_every_view_follows",
+     "test_the_verdict_after_a_rerun_is_the_verdict_of_the_new_numbers",
+     "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+     "test_a_failed_job_comes_back_done_through_quality_mode",
+     "test_a_failed_rerun_leaves_the_job_exactly_as_it_was",
+     "test_a_job_still_in_the_queue_has_nothing_to_rerun",
+     "test_the_rerun_door_is_the_admin_session_not_a_worker_key",
+     "test_the_detail_page_hands_the_reviewer_a_confirmation_and_a_diff"
+    ]
+   },
+   {
+    "path": "tests/test_rate_limit.py",
+    "batchIndex": 1,
+    "symbols": [
+     "conn",
+     "bucket",
+     "test_valid_key_is_allowed",
+     "test_authorize_works_on_the_real_clock",
+     "test_missing_or_unknown_key_is_401",
+     "test_revoked_key_is_401",
+     "test_401s_never_consume_tokens",
+     "test_capacity_from_config_then_429",
+     "test_retry_after_shrinks_as_time_passes",
+     "test_refill_restores_service_one_token_at_a_time",
+     "test_tokens_never_accumulate_past_capacity",
+     "test_exhausting_one_key_leaves_others_alone",
+     "test_capacity_change_is_read_per_request"
+    ]
+   },
+   {
+    "path": "tests/test_routes_worker.py",
+    "batchIndex": 1,
+    "symbols": [
+     "jpeg",
+     "env",
+     "headers",
+     "submit",
+     "finish",
+     "test_list_returns_lite_rows_scoped_to_the_key",
+     "test_list_total_counts_every_job_of_the_key",
+     "test_queued_job_has_no_verdict_or_toplam_yet",
+     "test_done_job_shows_verdict_and_toplam",
+     "test_list_handles_a_done_job_without_totals",
+     "test_job_without_an_image_has_no_thumbnail_url",
+     "test_detail_returns_the_envelope_plus_image_url",
+     "test_detail_of_another_workers_job_is_404",
+     "test_detail_of_unknown_job_is_404",
+     "test_detail_without_an_image_has_null_image_url",
+     "test_thumbnail_is_resized_to_the_configured_edge",
+     "test_thumbnail_is_cached_and_stable",
+     "test_undecodable_image_still_serves_its_bytes",
+     "test_thumbnail_of_another_workers_job_is_404",
+     "test_thumbnail_of_a_missing_file_is_404",
+     "test_image_returns_the_original_bytes",
+     "test_image_of_another_workers_job_is_404",
+     "test_worker_api_requires_an_api_key",
+     "test_revoked_key_is_locked_out"
+    ]
+   },
+   {
+    "path": "tests/test_run_py.py",
+    "batchIndex": 7,
+    "symbols": [
+     "isolated_data",
+     "flag_value",
+     "test_ocr_command_serves_the_gguf_with_mmproj_and_chat_template",
+     "test_ocr_command_runs_on_cpu_unless_ocr_ngl_says_otherwise",
+     "test_ocr_command_takes_its_port_from_the_flag",
+     "test_app_command_serves_the_app_factory_with_uvicorn",
+     "test_pids_and_logs_live_under_the_data_dir",
+     "test_spawn_appends_the_child_output_to_its_own_log",
+     "stub_transport",
+     "test_wait_healthy_passes_as_soon_as_health_answers_200",
+     "test_wait_healthy_uses_the_whole_budget_on_a_server_that_stays_loading",
+     "test_wait_healthy_gives_up_at_once_when_the_process_already_exited",
+     "sleep_child",
+     "track",
+     "test_stop_kills_the_tracked_processes_and_clears_their_pid_files",
+     "test_stop_is_not_an_error_when_nothing_is_tracked",
+     "test_stop_clears_a_pid_whose_process_is_already_gone",
+     "test_alive_tells_a_running_process_from_a_finished_one",
+     "FakeChild",
+     "FakeWorker",
+     "Launcher",
+     "launcher",
+     "test_start_tracks_pids_starts_the_worker_and_reports_the_admin_url",
+     "test_no_browser_starts_the_same_stack_without_opening_one",
+     "test_start_names_the_log_and_the_retry_command_when_a_service_never_heals",
+     "test_start_refuses_before_spawning_when_a_model_file_is_missing",
+     "test_start_passes_the_ports_to_the_app_child_and_its_own_worker",
+     "test_main_routes_the_flags_to_start_and_stop"
+    ]
+   },
+   {
+    "path": "tests/test_serve_demo.py",
+    "batchIndex": 1,
+    "symbols": [
+     "_seed",
+     "test_seed_covers_every_state_and_verdict",
+     "test_done_jobs_revalidate",
+     "test_mismatch_job_names_its_offending_fields",
+     "test_demo_routes_serve_config_and_samples",
+     "test_check_boots_probes_and_exits_zero",
+     "test_check_reports_failure_when_boot_breaks"
+    ]
+   },
+   {
+    "path": "tests/test_serve_demo_live_states.py",
+    "batchIndex": 4,
+    "symbols": [
+     "_statuses",
+     "_upload",
+     "_await_done",
+     "test_queued_and_running_jobs_survive_the_worker"
+    ]
+   },
+   {
+    "path": "tests/test_smoke_e2e.py",
+    "batchIndex": 4,
+    "symbols": [
+     "_envelope",
+     "_response",
+     "_no_app",
+     "test_smoke_passes_over_real_http",
+     "test_smoke_exits_nonzero_when_a_stage_breaks",
+     "test_a_clean_envelope_is_accepted",
+     "test_amounts_disagreeing_with_ground_truth_fail",
+     "test_a_mismatch_verdict_fails",
+     "test_an_envelope_outside_contract_v1_fails"
+    ]
+   },
+   {
+    "path": "tests/test_upload_atomic_orphan.py",
+    "batchIndex": 1,
+    "symbols": [
+     "env",
+     "photo",
+     "submit",
+     "test_a_strip_exif_failure_leaves_no_job_row",
+     "test_the_row_lands_already_pointing_at_bytes_that_exist"
+    ]
+   },
+   {
+    "path": "tests/test_validator.py",
+    "batchIndex": 4,
+    "symbols": [
+     "market",
+     "test_ground_truth_fixtures_validate_ok",
+     "test_ok_report_carries_expected_and_actual_blocks",
+     "test_tampered_line_total_names_the_item",
+     "test_tampered_kdv_names_totals_kdv",
+     "test_tampered_grand_total_names_totals_toplam",
+     "test_tampered_ara_toplam_names_only_totals_ara_toplam",
+     "test_kurus_drift_within_tolerance_stays_ok",
+     "test_drift_beyond_tolerance_is_mismatch",
+     "test_accepts_contract_model",
+     "test_missing_totals_fall_back_to_house_defaults",
+     "test_input_is_not_mutated",
+     "test_report_is_json_serializable"
+    ]
+   }
+  ],
+  "app/contract.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   },
+   {
+    "path": "app/numbers.py",
+    "batchIndex": 6,
+    "symbols": [
+     "parse_number",
+     "parse_percent",
+     "_clean",
+     "_parse",
+     "_build",
+     "_fraction"
+    ]
+   },
+   {
+    "path": "app/main.py",
+    "batchIndex": 1,
+    "symbols": [
+     "create_app",
+     "_connect",
+     "_add_auth_middleware",
+     "_add_admin_guard",
+     "_add_upload_cap",
+     "_add_security_headers",
+     "_add_request_logging",
+     "_configure_request_log",
+     "_log_request",
+     "_job_id",
+     "_error",
+     "_add_error_envelope",
+     "_code_for",
+     "_mount_static",
+     "_describe_contract"
+    ]
+   },
+   {
+    "path": "app/routes_admin.py",
+    "batchIndex": 6,
+    "symbols": [
+     "LoginBody",
+     "CorrectionBody",
+     "KeyBody",
+     "login",
+     "logout",
+     "session",
+     "list_jobs",
+     "get_job",
+     "correct_job",
+     "rerun_job",
+     "get_image",
+     "export_jobs",
+     "list_keys",
+     "create_key",
+     "revoke_key",
+     "service_status",
+     "_connect",
+     "_runner",
+     "_job",
+     "_detay",
+     "_metin",
+     "_uyari",
+     "_yol",
+     "_kayit",
+     "_duzelt",
+     "_satir",
+     "_json",
+     "_iso_gun",
+     "_pencere_gunu",
+     "_pencerede",
+     "_fold",
+     "_terimler",
+     "_icerir",
+     "_sirala",
+     "_session_response",
+     "_issue_cookie"
+    ]
+   },
+   {
+    "path": "app/routes_jobs.py",
+    "batchIndex": 6,
+    "symbols": [
+     "create_job",
+     "list_jobs",
+     "get_job",
+     "_connect",
+     "too_large_message",
+     "_require_image",
+     "_strip_exif",
+     "_envelope",
+     "_clean_iso",
+     "_bad_field"
+    ]
+   },
+   {
+    "path": "app/validator.py",
+    "batchIndex": 4,
+    "symbols": [
+     "validate",
+     "_bases",
+     "_distance",
+     "_close"
+    ]
+   },
+   {
+    "path": "scripts/acceptance.py",
+    "batchIndex": 4,
+    "symbols": [
+     "CheckError",
+     "Instance",
+     "check_contract",
+     "check_verdict_ok",
+     "check_tampered_kdv",
+     "check_auth",
+     "check_idempotent",
+     "check_export_parity",
+     "check_validator_edges",
+     "_variant",
+     "_issue_key",
+     "_expect",
+     "_ok",
+     "_body",
+     "_reason",
+     "_csv_rows",
+     "_xlsx_rows",
+     "_exact",
+     "_boot_demo",
+     "_live",
+     "_attempt",
+     "_row",
+     "_summary",
+     "main"
+    ]
+   },
+   {
+    "path": "scripts/gen_contract_doc.py",
+    "batchIndex": 4,
+    "symbols": [
+     "_type_name",
+     "_default",
+     "_table",
+     "doc_text",
+     "_write",
+     "main"
+    ]
+   },
+   {
+    "path": "tests/test_admin_detail.py",
+    "batchIndex": 1,
+    "symbols": [
+     "env",
+     "detay",
+     "kayitli_sonuc",
+     "test_the_detail_is_the_contract_envelope_plus_where_the_image_lives",
+     "test_the_stored_image_is_the_one_the_worker_uploaded",
+     "test_the_detail_reads_the_row_again_so_a_written_result_shows_up",
+     "test_the_mismatched_receipt_carries_the_block_the_panel_compares",
+     "test_an_unreadable_receipt_arrives_empty_rather_than_zero_rich",
+     "test_a_job_that_never_ran_has_no_result_but_still_an_image",
+     "test_a_job_with_no_image_on_disk_says_so_instead_of_breaking",
+     "test_an_unknown_job_is_404_on_both_doors",
+     "test_neither_the_detail_nor_the_image_open_without_a_session",
+     "test_the_page_holds_the_detail_controls",
+     "test_the_detail_module_calls_the_admin_api",
+     "test_a_list_row_opens_the_detail"
+    ]
+   },
+   {
+    "path": "tests/test_contract_export.py",
+    "batchIndex": 4,
+    "symbols": [
+     "_result_schema",
+     "test_fixtures_present",
+     "test_committed_schema_is_byte_stable_regeneration",
+     "test_schema_text_is_deterministic",
+     "test_regeneration_rewrites_identical_bytes",
+     "test_schema_root_is_job_envelope",
+     "test_fixture_parses_as_valid_result",
+     "test_doc_tables_cover_every_contract_field",
+     "test_doc_covers_verdicts_endpoints_and_versioning"
+    ]
+   },
+   {
+    "path": "tests/test_corrections.py",
+    "batchIndex": 1,
+    "symbols": [
+     "env",
+     "turce",
+     "duzelt",
+     "kayitli_sonuc",
+     "duzeltme_kayitlari",
+     "v1",
+     "detay",
+     "calisan_detay",
+     "yonetici_satiri",
+     "calisan_satiri",
+     "bes_yuzey",
+     "disa_aktarim_satiri",
+     "test_one_correction_lands_on_all_five_surfaces_at_once",
+     "test_the_corrected_envelope_is_still_contract_v1_on_every_door",
+     "test_the_verdict_after_a_correction_is_the_verdict_of_the_new_numbers",
+     "test_a_correction_touches_only_the_field_it_names",
+     "test_the_corrected_product_name_is_what_the_list_searches_on",
+     "test_the_export_row_every_format_is_built_from_carries_the_correction",
+     "test_every_field_that_moved_is_recorded_with_who_and_when",
+     "test_corrections_accumulate_so_the_history_reads_oldest_first",
+     "test_a_field_that_cannot_be_read_leaves_the_job_exactly_as_it_was",
+     "test_only_a_field_the_panel_edits_can_be_corrected",
+     "test_an_empty_body_is_not_a_correction",
+     "test_a_job_the_pipeline_has_not_read_has_nothing_to_correct",
+     "test_the_correction_door_is_the_admin_session_not_a_worker_key",
+     "test_the_detail_page_hands_the_reviewer_a_save"
+    ]
+   },
+   {
+    "path": "tests/test_exports.py",
+    "batchIndex": 1,
+    "symbols": [
+     "env",
+     "turce",
+     "indir",
+     "_sayfa",
+     "csv_satirlari",
+     "xlsx_satirlari",
+     "kimler",
+     "test_the_export_row_is_exactly_the_contract_8_columns",
+     "test_json_answers_with_contract_v1_envelopes",
+     "test_csv_carries_the_contract_header_and_one_row_per_submission",
+     "test_a_receipt_lands_in_csv_exactly_as_the_contract_row_reads_it",
+     "test_xlsx_writes_amounts_as_real_numbers_under_a_bold_header",
+     "test_turkish_survives_both_spreadsheet_formats",
+     "test_a_receipt_with_nothing_read_off_exports_no_amounts",
+     "test_the_quality_mode_flag_reaches_all_three_formats",
+     "test_a_corrected_receipt_exports_corrected_in_every_format",
+     "test_ids_exports_exactly_the_selection",
+     "test_worker_and_since_narrow_the_whole_set",
+     "test_an_empty_selection_is_a_header_only_file_not_an_error",
+     "test_each_format_arrives_as_a_named_download",
+     "test_the_export_door_is_the_admin_session",
+     "test_a_format_or_a_since_the_browser_never_sends_is_a_validation_error"
+    ]
+   },
+   {
+    "path": "tests/test_quality_rerun.py",
+    "batchIndex": 4,
+    "symbols": [
+     "kalite_bundle",
+     "env",
+     "yeni_sonuc",
+     "rerun",
+     "v1",
+     "detay",
+     "calisan_detay",
+     "yonetici_satiri",
+     "calisan_satiri",
+     "bes_yuzey",
+     "test_quality_rerun_replaces_the_result_and_every_view_follows",
+     "test_the_verdict_after_a_rerun_is_the_verdict_of_the_new_numbers",
+     "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+     "test_a_failed_job_comes_back_done_through_quality_mode",
+     "test_a_failed_rerun_leaves_the_job_exactly_as_it_was",
+     "test_a_job_still_in_the_queue_has_nothing_to_rerun",
+     "test_the_rerun_door_is_the_admin_session_not_a_worker_key",
+     "test_the_detail_page_hands_the_reviewer_a_confirmation_and_a_diff"
+    ]
+   },
+   {
+    "path": "tests/test_validator.py",
+    "batchIndex": 4,
+    "symbols": [
+     "market",
+     "test_ground_truth_fixtures_validate_ok",
+     "test_ok_report_carries_expected_and_actual_blocks",
+     "test_tampered_line_total_names_the_item",
+     "test_tampered_kdv_names_totals_kdv",
+     "test_tampered_grand_total_names_totals_toplam",
+     "test_tampered_ara_toplam_names_only_totals_ara_toplam",
+     "test_kurus_drift_within_tolerance_stays_ok",
+     "test_drift_beyond_tolerance_is_mismatch",
+     "test_accepts_contract_model",
+     "test_missing_totals_fall_back_to_house_defaults",
+     "test_input_is_not_mutated",
+     "test_report_is_json_serializable"
+    ]
+   }
+  ],
+  "app/ocr_client.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   }
+  ],
+  "app/pipeline.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   },
+   {
+    "path": "app/validator.py",
+    "batchIndex": 4,
+    "symbols": [
+     "validate",
+     "_bases",
+     "_distance",
+     "_close"
+    ]
+   },
+   {
+    "path": "app/routes_admin.py",
+    "batchIndex": 6,
+    "symbols": [
+     "LoginBody",
+     "CorrectionBody",
+     "KeyBody",
+     "login",
+     "logout",
+     "session",
+     "list_jobs",
+     "get_job",
+     "correct_job",
+     "rerun_job",
+     "get_image",
+     "export_jobs",
+     "list_keys",
+     "create_key",
+     "revoke_key",
+     "service_status",
+     "_connect",
+     "_runner",
+     "_job",
+     "_detay",
+     "_metin",
+     "_uyari",
+     "_yol",
+     "_kayit",
+     "_duzelt",
+     "_satir",
+     "_json",
+     "_iso_gun",
+     "_pencere_gunu",
+     "_pencerede",
+     "_fold",
+     "_terimler",
+     "_icerir",
+     "_sirala",
+     "_session_response",
+     "_issue_cookie"
+    ]
+   },
+   {
+    "path": "tests/test_captured_at_survives.py",
+    "batchIndex": 1,
+    "symbols": [
+     "jpeg",
+     "FakeOcr",
+     "FakeStructurer",
+     "runner",
+     "env",
+     "submit",
+     "process",
+     "meta_of",
+     "test_captured_at_survives_the_worker_into_the_get",
+     "test_the_list_view_reports_it_too",
+     "test_a_rerun_keeps_captured_at_and_refreshes_the_pipeline_meta",
+     "test_captured_at_stays_null_when_it_was_never_sent"
+    ]
+   }
+  ],
+  "app/queue_worker.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   },
+   {
+    "path": "app/db.py",
+    "batchIndex": 1,
+    "symbols": [
+     "_now",
+     "connect",
+     "_migrate",
+     "list_keys",
+     "create_job",
+     "get_job",
+     "find_job_by_client_ref",
+     "list_jobs",
+     "queue_depth",
+     "update_job",
+     "set_status",
+     "_check_columns",
+     "_update",
+     "add_correction",
+     "log_event"
+    ]
+   },
+   {
+    "path": "run.py",
+    "batchIndex": 7,
+    "symbols": [
+     "_say",
+     "_green",
+     "pid_path",
+     "log_path",
+     "required_files",
+     "ocr_command",
+     "app_command",
+     "roll_call",
+     "_spawn",
+     "wait_healthy",
+     "_alive",
+     "_wait_gone",
+     "_terminate",
+     "_tracked",
+     "stop",
+     "_wait_for_children",
+     "_failure_help",
+     "start",
+     "main"
+    ]
+   },
+   {
+    "path": "tests/test_captured_at_survives.py",
+    "batchIndex": 1,
+    "symbols": [
+     "jpeg",
+     "FakeOcr",
+     "FakeStructurer",
+     "runner",
+     "env",
+     "submit",
+     "process",
+     "meta_of",
+     "test_captured_at_survives_the_worker_into_the_get",
+     "test_the_list_view_reports_it_too",
+     "test_a_rerun_keeps_captured_at_and_refreshes_the_pipeline_meta",
+     "test_captured_at_stays_null_when_it_was_never_sent"
+    ]
+   },
+   {
+    "path": "tests/test_queue_worker.py",
+    "batchIndex": 1,
+    "symbols": [
+     "bundle",
+     "ok_runner",
+     "ago",
+     "wait_until",
+     "env",
+     "submit",
+     "running",
+     "test_run_once_processes_oldest_queued_job",
+     "test_job_is_running_while_the_runner_sees_it",
+     "test_done_stamps_finished_and_stores_the_bundle",
+     "test_meta_keeps_pipeline_fields_and_gains_received_at",
+     "test_runner_gets_quality_mode_and_worker",
+     "test_fast_mode_is_the_default_for_the_runner",
+     "test_bundle_error_fails_the_job_and_keeps_result_null",
+     "test_runner_exception_fails_job_but_the_worker_survives",
+     "test_missing_image_file_fails_the_job",
+     "test_burst_of_jobs_is_absorbed",
+     "test_start_processes_queued_jobs_and_stop_ends_the_thread",
+     "test_stop_waits_for_the_job_in_flight",
+     "test_recover_requeues_recently_running_jobs",
+     "test_recover_fails_stale_running_jobs",
+     "test_recover_leaves_other_statuses_alone",
+     "test_start_recovers_the_crash_then_processes"
+    ]
+   }
+  ],
+  "app/structurer.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   }
+  ],
+  "scripts/fake_models.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   }
+  ],
+  "scripts/serve_demo.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   },
+   {
+    "path": "app/auth.py",
+    "batchIndex": 1,
+    "symbols": [
+     "generate_key",
+     "hash_key",
+     "create_key",
+     "verify",
+     "revoke_key",
+     "authorize",
+     "_take_token",
+     "admin_configured",
+     "admin_token_ok",
+     "start_session",
+     "session_ok",
+     "end_session"
+    ]
+   },
+   {
+    "path": "app/db.py",
+    "batchIndex": 1,
+    "symbols": [
+     "_now",
+     "connect",
+     "_migrate",
+     "list_keys",
+     "create_job",
+     "get_job",
+     "find_job_by_client_ref",
+     "list_jobs",
+     "queue_depth",
+     "update_job",
+     "set_status",
+     "_check_columns",
+     "_update",
+     "add_correction",
+     "log_event"
+    ]
+   },
+   {
+    "path": "app/main.py",
+    "batchIndex": 1,
+    "symbols": [
+     "create_app",
+     "_connect",
+     "_add_auth_middleware",
+     "_add_admin_guard",
+     "_add_upload_cap",
+     "_add_security_headers",
+     "_add_request_logging",
+     "_configure_request_log",
+     "_log_request",
+     "_job_id",
+     "_error",
+     "_add_error_envelope",
+     "_code_for",
+     "_mount_static",
+     "_describe_contract"
+    ]
+   },
+   {
+    "path": "app/validator.py",
+    "batchIndex": 4,
+    "symbols": [
+     "validate",
+     "_bases",
+     "_distance",
+     "_close"
+    ]
+   },
+   {
+    "path": "scripts/acceptance.py",
+    "batchIndex": 4,
+    "symbols": [
+     "CheckError",
+     "Instance",
+     "check_contract",
+     "check_verdict_ok",
+     "check_tampered_kdv",
+     "check_auth",
+     "check_idempotent",
+     "check_export_parity",
+     "check_validator_edges",
+     "_variant",
+     "_issue_key",
+     "_expect",
+     "_ok",
+     "_body",
+     "_reason",
+     "_csv_rows",
+     "_xlsx_rows",
+     "_exact",
+     "_boot_demo",
+     "_live",
+     "_attempt",
+     "_row",
+     "_summary",
+     "main"
+    ]
+   },
+   {
+    "path": "tests/test_admin_detail.py",
+    "batchIndex": 1,
+    "symbols": [
+     "env",
+     "detay",
+     "kayitli_sonuc",
+     "test_the_detail_is_the_contract_envelope_plus_where_the_image_lives",
+     "test_the_stored_image_is_the_one_the_worker_uploaded",
+     "test_the_detail_reads_the_row_again_so_a_written_result_shows_up",
+     "test_the_mismatched_receipt_carries_the_block_the_panel_compares",
+     "test_an_unreadable_receipt_arrives_empty_rather_than_zero_rich",
+     "test_a_job_that_never_ran_has_no_result_but_still_an_image",
+     "test_a_job_with_no_image_on_disk_says_so_instead_of_breaking",
+     "test_an_unknown_job_is_404_on_both_doors",
+     "test_neither_the_detail_nor_the_image_open_without_a_session",
+     "test_the_page_holds_the_detail_controls",
+     "test_the_detail_module_calls_the_admin_api",
+     "test_a_list_row_opens_the_detail"
+    ]
+   },
+   {
+    "path": "tests/test_admin_list.py",
+    "batchIndex": 1,
+    "symbols": [
+     "env",
+     "liste",
+     "iso",
+     "idler",
+     "test_every_seeded_job_is_listed_once",
+     "test_a_row_carries_exactly_the_table_columns",
+     "test_a_job_that_never_ran_has_no_amount_but_still_a_day",
+     "test_the_quality_mode_column_follows_the_run_not_the_fixture",
+     "test_status_filter_keeps_only_that_state",
+     "test_worker_filter_uses_the_names_the_panel_offers",
+     "test_a_worker_with_no_jobs_is_an_empty_list_not_an_error",
+     "test_the_date_window_closes_around_the_day_the_row_shows",
+     "test_a_window_after_every_receipt_is_empty",
+     "test_a_date_the_browser_never_sends_is_the_usual_validation_envelope",
+     "test_search_finds_a_receipt_by_its_header",
+     "test_search_finds_a_product_the_table_never_shows",
+     "test_every_search_word_has_to_appear",
+     "test_sorting_orders_the_column_and_sinks_the_rows_that_have_no_value",
+     "test_pages_repeat_and_skip_nothing",
+     "test_an_oversized_page_still_answers_with_what_there_is",
+     "test_the_page_holds_the_list_controls",
+     "test_the_list_module_calls_the_admin_api"
+    ]
+   },
+   {
+    "path": "tests/test_corrections.py",
+    "batchIndex": 1,
+    "symbols": [
+     "env",
+     "turce",
+     "duzelt",
+     "kayitli_sonuc",
+     "duzeltme_kayitlari",
+     "v1",
+     "detay",
+     "calisan_detay",
+     "yonetici_satiri",
+     "calisan_satiri",
+     "bes_yuzey",
+     "disa_aktarim_satiri",
+     "test_one_correction_lands_on_all_five_surfaces_at_once",
+     "test_the_corrected_envelope_is_still_contract_v1_on_every_door",
+     "test_the_verdict_after_a_correction_is_the_verdict_of_the_new_numbers",
+     "test_a_correction_touches_only_the_field_it_names",
+     "test_the_corrected_product_name_is_what_the_list_searches_on",
+     "test_the_export_row_every_format_is_built_from_carries_the_correction",
+     "test_every_field_that_moved_is_recorded_with_who_and_when",
+     "test_corrections_accumulate_so_the_history_reads_oldest_first",
+     "test_a_field_that_cannot_be_read_leaves_the_job_exactly_as_it_was",
+     "test_only_a_field_the_panel_edits_can_be_corrected",
+     "test_an_empty_body_is_not_a_correction",
+     "test_a_job_the_pipeline_has_not_read_has_nothing_to_correct",
+     "test_the_correction_door_is_the_admin_session_not_a_worker_key",
+     "test_the_detail_page_hands_the_reviewer_a_save"
+    ]
+   },
+   {
+    "path": "tests/test_exports.py",
+    "batchIndex": 1,
+    "symbols": [
+     "env",
+     "turce",
+     "indir",
+     "_sayfa",
+     "csv_satirlari",
+     "xlsx_satirlari",
+     "kimler",
+     "test_the_export_row_is_exactly_the_contract_8_columns",
+     "test_json_answers_with_contract_v1_envelopes",
+     "test_csv_carries_the_contract_header_and_one_row_per_submission",
+     "test_a_receipt_lands_in_csv_exactly_as_the_contract_row_reads_it",
+     "test_xlsx_writes_amounts_as_real_numbers_under_a_bold_header",
+     "test_turkish_survives_both_spreadsheet_formats",
+     "test_a_receipt_with_nothing_read_off_exports_no_amounts",
+     "test_the_quality_mode_flag_reaches_all_three_formats",
+     "test_a_corrected_receipt_exports_corrected_in_every_format",
+     "test_ids_exports_exactly_the_selection",
+     "test_worker_and_since_narrow_the_whole_set",
+     "test_an_empty_selection_is_a_header_only_file_not_an_error",
+     "test_each_format_arrives_as_a_named_download",
+     "test_the_export_door_is_the_admin_session",
+     "test_a_format_or_a_since_the_browser_never_sends_is_a_validation_error"
+    ]
+   },
+   {
+    "path": "tests/test_quality_rerun.py",
+    "batchIndex": 4,
+    "symbols": [
+     "kalite_bundle",
+     "env",
+     "yeni_sonuc",
+     "rerun",
+     "v1",
+     "detay",
+     "calisan_detay",
+     "yonetici_satiri",
+     "calisan_satiri",
+     "bes_yuzey",
+     "test_quality_rerun_replaces_the_result_and_every_view_follows",
+     "test_the_verdict_after_a_rerun_is_the_verdict_of_the_new_numbers",
+     "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+     "test_a_failed_job_comes_back_done_through_quality_mode",
+     "test_a_failed_rerun_leaves_the_job_exactly_as_it_was",
+     "test_a_job_still_in_the_queue_has_nothing_to_rerun",
+     "test_the_rerun_door_is_the_admin_session_not_a_worker_key",
+     "test_the_detail_page_hands_the_reviewer_a_confirmation_and_a_diff"
+    ]
+   },
+   {
+    "path": "tests/test_serve_demo.py",
+    "batchIndex": 1,
+    "symbols": [
+     "_seed",
+     "test_seed_covers_every_state_and_verdict",
+     "test_done_jobs_revalidate",
+     "test_mismatch_job_names_its_offending_fields",
+     "test_demo_routes_serve_config_and_samples",
+     "test_check_boots_probes_and_exits_zero",
+     "test_check_reports_failure_when_boot_breaks"
+    ]
+   },
+   {
+    "path": "tests/test_serve_demo_live_states.py",
+    "batchIndex": 4,
+    "symbols": [
+     "_statuses",
+     "_upload",
+     "_await_done",
+     "test_queued_and_running_jobs_survive_the_worker"
+    ]
+   }
+  ],
+  "scripts/smoke_e2e.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   },
+   {
+    "path": "app/auth.py",
+    "batchIndex": 1,
+    "symbols": [
+     "generate_key",
+     "hash_key",
+     "create_key",
+     "verify",
+     "revoke_key",
+     "authorize",
+     "_take_token",
+     "admin_configured",
+     "admin_token_ok",
+     "start_session",
+     "session_ok",
+     "end_session"
+    ]
+   },
+   {
+    "path": "app/db.py",
+    "batchIndex": 1,
+    "symbols": [
+     "_now",
+     "connect",
+     "_migrate",
+     "list_keys",
+     "create_job",
+     "get_job",
+     "find_job_by_client_ref",
+     "list_jobs",
+     "queue_depth",
+     "update_job",
+     "set_status",
+     "_check_columns",
+     "_update",
+     "add_correction",
+     "log_event"
+    ]
+   },
+   {
+    "path": "app/main.py",
+    "batchIndex": 1,
+    "symbols": [
+     "create_app",
+     "_connect",
+     "_add_auth_middleware",
+     "_add_admin_guard",
+     "_add_upload_cap",
+     "_add_security_headers",
+     "_add_request_logging",
+     "_configure_request_log",
+     "_log_request",
+     "_job_id",
+     "_error",
+     "_add_error_envelope",
+     "_code_for",
+     "_mount_static",
+     "_describe_contract"
+    ]
+   }
+  ],
+  "spike/probe_stage2.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   }
+  ],
+  "spike/probe_thinking.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   }
+  ],
+  "spike/probe_thinking2.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   }
+  ],
+  "spike/probe_thinking3.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   }
+  ],
+  "tests/test_config.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   }
+  ],
+  "tests/test_contract.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   }
+  ],
+  "tests/test_fake_models.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   }
+  ],
+  "tests/test_integration_m1.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   },
+   {
+    "path": "app/auth.py",
+    "batchIndex": 1,
+    "symbols": [
+     "generate_key",
+     "hash_key",
+     "create_key",
+     "verify",
+     "revoke_key",
+     "authorize",
+     "_take_token",
+     "admin_configured",
+     "admin_token_ok",
+     "start_session",
+     "session_ok",
+     "end_session"
+    ]
+   },
+   {
+    "path": "app/db.py",
+    "batchIndex": 1,
+    "symbols": [
+     "_now",
+     "connect",
+     "_migrate",
+     "list_keys",
+     "create_job",
+     "get_job",
+     "find_job_by_client_ref",
+     "list_jobs",
+     "queue_depth",
+     "update_job",
+     "set_status",
+     "_check_columns",
+     "_update",
+     "add_correction",
+     "log_event"
+    ]
+   },
+   {
+    "path": "app/main.py",
+    "batchIndex": 1,
+    "symbols": [
+     "create_app",
+     "_connect",
+     "_add_auth_middleware",
+     "_add_admin_guard",
+     "_add_upload_cap",
+     "_add_security_headers",
+     "_add_request_logging",
+     "_configure_request_log",
+     "_log_request",
+     "_job_id",
+     "_error",
+     "_add_error_envelope",
+     "_code_for",
+     "_mount_static",
+     "_describe_contract"
+    ]
+   }
+  ],
+  "tests/test_ocr_client.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   }
+  ],
+  "tests/test_pipeline.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   }
+  ],
+  "tests/test_smoke_real_structurer.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   }
+  ],
+  "tests/test_structurer.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   }
+  ],
+  "tests/test_tailscale.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   }
+  ],
+  "tests/test_unreadable_survives.py": [
+   {
+    "path": "app/__init__.py",
+    "batchIndex": 1,
+    "symbols": []
+   },
+   {
+    "path": "app/db.py",
+    "batchIndex": 1,
+    "symbols": [
+     "_now",
+     "connect",
+     "_migrate",
+     "list_keys",
+     "create_job",
+     "get_job",
+     "find_job_by_client_ref",
+     "list_jobs",
+     "queue_depth",
+     "update_job",
+     "set_status",
+     "_check_columns",
+     "_update",
+     "add_correction",
+     "log_event"
+    ]
+   }
+  ]
+ }
+}

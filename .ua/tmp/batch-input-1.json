@@ -1,0 +1,884 @@
+{
+  "batchIndex": 1,
+  "files": [
+    {
+      "path": "app/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/config.py",
+      "language": "python",
+      "sizeLines": 231,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/queue_worker.py",
+      "language": "python",
+      "sizeLines": 174,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/structurer.py",
+      "language": "python",
+      "sizeLines": 158,
+      "fileCategory": "code"
+    },
+    {
+      "path": "run.py",
+      "language": "python",
+      "sizeLines": 330,
+      "fileCategory": "code"
+    },
+    {
+      "path": "spike/probe_stage2.py",
+      "language": "python",
+      "sizeLines": 34,
+      "fileCategory": "code"
+    },
+    {
+      "path": "spike/probe_thinking.py",
+      "language": "python",
+      "sizeLines": 23,
+      "fileCategory": "code"
+    },
+    {
+      "path": "spike/probe_thinking2.py",
+      "language": "python",
+      "sizeLines": 33,
+      "fileCategory": "code"
+    },
+    {
+      "path": "spike/probe_thinking3.py",
+      "language": "python",
+      "sizeLines": 20,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "app/__init__.py": [],
+    "app/config.py": [],
+    "app/queue_worker.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/db.py",
+      "app/pipeline.py"
+    ],
+    "app/structurer.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/contract.py"
+    ],
+    "run.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/queue_worker.py",
+      "app/status.py"
+    ],
+    "spike/probe_stage2.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/ocr_client.py",
+      "app/structurer.py"
+    ],
+    "spike/probe_thinking.py": [
+      "app/__init__.py",
+      "app/config.py"
+    ],
+    "spike/probe_thinking2.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/structurer.py"
+    ],
+    "spike/probe_thinking3.py": [
+      "app/__init__.py",
+      "app/config.py"
+    ]
+  },
+  "neighborMap": {
+    "app/__init__.py": [
+      {
+        "path": "app/auth.py",
+        "batchIndex": 4,
+        "symbols": [
+          "generate_key",
+          "hash_key",
+          "create_key",
+          "verify",
+          "revoke_key",
+          "authorize",
+          "_take_token",
+          "admin_configured",
+          "admin_token_ok",
+          "start_session",
+          "session_ok",
+          "end_session"
+        ]
+      },
+      {
+        "path": "app/contract.py",
+        "batchIndex": 2,
+        "symbols": [
+          "_lowered",
+          "_to_text",
+          "_to_amount",
+          "_to_rate",
+          "_Model",
+          "Header",
+          "ReceiptMeta",
+          "Item",
+          "Totals",
+          "Result",
+          "TotalsBlock",
+          "Validation",
+          "JobMeta",
+          "JobEnvelope",
+          "schema_text"
+        ]
+      },
+      {
+        "path": "app/db.py",
+        "batchIndex": 3,
+        "symbols": [
+          "_now",
+          "connect",
+          "_migrate",
+          "list_keys",
+          "create_job",
+          "get_job",
+          "find_job_by_client_ref",
+          "list_jobs",
+          "queue_depth",
+          "update_job",
+          "set_status",
+          "_check_columns",
+          "_update",
+          "add_correction",
+          "log_event"
+        ]
+      },
+      {
+        "path": "app/exports.py",
+        "batchIndex": 3,
+        "symbols": [
+          "select",
+          "row",
+          "to_json",
+          "to_csv",
+          "to_xlsx",
+          "filename",
+          "_csv_value",
+          "_json"
+        ]
+      },
+      {
+        "path": "app/keys_cli.py",
+        "batchIndex": 4,
+        "symbols": [
+          "_cmd_add",
+          "_cmd_list",
+          "_cmd_revoke",
+          "main"
+        ]
+      },
+      {
+        "path": "app/main.py",
+        "batchIndex": 3,
+        "symbols": [
+          "create_app",
+          "_connect",
+          "_add_auth_middleware",
+          "_add_admin_guard",
+          "_add_upload_cap",
+          "_add_security_headers",
+          "_add_request_logging",
+          "_configure_request_log",
+          "_log_request",
+          "_job_id",
+          "_error",
+          "_add_error_envelope",
+          "_code_for",
+          "_mount_static",
+          "_describe_contract"
+        ]
+      },
+      {
+        "path": "app/ocr_client.py",
+        "batchIndex": 2,
+        "symbols": [
+          "OcrError",
+          "OcrClient"
+        ]
+      },
+      {
+        "path": "app/pipeline.py",
+        "batchIndex": 2,
+        "symbols": [
+          "run",
+          "_default_structurer",
+          "_bundle",
+          "_reason",
+          "_ms"
+        ]
+      },
+      {
+        "path": "app/routes_admin.py",
+        "batchIndex": 3,
+        "symbols": [
+          "LoginBody",
+          "CorrectionBody",
+          "KeyBody",
+          "login",
+          "logout",
+          "session",
+          "list_jobs",
+          "get_job",
+          "correct_job",
+          "rerun_job",
+          "get_image",
+          "export_jobs",
+          "list_keys",
+          "create_key",
+          "revoke_key",
+          "service_status",
+          "_connect",
+          "_runner",
+          "_job",
+          "_detay",
+          "_metin",
+          "_uyari",
+          "_yol",
+          "_kayit",
+          "_duzelt",
+          "_satir",
+          "_json",
+          "_iso_gun",
+          "_pencere_gunu",
+          "_pencerede",
+          "_fold",
+          "_terimler",
+          "_icerir",
+          "_sirala",
+          "_session_response",
+          "_issue_cookie"
+        ]
+      },
+      {
+        "path": "app/routes_jobs.py",
+        "batchIndex": 3,
+        "symbols": [
+          "create_job",
+          "list_jobs",
+          "get_job",
+          "_connect",
+          "too_large_message",
+          "_require_image",
+          "_strip_exif",
+          "_envelope",
+          "_clean_iso",
+          "_bad_field"
+        ]
+      },
+      {
+        "path": "app/routes_worker.py",
+        "batchIndex": 3,
+        "symbols": [
+          "list_jobs",
+          "get_job",
+          "get_thumbnail",
+          "get_image",
+          "_connect",
+          "_own_job",
+          "_image_path",
+          "_lite",
+          "_thumbnail"
+        ]
+      },
+      {
+        "path": "app/status.py",
+        "batchIndex": 3,
+        "symbols": [
+          "probe_service",
+          "vram_info",
+          "probe_all"
+        ]
+      },
+      {
+        "path": "app/validator.py",
+        "batchIndex": 2,
+        "symbols": [
+          "validate",
+          "_bases",
+          "_distance",
+          "_close"
+        ]
+      },
+      {
+        "path": "scripts/acceptance.py",
+        "batchIndex": 2,
+        "symbols": [
+          "CheckError",
+          "Instance",
+          "check_contract",
+          "check_verdict_ok",
+          "check_tampered_kdv",
+          "check_auth",
+          "check_idempotent",
+          "check_export_parity",
+          "check_validator_edges",
+          "_variant",
+          "_issue_key",
+          "_expect",
+          "_ok",
+          "_body",
+          "_reason",
+          "_csv_rows",
+          "_xlsx_rows",
+          "_exact",
+          "_boot_demo",
+          "_live",
+          "_attempt",
+          "_row",
+          "_summary",
+          "main"
+        ]
+      },
+      {
+        "path": "scripts/fake_models.py",
+        "batchIndex": 4,
+        "symbols": [
+          "default_dirs",
+          "_tr",
+          "_qty",
+          "render_ocr_text",
+          "Fixture",
+          "FixtureBook",
+          "_completion",
+          "_last_message",
+          "_image_bytes",
+          "_model_id",
+          "_Handler",
+          "FakeModelServer",
+          "FakeModels",
+          "start_fake_models"
+        ]
+      },
+      {
+        "path": "scripts/gen_contract_doc.py",
+        "batchIndex": 2,
+        "symbols": [
+          "_type_name",
+          "_default",
+          "_table",
+          "doc_text",
+          "_write",
+          "main"
+        ]
+      },
+      {
+        "path": "scripts/serve_demo.py",
+        "batchIndex": 2,
+        "symbols": [
+          "DemoError",
+          "_log",
+          "fixture_names",
+          "_fixture_file",
+          "_fixture_image",
+          "_result_for",
+          "_store_image",
+          "seed_jobs",
+          "DemoWorker",
+          "_model_runner",
+          "_start_worker",
+          "_add_demo_routes",
+          "_serve",
+          "_url",
+          "_boot",
+          "_check",
+          "_review",
+          "main"
+        ]
+      },
+      {
+        "path": "scripts/smoke_e2e.py",
+        "batchIndex": 4,
+        "symbols": [
+          "SmokeError",
+          "_log",
+          "_App",
+          "_strata_env",
+          "_start_worker",
+          "_validated",
+          "_submit",
+          "_poll_to_done",
+          "_failure",
+          "_check",
+          "_run",
+          "main"
+        ]
+      }
+    ],
+    "app/config.py": [
+      {
+        "path": "app/auth.py",
+        "batchIndex": 4,
+        "symbols": [
+          "generate_key",
+          "hash_key",
+          "create_key",
+          "verify",
+          "revoke_key",
+          "authorize",
+          "_take_token",
+          "admin_configured",
+          "admin_token_ok",
+          "start_session",
+          "session_ok",
+          "end_session"
+        ]
+      },
+      {
+        "path": "app/contract.py",
+        "batchIndex": 2,
+        "symbols": [
+          "_lowered",
+          "_to_text",
+          "_to_amount",
+          "_to_rate",
+          "_Model",
+          "Header",
+          "ReceiptMeta",
+          "Item",
+          "Totals",
+          "Result",
+          "TotalsBlock",
+          "Validation",
+          "JobMeta",
+          "JobEnvelope",
+          "schema_text"
+        ]
+      },
+      {
+        "path": "app/db.py",
+        "batchIndex": 3,
+        "symbols": [
+          "_now",
+          "connect",
+          "_migrate",
+          "list_keys",
+          "create_job",
+          "get_job",
+          "find_job_by_client_ref",
+          "list_jobs",
+          "queue_depth",
+          "update_job",
+          "set_status",
+          "_check_columns",
+          "_update",
+          "add_correction",
+          "log_event"
+        ]
+      },
+      {
+        "path": "app/main.py",
+        "batchIndex": 3,
+        "symbols": [
+          "create_app",
+          "_connect",
+          "_add_auth_middleware",
+          "_add_admin_guard",
+          "_add_upload_cap",
+          "_add_security_headers",
+          "_add_request_logging",
+          "_configure_request_log",
+          "_log_request",
+          "_job_id",
+          "_error",
+          "_add_error_envelope",
+          "_code_for",
+          "_mount_static",
+          "_describe_contract"
+        ]
+      },
+      {
+        "path": "app/ocr_client.py",
+        "batchIndex": 2,
+        "symbols": [
+          "OcrError",
+          "OcrClient"
+        ]
+      },
+      {
+        "path": "app/pipeline.py",
+        "batchIndex": 2,
+        "symbols": [
+          "run",
+          "_default_structurer",
+          "_bundle",
+          "_reason",
+          "_ms"
+        ]
+      },
+      {
+        "path": "app/routes_admin.py",
+        "batchIndex": 3,
+        "symbols": [
+          "LoginBody",
+          "CorrectionBody",
+          "KeyBody",
+          "login",
+          "logout",
+          "session",
+          "list_jobs",
+          "get_job",
+          "correct_job",
+          "rerun_job",
+          "get_image",
+          "export_jobs",
+          "list_keys",
+          "create_key",
+          "revoke_key",
+          "service_status",
+          "_connect",
+          "_runner",
+          "_job",
+          "_detay",
+          "_metin",
+          "_uyari",
+          "_yol",
+          "_kayit",
+          "_duzelt",
+          "_satir",
+          "_json",
+          "_iso_gun",
+          "_pencere_gunu",
+          "_pencerede",
+          "_fold",
+          "_terimler",
+          "_icerir",
+          "_sirala",
+          "_session_response",
+          "_issue_cookie"
+        ]
+      },
+      {
+        "path": "app/routes_jobs.py",
+        "batchIndex": 3,
+        "symbols": [
+          "create_job",
+          "list_jobs",
+          "get_job",
+          "_connect",
+          "too_large_message",
+          "_require_image",
+          "_strip_exif",
+          "_envelope",
+          "_clean_iso",
+          "_bad_field"
+        ]
+      },
+      {
+        "path": "app/routes_worker.py",
+        "batchIndex": 3,
+        "symbols": [
+          "list_jobs",
+          "get_job",
+          "get_thumbnail",
+          "get_image",
+          "_connect",
+          "_own_job",
+          "_image_path",
+          "_lite",
+          "_thumbnail"
+        ]
+      },
+      {
+        "path": "app/status.py",
+        "batchIndex": 3,
+        "symbols": [
+          "probe_service",
+          "vram_info",
+          "probe_all"
+        ]
+      },
+      {
+        "path": "scripts/acceptance.py",
+        "batchIndex": 2,
+        "symbols": [
+          "CheckError",
+          "Instance",
+          "check_contract",
+          "check_verdict_ok",
+          "check_tampered_kdv",
+          "check_auth",
+          "check_idempotent",
+          "check_export_parity",
+          "check_validator_edges",
+          "_variant",
+          "_issue_key",
+          "_expect",
+          "_ok",
+          "_body",
+          "_reason",
+          "_csv_rows",
+          "_xlsx_rows",
+          "_exact",
+          "_boot_demo",
+          "_live",
+          "_attempt",
+          "_row",
+          "_summary",
+          "main"
+        ]
+      },
+      {
+        "path": "scripts/fake_models.py",
+        "batchIndex": 4,
+        "symbols": [
+          "default_dirs",
+          "_tr",
+          "_qty",
+          "render_ocr_text",
+          "Fixture",
+          "FixtureBook",
+          "_completion",
+          "_last_message",
+          "_image_bytes",
+          "_model_id",
+          "_Handler",
+          "FakeModelServer",
+          "FakeModels",
+          "start_fake_models"
+        ]
+      },
+      {
+        "path": "scripts/gen_contract_doc.py",
+        "batchIndex": 2,
+        "symbols": [
+          "_type_name",
+          "_default",
+          "_table",
+          "doc_text",
+          "_write",
+          "main"
+        ]
+      },
+      {
+        "path": "scripts/serve_demo.py",
+        "batchIndex": 2,
+        "symbols": [
+          "DemoError",
+          "_log",
+          "fixture_names",
+          "_fixture_file",
+          "_fixture_image",
+          "_result_for",
+          "_store_image",
+          "seed_jobs",
+          "DemoWorker",
+          "_model_runner",
+          "_start_worker",
+          "_add_demo_routes",
+          "_serve",
+          "_url",
+          "_boot",
+          "_check",
+          "_review",
+          "main"
+        ]
+      },
+      {
+        "path": "scripts/smoke_e2e.py",
+        "batchIndex": 4,
+        "symbols": [
+          "SmokeError",
+          "_log",
+          "_App",
+          "_strata_env",
+          "_start_worker",
+          "_validated",
+          "_submit",
+          "_poll_to_done",
+          "_failure",
+          "_check",
+          "_run",
+          "main"
+        ]
+      }
+    ],
+    "app/queue_worker.py": [
+      {
+        "path": "app/db.py",
+        "batchIndex": 3,
+        "symbols": [
+          "_now",
+          "connect",
+          "_migrate",
+          "list_keys",
+          "create_job",
+          "get_job",
+          "find_job_by_client_ref",
+          "list_jobs",
+          "queue_depth",
+          "update_job",
+          "set_status",
+          "_check_columns",
+          "_update",
+          "add_correction",
+          "log_event"
+        ]
+      },
+      {
+        "path": "app/pipeline.py",
+        "batchIndex": 2,
+        "symbols": [
+          "run",
+          "_default_structurer",
+          "_bundle",
+          "_reason",
+          "_ms"
+        ]
+      },
+      {
+        "path": "scripts/serve_demo.py",
+        "batchIndex": 2,
+        "symbols": [
+          "DemoError",
+          "_log",
+          "fixture_names",
+          "_fixture_file",
+          "_fixture_image",
+          "_result_for",
+          "_store_image",
+          "seed_jobs",
+          "DemoWorker",
+          "_model_runner",
+          "_start_worker",
+          "_add_demo_routes",
+          "_serve",
+          "_url",
+          "_boot",
+          "_check",
+          "_review",
+          "main"
+        ]
+      },
+      {
+        "path": "scripts/smoke_e2e.py",
+        "batchIndex": 4,
+        "symbols": [
+          "SmokeError",
+          "_log",
+          "_App",
+          "_strata_env",
+          "_start_worker",
+          "_validated",
+          "_submit",
+          "_poll_to_done",
+          "_failure",
+          "_check",
+          "_run",
+          "main"
+        ]
+      }
+    ],
+    "app/structurer.py": [
+      {
+        "path": "app/contract.py",
+        "batchIndex": 2,
+        "symbols": [
+          "_lowered",
+          "_to_text",
+          "_to_amount",
+          "_to_rate",
+          "_Model",
+          "Header",
+          "ReceiptMeta",
+          "Item",
+          "Totals",
+          "Result",
+          "TotalsBlock",
+          "Validation",
+          "JobMeta",
+          "JobEnvelope",
+          "schema_text"
+        ]
+      },
+      {
+        "path": "app/pipeline.py",
+        "batchIndex": 2,
+        "symbols": [
+          "run",
+          "_default_structurer",
+          "_bundle",
+          "_reason",
+          "_ms"
+        ]
+      },
+      {
+        "path": "scripts/serve_demo.py",
+        "batchIndex": 2,
+        "symbols": [
+          "DemoError",
+          "_log",
+          "fixture_names",
+          "_fixture_file",
+          "_fixture_image",
+          "_result_for",
+          "_store_image",
+          "seed_jobs",
+          "DemoWorker",
+          "_model_runner",
+          "_start_worker",
+          "_add_demo_routes",
+          "_serve",
+          "_url",
+          "_boot",
+          "_check",
+          "_review",
+          "main"
+        ]
+      },
+      {
+        "path": "scripts/smoke_e2e.py",
+        "batchIndex": 4,
+        "symbols": [
+          "SmokeError",
+          "_log",
+          "_App",
+          "_strata_env",
+          "_start_worker",
+          "_validated",
+          "_submit",
+          "_poll_to_done",
+          "_failure",
+          "_check",
+          "_run",
+          "main"
+        ]
+      }
+    ],
+    "run.py": [
+      {
+        "path": "app/status.py",
+        "batchIndex": 3,
+        "symbols": [
+          "probe_service",
+          "vram_info",
+          "probe_all"
+        ]
+      }
+    ],
+    "spike/probe_stage2.py": [
+      {
+        "path": "app/ocr_client.py",
+        "batchIndex": 2,
+        "symbols": [
+          "OcrError",
+          "OcrClient"
+        ]
+      }
+    ]
+  }
+}

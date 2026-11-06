@@ -1,0 +1,16 @@
+{
+ "batchImportData": {
+  "spike/CANLI_TEST_RAPORU.md": [],
+  "spike/REPORT.md": [],
+  "spike/_restart_app.ps1": [],
+  "spike/bench_paddle.json": [],
+  "spike/bench_qwen_natural.json": [],
+  "spike/hard_paddle.json": [],
+  "spike/hard_qwen.json": [],
+  "spike/last_out.txt": [],
+  "spike/live_real.json": [],
+  "spike/real_paddle.json": [],
+  "spike/real_qwen.json": []
+ },
+ "neighborMap": {}
+}

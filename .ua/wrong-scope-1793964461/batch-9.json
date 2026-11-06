@@ -1,0 +1,87 @@
+{
+  "nodes": [
+    {
+      "id": "config:fixtures/fis_benzin_clean.json",
+      "type": "config",
+      "name": "fis_benzin_clean.json",
+      "filePath": "fixtures/fis_benzin_clean.json",
+      "summary": "Akaryakıt istasyonu fişi için beklenen (ground-truth) contract v1 çıktısı: tek satırlık Kurşunsuz 95 litresi, KDV hariç tek oranlı toplamlar (ara_toplam 1727.08 + kdv 345.42 = 2072.50). Temiz/dijital baskı fis_benzin_clean.png görselinin yapılandırılmış hedefi.",
+      "tags": ["test-fixture", "ground-truth", "data-model", "fiş-ocr", "akaryakıt"],
+      "complexity": "simple",
+      "languageNotes": "Şema: header (isim/vergi_dairesi/vergi_no) + meta (tarih/saat/no/tip) + items[] + totals + para_birimi. Totaller KDV hariç tabanda kurulu (toplam = ara_toplam - iskonto + kdv), yani validator'ın exclusive yoluna denk düşüyor; tek KDV oranı (0.2)."
+    },
+    {
+      "id": "config:fixtures/fis_benzin_foto.json",
+      "type": "config",
+      "name": "fis_benzin_foto.json",
+      "filePath": "fixtures/fis_benzin_foto.json",
+      "summary": "Aynı akaryakıt fişinin fotoğraf (çekim) varyantının beklenen çıktısı; içerik olarak fis_benzin_clean.json ile birebir aynı ground-truth'u taşır. Fark, hedef görselin bozulmuş/fotoğraf kalitesinde olmasıdır.",
+      "tags": ["test-fixture", "ground-truth", "data-model", "fiş-ocr", "foto-varyant"],
+      "complexity": "simple",
+      "languageNotes": "_clean/_foto çiftleri aynı JSON gövdesini paylaşır: beklenen sonuç giriş görselin kalitesinden bağımsızdır, sadece girdi tarafı değişir. serve_demo.py bu ismi canlı kuyruk durumunu taklit etmek için de kullanıyor."
+    },
+    {
+      "id": "config:fixtures/fis_market_clean.json",
+      "type": "config",
+      "name": "fis_market_clean.json",
+      "filePath": "fixtures/fis_market_clean.json",
+      "summary": "Market (BILGIN MARKETLER) fişinin beklenen contract v1 çıktısı: 6 kalem, iskonto ve KDV dahil toplamlar (ara_toplam 1046.40 - iskonto 52.32 + kdv 198.82 = 1192.90). Projenin birincil referans fixture'ı — acceptance, smoke e2e ve M1 testlerinin çoğu bu dosyaya sabitlenmiş durumda.",
+      "tags": ["test-fixture", "ground-truth", "data-model", "fiş-ocr", "market"],
+      "complexity": "moderate",
+      "languageNotes": "scripts/acceptance.py, scripts/smoke_e2e.py ve tests/test_integration_m1.py içinde FIXTURE = \"fis_market_clean\" sabitiyle referanslanan varsayılan fixture. İskonto satırını sınayan tek kalemli temiz fixture'a göre en zengin toplam doğrulamasını sağlar; tutarlar KDV hariç tabanda."
+    },
+    {
+      "id": "config:fixtures/fis_market_foto.json",
+      "type": "config",
+      "name": "fis_market_foto.json",
+      "filePath": "fixtures/fis_market_foto.json",
+      "summary": "Market fişinin fotoğraf varyantının beklenen çıktısı; temiz sürümle aynı 6 kalem ve toplamları içerir. Demo arayüzünde kasten bozulmuş toplam senaryosu (uyuşmazlık paneli) için MISMATCH_FIXTURE olarak kullanılır.",
+      "tags": ["test-fixture", "ground-truth", "data-model", "fiş-ocr", "uyuşmazlık"],
+      "complexity": "moderate",
+      "languageNotes": "scripts/serve_demo.py bu fixture'ı MISMATCH_FIXTURE olarak işaretler: beklenen değer sabit kalıp model çıktısının toplamı kaydırıldığı zaman, doğrulayıcının uyarı alanı (_toplam_uyari benzeri) yüzeye çıkar."
+    },
+    {
+      "id": "config:fixtures/fis_restoran_clean.json",
+      "type": "config",
+      "name": "fis_restoran_clean.json",
+      "filePath": "fixtures/fis_restoran_clean.json",
+      "summary": "Restoran (LEZZET DUNYASI) fişinin beklenen contract v1 çıktısı: 6 yiyecek/içecek kalemi, iskonto yok ve %10 KDV (ara_toplam 1110.00 + kdv 111.00 = 1221.00). Yeme-içme sektörü için %20 değil %10 KDV oranını sınamak üzere eklenmiş.",
+      "tags": ["test-fixture", "ground-truth", "data-model", "fiş-ocr", "restoran"],
+      "complexity": "moderate",
+      "languageNotes": "kdv_orani 0.1 ile diğer iki fixture'dan ayrılır; böylece validator'ın oran hesabı tek bir sabite sabitlenmemiş olur. iskonto 0.0 olduğu için iskonto indirim yolunu temiz sürüm market fixture'ı üstlenir."
+    },
+    {
+      "id": "config:fixtures/fis_restoran_foto.json",
+      "type": "config",
+      "name": "fis_restoran_foto.json",
+      "filePath": "fixtures/fis_restoran_foto.json",
+      "summary": "Restoran fişinin fotoğraf varyantının beklenen çıktısı; temiz sürümle aynı kalem ve toplamları taşır. Demo tohumlamasında işi çalışırken (running) göstermek için de referans alınır.",
+      "tags": ["test-fixture", "ground-truth", "data-model", "fiş-ocr", "foto-varyant"],
+      "complexity": "moderate",
+      "languageNotes": "scripts/serve_demo.py LIVE_STATES içinde bu fixture'ı \"running\" durumuna sabitler; scripts/test ve admin detay testleri demo-fis_restoran_clean üzerinden okur."
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:fixtures/fis_benzin_clean.json",
+      "target": "config:fixtures/fis_benzin_foto.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:fixtures/fis_market_clean.json",
+      "target": "config:fixtures/fis_market_foto.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:fixtures/fis_restoran_clean.json",
+      "target": "config:fixtures/fis_restoran_foto.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

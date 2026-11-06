@@ -1,0 +1,1258 @@
+[
+ {
+  "path": "static/app/api.js",
+  "totalLines": 232,
+  "nonEmpty": 213,
+  "functions": [
+   {
+    "n": "classifyFailure",
+    "l": [
+     40,
+     56
+    ],
+    "p": ""
+   },
+   {
+    "n": "backoffDelay",
+    "l": [
+     59,
+     62
+    ],
+    "p": "attempt"
+   },
+   {
+    "n": "isOnline",
+    "l": [
+     65,
+     67
+    ],
+    "p": ""
+   },
+   {
+    "n": "getApiKey",
+    "l": [
+     69,
+     75
+    ],
+    "p": ""
+   },
+   {
+    "n": "setApiKey",
+    "l": [
+     78,
+     88
+    ],
+    "p": "key"
+   },
+   {
+    "n": "failureMessage",
+    "l": [
+     95,
+     104
+    ],
+    "p": "data"
+   },
+   {
+    "n": "retryAfterSeconds",
+    "l": [
+     106,
+     109
+    ],
+    "p": "headers"
+   },
+   {
+    "n": "call",
+    "l": [
+     111,
+     132
+    ],
+    "p": "path"
+   },
+   {
+    "n": "submitJob",
+    "l": [
+     138,
+     151
+    ],
+    "p": "image"
+   },
+   {
+    "n": "listJobs",
+    "l": [
+     158,
+     161
+    ],
+    "p": ""
+   },
+   {
+    "n": "getJob",
+    "l": [
+     164,
+     167
+    ],
+    "p": "jobId"
+   },
+   {
+    "n": "fetchImage",
+    "l": [
+     173,
+     184
+    ],
+    "p": "url"
+   },
+   {
+    "n": "pollJob",
+    "l": [
+     192,
+     232
+    ],
+    "p": "jobId"
+   }
+  ],
+  "classes": [
+   {
+    "n": "ApiError",
+    "l": [
+     29,
+     37
+    ],
+    "m": "constructor"
+   }
+  ],
+  "exports": [
+   "STORAGE_KEY",
+   "POLL",
+   "ApiError",
+   "classifyFailure",
+   "backoffDelay",
+   "isOnline",
+   "getApiKey",
+   "setApiKey",
+   "submitJob",
+   "listJobs",
+   "getJob",
+   "fetchImage",
+   "pollJob"
+  ],
+  "metrics": {
+   "importCount": 0,
+   "exportCount": 13,
+   "functionCount": 13,
+   "classCount": 1
+  }
+ },
+ {
+  "path": "static/app/app.js",
+  "totalLines": 412,
+  "nonEmpty": 373,
+  "functions": [
+   {
+    "n": "metin",
+    "l": [
+     75,
+     77
+    ],
+    "p": "value"
+   },
+   {
+    "n": "show",
+    "l": [
+     87,
+     92
+    ],
+    "p": "step"
+   },
+   {
+    "n": "hideError",
+    "l": [
+     94,
+     98
+    ],
+    "p": ""
+   },
+   {
+    "n": "showError",
+    "l": [
+     100,
+     104
+    ],
+    "p": "message"
+   },
+   {
+    "n": "cizDurum",
+    "l": [
+     126,
+     133
+    ],
+    "p": ""
+   },
+   {
+    "n": "hataGoster",
+    "l": [
+     140,
+     160
+    ],
+    "p": "err"
+   },
+   {
+    "n": "gonder",
+    "l": [
+     162,
+     195
+    ],
+    "p": "crop"
+   },
+   {
+    "n": "detayAc",
+    "l": [
+     201,
+     230
+    ],
+    "p": "job"
+   },
+   {
+    "n": "cizTablo",
+    "l": [
+     232,
+     251
+    ],
+    "p": "items"
+   },
+   {
+    "n": "sonucGoster",
+    "l": [
+     253,
+     301
+    ],
+    "p": "env"
+   },
+   {
+    "n": "kamerayaDon",
+    "l": [
+     311,
+     319
+    ],
+    "p": ""
+   },
+   {
+    "n": "cizNet",
+    "l": [
+     350,
+     354
+    ],
+    "p": ""
+   }
+  ],
+  "classes": [],
+  "exports": [],
+  "metrics": {
+   "importCount": 10,
+   "exportCount": 0,
+   "functionCount": 12,
+   "classCount": 0
+  }
+ },
+ {
+  "path": "static/app/capture.js",
+  "totalLines": 277,
+  "nonEmpty": 251,
+  "functions": [
+   {
+    "n": "scaleToFit",
+    "l": [
+     74,
+     81
+    ],
+    "p": "width,height,maxEdge"
+   },
+   {
+    "n": "isPermissionDenied",
+    "l": [
+     83,
+     90
+    ],
+    "p": "err"
+   },
+   {
+    "n": "injectStyles",
+    "l": [
+     92,
+     98
+    ],
+    "p": "doc"
+   },
+   {
+    "n": "createCapture",
+    "l": [
+     100,
+     277
+    ],
+    "p": ""
+   }
+  ],
+  "classes": [],
+  "exports": [
+   "DEFAULT_MAX_EDGE",
+   "DEFAULT_JPEG_QUALITY",
+   "scaleToFit",
+   "createCapture"
+  ],
+  "metrics": {
+   "importCount": 1,
+   "exportCount": 4,
+   "functionCount": 4,
+   "classCount": 0
+  }
+ },
+ {
+  "path": "static/app/crop.js",
+  "totalLines": 553,
+  "nonEmpty": 500,
+  "functions": [
+   {
+    "n": "between",
+    "l": [
+     56,
+     60
+    ],
+    "p": "value,a,b"
+   },
+   {
+    "n": "exifOrientation",
+    "l": [
+     63,
+     80
+    ],
+    "p": "bytes"
+   },
+   {
+    "n": "tiffOrientation",
+    "l": [
+     82,
+     96
+    ],
+    "p": "view,start"
+   },
+   {
+    "n": "orientationSize",
+    "l": [
+     99,
+     103
+    ],
+    "p": "width,height,orientation"
+   },
+   {
+    "n": "orientationTransform",
+    "l": [
+     106,
+     125
+    ],
+    "p": "orientation,width,height"
+   },
+   {
+    "n": "rotateSize",
+    "l": [
+     127,
+     131
+    ],
+    "p": "width,height,turns"
+   },
+   {
+    "n": "rotationMatrix",
+    "l": [
+     134,
+     145
+    ],
+    "p": "turns,width,height"
+   },
+   {
+    "n": "cropBox",
+    "l": [
+     148,
+     157
+    ],
+    "p": "width,height"
+   },
+   {
+    "n": "coverScale",
+    "l": [
+     160,
+     163
+    ],
+    "p": "boxWidth,boxHeight,imageWidth,imageHeight"
+   },
+   {
+    "n": "clampScale",
+    "l": [
+     165,
+     167
+    ],
+    "p": "scale,min"
+   },
+   {
+    "n": "clampOffset",
+    "l": [
+     170,
+     175
+    ],
+    "p": "box,imageWidth,imageHeight,scale,offset"
+   },
+   {
+    "n": "cropRect",
+    "l": [
+     178,
+     187
+    ],
+    "p": "box,imageWidth,imageHeight,scale,offset"
+   },
+   {
+    "n": "injectStyles",
+    "l": [
+     189,
+     195
+    ],
+    "p": "doc"
+   },
+   {
+    "n": "createCropper",
+    "l": [
+     197,
+     553
+    ],
+    "p": ""
+   }
+  ],
+  "classes": [],
+  "exports": [
+   "DEFAULT_INSET",
+   "MAX_ZOOM",
+   "exifOrientation",
+   "orientationSize",
+   "orientationTransform",
+   "rotateSize",
+   "rotationMatrix",
+   "cropBox",
+   "coverScale",
+   "clampScale",
+   "clampOffset",
+   "cropRect",
+   "createCropper"
+  ],
+  "metrics": {
+   "importCount": 1,
+   "exportCount": 13,
+   "functionCount": 14,
+   "classCount": 0
+  }
+ },
+ {
+  "path": "static/app/feedback.js",
+  "totalLines": 107,
+  "nonEmpty": 94,
+  "functions": [
+   {
+    "n": "readMuted",
+    "l": [
+     13,
+     19
+    ],
+    "p": "storage"
+   },
+   {
+    "n": "writeMuted",
+    "l": [
+     21,
+     29
+    ],
+    "p": "muted,storage"
+   },
+   {
+    "n": "createFeedback",
+    "l": [
+     31,
+     107
+    ],
+    "p": ""
+   }
+  ],
+  "classes": [],
+  "exports": [
+   "MUTE_KEY",
+   "VIBE_MS",
+   "createFeedback"
+  ],
+  "metrics": {
+   "importCount": 0,
+   "exportCount": 3,
+   "functionCount": 3,
+   "classCount": 0
+  }
+ },
+ {
+  "path": "static/app/flow.js",
+  "totalLines": 48,
+  "nonEmpty": 40,
+  "functions": [
+   {
+    "n": "createFlow",
+    "l": [
+     10,
+     48
+    ],
+    "p": ""
+   }
+  ],
+  "classes": [],
+  "exports": [
+   "ARALIK_MS",
+   "createFlow"
+  ],
+  "metrics": {
+   "importCount": 0,
+   "exportCount": 2,
+   "functionCount": 1,
+   "classCount": 0
+  }
+ },
+ {
+  "path": "static/app/history.js",
+  "totalLines": 194,
+  "nonEmpty": 173,
+  "functions": [
+   {
+    "n": "tarihMetin",
+    "l": [
+     37,
+     40
+    ],
+    "p": "iso"
+   },
+   {
+    "n": "createHistory",
+    "l": [
+     42,
+     194
+    ],
+    "p": ""
+   }
+  ],
+  "classes": [],
+  "exports": [
+   "createHistory"
+  ],
+  "metrics": {
+   "importCount": 2,
+   "exportCount": 1,
+   "functionCount": 2,
+   "classCount": 0
+  }
+ },
+ {
+  "path": "static/app/recovery.js",
+  "totalLines": 102,
+  "nonEmpty": 94,
+  "functions": [
+   {
+    "n": "recoveryFor",
+    "l": [
+     48,
+     59
+    ],
+    "p": "error"
+   },
+   {
+    "n": "withTimeout",
+    "l": [
+     62,
+     84
+    ],
+    "p": "promise"
+   },
+   {
+    "n": "offlineNotice",
+    "l": [
+     87,
+     95
+    ],
+    "p": ""
+   },
+   {
+    "n": "cameraNotice",
+    "l": [
+     98,
+     102
+    ],
+    "p": "state"
+   }
+  ],
+  "classes": [],
+  "exports": [
+   "UPLOAD_TIMEOUT_MS",
+   "RECOVERIES",
+   "recoveryFor",
+   "withTimeout",
+   "offlineNotice",
+   "cameraNotice"
+  ],
+  "metrics": {
+   "importCount": 1,
+   "exportCount": 6,
+   "functionCount": 4,
+   "classCount": 0
+  }
+ },
+ {
+  "path": "static/app/stages.js",
+  "totalLines": 124,
+  "nonEmpty": 109,
+  "functions": [
+   {
+    "n": "injectStyles",
+    "l": [
+     50,
+     56
+    ],
+    "p": "doc"
+   },
+   {
+    "n": "createStages",
+    "l": [
+     62,
+     124
+    ],
+    "p": ""
+   }
+  ],
+  "classes": [],
+  "exports": [
+   "createStages"
+  ],
+  "metrics": {
+   "importCount": 1,
+   "exportCount": 1,
+   "functionCount": 2,
+   "classCount": 0
+  }
+ },
+ {
+  "path": "static/app/status.js",
+  "totalLines": 103,
+  "nonEmpty": 95,
+  "functions": [
+   {
+    "n": "positive",
+    "l": [
+     63,
+     66
+    ],
+    "p": "value"
+   },
+   {
+    "n": "stageIdFor",
+    "l": [
+     69,
+     74
+    ],
+    "p": "status"
+   },
+   {
+    "n": "statusOf",
+    "l": [
+     80,
+     103
+    ],
+    "p": "envelope"
+   }
+  ],
+  "classes": [],
+  "exports": [
+   "STALE_AFTER_MS",
+   "OCR_BUDGET_MS",
+   "STAGES",
+   "PIPELINE",
+   "stageIdFor",
+   "statusOf"
+  ],
+  "metrics": {
+   "importCount": 0,
+   "exportCount": 6,
+   "functionCount": 3,
+   "classCount": 0
+  }
+ },
+ {
+  "path": "static/app/verdict.js",
+  "totalLines": 137,
+  "nonEmpty": 120,
+  "functions": [
+   {
+    "n": "injectStyles",
+    "l": [
+     61,
+     67
+    ],
+    "p": "doc"
+   },
+   {
+    "n": "createVerdict",
+    "l": [
+     74,
+     137
+    ],
+    "p": ""
+   }
+  ],
+  "classes": [],
+  "exports": [
+   "createVerdict"
+  ],
+  "metrics": {
+   "importCount": 0,
+   "exportCount": 1,
+   "functionCount": 2,
+   "classCount": 0
+  }
+ },
+ {
+  "path": "tests/js/api.test.js",
+  "totalLines": 331,
+  "nonEmpty": 292,
+  "functions": [
+   {
+    "n": "response",
+    "l": [
+     18,
+     25
+    ],
+    "p": "status"
+   },
+   {
+    "n": "makeStorage",
+    "l": [
+     27,
+     47
+    ],
+    "p": ""
+   },
+   {
+    "n": "networkError",
+    "l": [
+     49,
+     53
+    ],
+    "p": ""
+   },
+   {
+    "n": "envelope",
+    "l": [
+     55,
+     57
+    ],
+    "p": "status"
+   },
+   {
+    "n": "queued",
+    "l": [
+     59,
+     61
+    ],
+    "p": "n"
+   },
+   {
+    "n": "harness",
+    "l": [
+     64,
+     93
+    ],
+    "p": ""
+   }
+  ],
+  "classes": [],
+  "exports": [],
+  "metrics": {
+   "importCount": 1,
+   "exportCount": 0,
+   "functionCount": 6,
+   "classCount": 0
+  }
+ },
+ {
+  "path": "tests/js/capture.test.js",
+  "totalLines": 319,
+  "nonEmpty": 282,
+  "functions": [
+   {
+    "n": "makeEl",
+    "l": [
+     8,
+     49
+    ],
+    "p": "tagName"
+   },
+   {
+    "n": "makeDoc",
+    "l": [
+     51,
+     79
+    ],
+    "p": ""
+   },
+   {
+    "n": "makeStream",
+    "l": [
+     81,
+     84
+    ],
+    "p": ""
+   },
+   {
+    "n": "makeDevices",
+    "l": [
+     86,
+     99
+    ],
+    "p": "streamOrError"
+   },
+   {
+    "n": "deniedError",
+    "l": [
+     101,
+     105
+    ],
+    "p": ""
+   },
+   {
+    "n": "missingError",
+    "l": [
+     107,
+     111
+    ],
+    "p": ""
+   },
+   {
+    "n": "harness",
+    "l": [
+     113,
+     126
+    ],
+    "p": ""
+   }
+  ],
+  "classes": [],
+  "exports": [],
+  "metrics": {
+   "importCount": 1,
+   "exportCount": 0,
+   "functionCount": 7,
+   "classCount": 0
+  }
+ },
+ {
+  "path": "tests/js/crop.test.js",
+  "totalLines": 473,
+  "nonEmpty": 424,
+  "functions": [
+   {
+    "n": "makeEl",
+    "l": [
+     21,
+     75
+    ],
+    "p": "tagName"
+   },
+   {
+    "n": "makeDoc",
+    "l": [
+     77,
+     91
+    ],
+    "p": ""
+   },
+   {
+    "n": "harness",
+    "l": [
+     93,
+     107
+    ],
+    "p": ""
+   },
+   {
+    "n": "jpegWithOrientation",
+    "l": [
+     111,
+     145
+    ],
+    "p": "value"
+   },
+   {
+    "n": "corners",
+    "l": [
+     168,
+     173
+    ],
+    "p": "width,height"
+   },
+   {
+    "n": "apply",
+    "l": [
+     174,
+     174
+    ],
+    "p": "m,x,y"
+   },
+   {
+    "n": "asCorners",
+    "l": [
+     175,
+     176
+    ],
+    "p": "points"
+   },
+   {
+    "n": "bitmapOf",
+    "l": [
+     270,
+     272
+    ],
+    "p": "width,height"
+   },
+   {
+    "n": "stubBitmaps",
+    "l": [
+     274,
+     282
+    ],
+    "p": "bitmap"
+   },
+   {
+    "n": "loadedCropper",
+    "l": [
+     284,
+     294
+    ],
+    "p": ""
+   }
+  ],
+  "classes": [],
+  "exports": [],
+  "metrics": {
+   "importCount": 1,
+   "exportCount": 0,
+   "functionCount": 10,
+   "classCount": 0
+  }
+ },
+ {
+  "path": "tests/js/feedback.test.js",
+  "totalLines": 344,
+  "nonEmpty": 301,
+  "functions": [
+   {
+    "n": "makeCtxClass",
+    "l": [
+     9,
+     75
+    ],
+    "p": ""
+   },
+   {
+    "n": "makeNav",
+    "l": [
+     77,
+     79
+    ],
+    "p": "vibes"
+   },
+   {
+    "n": "makeStorage",
+    "l": [
+     81,
+     89
+    ],
+    "p": ""
+   },
+   {
+    "n": "makeEl",
+    "l": [
+     91,
+     132
+    ],
+    "p": "tagName"
+   },
+   {
+    "n": "makeDoc",
+    "l": [
+     134,
+     148
+    ],
+    "p": ""
+   },
+   {
+    "n": "makeStream",
+    "l": [
+     150,
+     153
+    ],
+    "p": ""
+   },
+   {
+    "n": "captureHarness",
+    "l": [
+     276,
+     298
+    ],
+    "p": ""
+   }
+  ],
+  "classes": [],
+  "exports": [],
+  "metrics": {
+   "importCount": 2,
+   "exportCount": 0,
+   "functionCount": 7,
+   "classCount": 0
+  }
+ },
+ {
+  "path": "tests/js/flow.test.js",
+  "totalLines": 169,
+  "nonEmpty": 137,
+  "functions": [
+   {
+    "n": "saat",
+    "l": [
+     7,
+     31
+    ],
+    "p": ""
+   },
+   {
+    "n": "harness",
+    "l": [
+     33,
+     37
+    ],
+    "p": ""
+   },
+   {
+    "n": "akisla",
+    "l": [
+     41,
+     51
+    ],
+    "p": "akis"
+   }
+  ],
+  "classes": [],
+  "exports": [],
+  "metrics": {
+   "importCount": 1,
+   "exportCount": 0,
+   "functionCount": 3,
+   "classCount": 0
+  }
+ },
+ {
+  "path": "tests/js/recovery.test.js",
+  "totalLines": 138,
+  "nonEmpty": 117,
+  "functions": [
+   {
+    "n": "fakeTimers",
+    "l": [
+     14,
+     29
+    ],
+    "p": ""
+   }
+  ],
+  "classes": [],
+  "exports": [],
+  "metrics": {
+   "importCount": 2,
+   "exportCount": 0,
+   "functionCount": 1,
+   "classCount": 0
+  }
+ },
+ {
+  "path": "tests/js/stages.test.js",
+  "totalLines": 199,
+  "nonEmpty": 167,
+  "functions": [
+   {
+    "n": "makeEl",
+    "l": [
+     8,
+     30
+    ],
+    "p": "tagName"
+   },
+   {
+    "n": "makeDoc",
+    "l": [
+     32,
+     45
+    ],
+    "p": ""
+   },
+   {
+    "n": "harness",
+    "l": [
+     47,
+     52
+    ],
+    "p": ""
+   },
+   {
+    "n": "durum",
+    "l": [
+     55,
+     58
+    ],
+    "p": "status"
+   },
+   {
+    "n": "classes",
+    "l": [
+     60,
+     60
+    ],
+    "p": "adimlar"
+   },
+   {
+    "n": "etiketler",
+    "l": [
+     61,
+     61
+    ],
+    "p": "adimlar"
+   }
+  ],
+  "classes": [],
+  "exports": [],
+  "metrics": {
+   "importCount": 2,
+   "exportCount": 0,
+   "functionCount": 6,
+   "classCount": 0
+  }
+ },
+ {
+  "path": "tests/js/status.test.js",
+  "totalLines": 139,
+  "nonEmpty": 118,
+  "functions": [
+   {
+    "n": "envelope",
+    "l": [
+     12,
+     14
+    ],
+    "p": "status"
+   },
+   {
+    "n": "validation",
+    "l": [
+     16,
+     18
+    ],
+    "p": "verdict"
+   }
+  ],
+  "classes": [],
+  "exports": [],
+  "metrics": {
+   "importCount": 1,
+   "exportCount": 0,
+   "functionCount": 2,
+   "classCount": 0
+  }
+ },
+ {
+  "path": "tests/js/upload_error.test.js",
+  "totalLines": 120,
+  "nonEmpty": 102,
+  "functions": [
+   {
+    "n": "fetchReturning",
+    "l": [
+     16,
+     23
+    ],
+    "p": "status,body"
+   },
+   {
+    "n": "envelope",
+    "l": [
+     26,
+     28
+    ],
+    "p": "code,message,details"
+   },
+   {
+    "n": "submit",
+    "l": [
+     31,
+     38
+    ],
+    "p": "body"
+   }
+  ],
+  "classes": [],
+  "exports": [],
+  "metrics": {
+   "importCount": 2,
+   "exportCount": 0,
+   "functionCount": 3,
+   "classCount": 0
+  }
+ },
+ {
+  "path": "tests/js/verdict.test.js",
+  "totalLines": 254,
+  "nonEmpty": 211,
+  "functions": [
+   {
+    "n": "makeEl",
+    "l": [
+     8,
+     61
+    ],
+    "p": "tagName"
+   },
+   {
+    "n": "makeDoc",
+    "l": [
+     63,
+     70
+    ],
+    "p": ""
+   },
+   {
+    "n": "harness",
+    "l": [
+     72,
+     85
+    ],
+    "p": ""
+   },
+   {
+    "n": "durum",
+    "l": [
+     88,
+     91
+    ],
+    "p": "status"
+   }
+  ],
+  "classes": [],
+  "exports": [],
+  "metrics": {
+   "importCount": 2,
+   "exportCount": 0,
+   "functionCount": 4,
+   "classCount": 0
+  }
+ }
+]

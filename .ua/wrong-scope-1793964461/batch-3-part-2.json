@@ -1,0 +1,188 @@
+{
+  "nodes": [
+    {
+      "id": "file:static/app/recovery.js",
+      "type": "file",
+      "name": "recovery.js",
+      "filePath": "static/app/recovery.js",
+      "summary": "Tıkanmış durum kurtarması: gönderimi kilitleyen her yol (yükleme zaman aşımı, ölü ağ, iptal edilmiş anahtar, sunucunun reddettiği görüntü, kapalı kamera izni) çalışanın yapabileceği tek eyleme eşlenir — yerinde tekrar, ağı beklemek, anahtarı düzeltmek ya da yeniden kırpmak/çekmek. API yüklemeye süre sınırı koymadığı için PWA kendi son tarihini koyar ve tekrar client_ref sayesinde idempotent kalır.",
+      "tags": ["hata-kurtarma", "durum-yönetimi", "erişilebilirlik", "pwa"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:static/app/recovery.js:recoveryFor",
+      "type": "function",
+      "name": "recoveryFor",
+      "filePath": "static/app/recovery.js",
+      "lineRange": [48, 59],
+      "summary": "Herhangi bir gönderim hatasını arayüzün dallandığı { action, message } çiftine çevirir; ApiError'un kendi kopyası zaten Türkçe olan türlerde (key_invalid, offline, rate_limited, server_error, rejected) onu kullanır.",
+      "tags": ["hata-kurtarma", "eşleme", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:static/app/recovery.js:withTimeout",
+      "type": "function",
+      "name": "withTimeout",
+      "filePath": "static/app/recovery.js",
+      "lineRange": [62, 84],
+      "summary": "Bir.promise UPLOAD_TIMEOUT_MS ömrünü aştığında timeout türünde ApiError ile reddeder; zamanlayıcı her iki yolda da temizlendiği için sızan bir geri çağrı kalmaz.",
+      "tags": ["zamanlayıcı", "zaman-aşımı", "hata-yönetimi"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:static/app/recovery.js:offlineNotice",
+      "type": "function",
+      "name": "offlineNotice",
+      "filePath": "static/app/recovery.js",
+      "lineRange": [87, 95],
+      "summary": "Çevrimdışı bandını üretir: kırpmış fiş hâlâ hazırdaysa 'cihazında hazır duruyor' mesajı, değilse gönderilenlerin sunucu kuyruğunda güvende olduğu mesajı.",
+      "tags": ["ağ", "ui-mesajı", "erişilebilirlik"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:static/app/recovery.js:cameraNotice",
+      "type": "function",
+      "name": "cameraNotice",
+      "filePath": "static/app/recovery.js",
+      "lineRange": [98, 102],
+      "summary": "Yalnızca kamera izni reddedildiğinde vizörün altında görünen yönlendirmeyi döndürür; diğer durumlarda boş dize.",
+      "tags": ["kamera", "ui-mesajı", "erişilebilirlik"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:static/app/stages.js",
+      "type": "file",
+      "name": "stages.js",
+      "filePath": "static/app/stages.js",
+      "summary": "D2 canlı hat geri bildirimi: fişin dört Türkçe aşamasını çalışanın tek bakışta okuyacağı yatay bir adım satırı olarak çizer; vurgu aşamadan aşamaya kayarken geçen saniyeler başlığın yanında sayar.",
+      "tags": ["ui", "animasyon", "durum-gösterimi", "erişilebilirlik"],
+      "complexity": "moderate",
+      "languageNotes": "Dolgu, nokta satırının 1/8 ile 7/8'i arasındaki 75% yolun oranı olarak hesaplanır; prefers-reduced-motion altında nabız animasyonu kapanır."
+    },
+    {
+      "id": "function:static/app/stages.js:createStages",
+      "type": "function",
+      "name": "createStages",
+      "filePath": "static/app/stages.js",
+      "lineRange": [62, 124],
+      "summary": "update(statusOf()) ile tek bir kare çizen, update(null) ile boş durumuna dönen adım satırı fabrikası; stilleri bir kez enjekte eder ve mismatch/unreadable/failed için son aşamaya uyarı rengi verir.",
+      "tags": ["factory", "ui", "animasyon"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:static/app/status.js",
+      "type": "file",
+      "name": "status.js",
+      "filePath": "static/app/status.js",
+      "summary": "Bir işin çalışanın gördüğü duruma çeviren saf modeli: dört sunucu durumu artı done işinin verdict'u → okunacak Türkçe aşama, ilerleme çubuğu oranı ve canlı bir iş durduğunda yavaşlama (stale) bayrağı.",
+      "tags": ["durum-modeli", "saf-fonksiyon", "ui-verisi", "doğrulama"],
+      "complexity": "moderate",
+      "languageNotes": "API yalnızca queued/running/done/failed döndürdüğü için running'in iki alt aşaması (OCR → yapılandırma) sunucu alanı yerine geçen süreye (OCR_BUDGET_MS) göre tahmin edilir."
+    },
+    {
+      "id": "function:static/app/status.js:stageIdFor",
+      "type": "function",
+      "name": "stageIdFor",
+      "filePath": "static/app/status.js",
+      "lineRange": [69, 74],
+      "summary": "Durum, geçen süre ve verdict'ten aşama kimliğini türetir; done işinde verdict'u aşamaya eşler, running'i OCR süresine göre ikiye böler.",
+      "tags": ["durum-modeli", "eşleme", "saf-fonksiyon"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:static/app/status.js:statusOf",
+      "type": "function",
+      "name": "statusOf",
+      "filePath": "static/app/status.js",
+      "lineRange": [80, 103],
+      "summary": "Tam zarf ya da lite satır ile geçen süreden etiket, ipucu, ilerleme oranı, uyuşmayan alanlar ve stale bayrağını üreten tek dönüştürücü; hiç zarf ulaşmasa bile çökmeyip bir görünüm üretir.",
+      "tags": ["durum-modeli", "dönüştürücü", "ui-verisi"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:static/app/verdict.js",
+      "type": "file",
+      "name": "verdict.js",
+      "filePath": "static/app/verdict.js",
+      "summary": "D3 karar geri bildirimi: fişin bittiği çip. ok onay işaretini çizerek belirir, mismatch kehribar rengiyle sarsılır, unreadable ise tek dokunuşla yeniden çekimi doğrudan kararın altına koyar.",
+      "tags": ["ui", "animasyon", "durum-gösterimi", "erişilebilirlik"],
+      "complexity": "moderate",
+      "languageNotes": "Uyuşmayan alan adları ekranda tek listede kalsın diye çip onları tekrar etmez, aria-describedby ile uyarı paragrafını işaret eder."
+    },
+    {
+      "id": "function:static/app/verdict.js:createVerdict",
+      "type": "function",
+      "name": "createVerdict",
+      "filePath": "static/app/verdict.js",
+      "lineRange": [74, 137],
+      "summary": "update(statusOf()) ile çipi ve altındaki detay yuvasını çizen fabrika; same verdict yeniden açıldığında sarsıntı yeniden başlar, update(null) çipi boş durumuna döndürür.",
+      "tags": ["factory", "ui", "erişilebilirlik"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/js/api.test.js",
+      "type": "file",
+      "name": "api.test.js",
+      "filePath": "tests/js/api.test.js",
+      "summary": "API istemcisinin node:test testleri: anahtarın depolama gidiş-dönüşü, /v1/jobs yüklemesinin başlık ve alanları, hata sınıflandırması, geri çekme eğrisi ve pollJob'ün kuyruktan tamamlanmaya (ya da tavan sürede hataya) yolculuğu.",
+      "tags": ["test", "api-istemcisi", "sahte-fetch", "ağ"],
+      "complexity": "complex",
+      "languageNotes": "Gerçek ağ yerine kayıtları tutulan sahte fetch, Map tabanlı sahte localStorage ve enjekte edilen sleep/now kullanılır; tavan senaryoları hiç beklemeden çalışır."
+    },
+    {
+      "id": "file:tests/js/capture.test.js",
+      "type": "file",
+      "name": "capture.test.js",
+      "filePath": "tests/js/capture.test.js",
+      "summary": "Kamera modülünün testleri: arka kameranın istenmesi, JPEG'in uzun kenarla sınırlanması, akış hazır değilken çekimin boş dönmesi, izin reddi ile kameranın yokluğunun ayrılması ve dosya girişine düşüş.",
+      "tags": ["test", "kamera", "sahte-dom", "medya"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:tests/js/crop.test.js",
+      "type": "file",
+      "name": "crop.test.js",
+      "filePath": "tests/js/crop.test.js",
+      "summary": "Kırpma geometrisinin testleri: EXIF okuma (her iki bayt sırası), yönlendirme ve döndürme matrisleri, kutu ölçeği ile kaydırma sınırları ve kırpma dikdörtgeni; ayrıca sahte createImageBitmap ile EXIF'in önce uygulandığı ve görüntünün iki kez çevrilmediği doğrulanır.",
+      "tags": ["test", "geometri", "exif", "sahte-dom"],
+      "complexity": "complex"
+    }
+  ],
+  "edges": [
+    { "source": "file:static/app/recovery.js", "target": "function:static/app/recovery.js:recoveryFor", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:static/app/recovery.js", "target": "function:static/app/recovery.js:withTimeout", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:static/app/recovery.js", "target": "function:static/app/recovery.js:offlineNotice", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:static/app/recovery.js", "target": "function:static/app/recovery.js:cameraNotice", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:static/app/recovery.js", "target": "function:static/app/recovery.js:recoveryFor", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:static/app/recovery.js", "target": "function:static/app/recovery.js:withTimeout", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:static/app/recovery.js", "target": "function:static/app/recovery.js:offlineNotice", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:static/app/recovery.js", "target": "function:static/app/recovery.js:cameraNotice", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:static/app/recovery.js", "target": "file:static/app/api.js", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "function:static/app/recovery.js:withTimeout", "target": "class:static/app/api.js:ApiError", "type": "calls", "direction": "forward", "weight": 0.8 },
+
+    { "source": "file:static/app/stages.js", "target": "function:static/app/stages.js:createStages", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:static/app/stages.js", "target": "function:static/app/stages.js:createStages", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:static/app/stages.js", "target": "file:static/app/status.js", "type": "imports", "direction": "forward", "weight": 0.7 },
+
+    { "source": "file:static/app/status.js", "target": "function:static/app/status.js:stageIdFor", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:static/app/status.js", "target": "function:static/app/status.js:statusOf", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:static/app/status.js", "target": "function:static/app/status.js:stageIdFor", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:static/app/status.js", "target": "function:static/app/status.js:statusOf", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "function:static/app/status.js:statusOf", "target": "function:static/app/status.js:stageIdFor", "type": "calls", "direction": "forward", "weight": 0.8 },
+
+    { "source": "file:static/app/verdict.js", "target": "function:static/app/verdict.js:createVerdict", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:static/app/verdict.js", "target": "function:static/app/verdict.js:createVerdict", "type": "exports", "direction": "forward", "weight": 0.8 },
+
+    { "source": "file:tests/js/api.test.js", "target": "file:static/app/api.js", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:tests/js/capture.test.js", "target": "file:static/app/capture.js", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:tests/js/crop.test.js", "target": "file:static/app/crop.js", "type": "imports", "direction": "forward", "weight": 0.7 },
+
+    { "source": "file:static/app/recovery.js", "target": "file:tests/js/recovery.test.js", "type": "tested_by", "direction": "forward", "weight": 0.5 },
+    { "source": "file:static/app/recovery.js", "target": "file:tests/js/upload_error.test.js", "type": "tested_by", "direction": "forward", "weight": 0.5 },
+    { "source": "file:static/app/stages.js", "target": "file:tests/js/stages.test.js", "type": "tested_by", "direction": "forward", "weight": 0.5 },
+    { "source": "file:static/app/status.js", "target": "file:tests/js/status.test.js", "type": "tested_by", "direction": "forward", "weight": 0.5 },
+    { "source": "file:static/app/status.js", "target": "file:tests/js/stages.test.js", "type": "tested_by", "direction": "forward", "weight": 0.5 },
+    { "source": "file:static/app/status.js", "target": "file:tests/js/verdict.test.js", "type": "tested_by", "direction": "forward", "weight": 0.5 },
+    { "source": "file:static/app/verdict.js", "target": "file:tests/js/verdict.test.js", "type": "tested_by", "direction": "forward", "weight": 0.5 }
+  ]
+}

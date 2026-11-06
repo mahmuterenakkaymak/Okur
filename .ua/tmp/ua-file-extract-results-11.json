@@ -1,0 +1,288 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 9,
+  "filesSkipped": [
+    "spike/_restart_app.ps1",
+    "spike/last_out.txt"
+  ],
+  "filesUnreadable": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 9,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 0,
+      "failed": 0,
+      "skipped": 9
+    }
+  },
+  "results": [
+    {
+      "path": "spike/CANLI_TEST_RAPORU.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 61,
+      "nonEmptyLines": 48,
+      "sections": [
+        {
+          "heading": "Canlı hat testi — gerçek PaddleOCR-VL (:8081) + gerçek Strata (:8080)",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Sonuç: 1 gerçek entegrasyon hatası bulundu (birim testlerinin göremediği)",
+          "level": 2,
+          "line": 7
+        },
+        {
+          "heading": "Kök neden (kanıtla)",
+          "level": 2,
+          "line": 15
+        },
+        {
+          "heading": "Doğrulanmış düzeltme",
+          "level": 2,
+          "line": 31
+        },
+        {
+          "heading": "Pipeline'a kuyruklanan düzeltme görevi",
+          "level": 2,
+          "line": 44
+        },
+        {
+          "heading": "İkincil bulgular (küçük)",
+          "level": 2,
+          "line": 49
+        },
+        {
+          "heading": "Nasıl tekrarlanır",
+          "level": 2,
+          "line": 56
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 7
+      }
+    },
+    {
+      "path": "spike/REPORT.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 84,
+      "nonEmptyLines": 69,
+      "sections": [
+        {
+          "heading": "M0 Model Spike — Report (2026-10-31)",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Question",
+          "level": 2,
+          "line": 3
+        },
+        {
+          "heading": "Candidates (both Apache-2.0 → commercial use OK)",
+          "level": 2,
+          "line": 7
+        },
+        {
+          "heading": "Method",
+          "level": 2,
+          "line": 13
+        },
+        {
+          "heading": "Results",
+          "level": 2,
+          "line": 25
+        },
+        {
+          "heading": "Decisive finding",
+          "level": 2,
+          "line": 36
+        },
+        {
+          "heading": "Recommendation",
+          "level": 2,
+          "line": 41
+        },
+        {
+          "heading": "Honest caveats (what this spike did NOT prove)",
+          "level": 2,
+          "line": 47
+        },
+        {
+          "heading": "Next step",
+          "level": 2,
+          "line": 55
+        },
+        {
+          "heading": "REAL-WORLD TEST (added 2026-10-31, Google Images screenshots — no download)",
+          "level": 2,
+          "line": 61
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 10
+      }
+    },
+    {
+      "path": "spike/bench_paddle.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 56,
+      "nonEmptyLines": 56,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 0
+      }
+    },
+    {
+      "path": "spike/bench_qwen_natural.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 56,
+      "nonEmptyLines": 56,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 0
+      }
+    },
+    {
+      "path": "spike/hard_paddle.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 26,
+      "nonEmptyLines": 26,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 0
+      }
+    },
+    {
+      "path": "spike/hard_qwen.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 26,
+      "nonEmptyLines": 26,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 0
+      }
+    },
+    {
+      "path": "spike/live_real.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 269,
+      "nonEmptyLines": 269,
+      "sections": [
+        {
+          "heading": "gercek_market_1.png",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "gercek_bim_2.png",
+          "level": 1,
+          "line": 110
+        },
+        {
+          "heading": "gercek_elyazisi_3_kirp.png",
+          "level": 1,
+          "line": 212
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 3
+      }
+    },
+    {
+      "path": "spike/real_paddle.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 14,
+      "nonEmptyLines": 14,
+      "sections": [
+        {
+          "heading": "gercek_bim_2",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "gercek_elyazisi_3_kirp",
+          "level": 1,
+          "line": 6
+        },
+        {
+          "heading": "gercek_market_1",
+          "level": 1,
+          "line": 10
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 3
+      }
+    },
+    {
+      "path": "spike/real_qwen.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 14,
+      "nonEmptyLines": 14,
+      "sections": [
+        {
+          "heading": "gercek_bim_2",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "gercek_elyazisi_3_kirp",
+          "level": 1,
+          "line": 6
+        },
+        {
+          "heading": "gercek_market_1",
+          "level": 1,
+          "line": 10
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 3
+      }
+    }
+  ]
+}

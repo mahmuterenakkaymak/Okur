@@ -1,0 +1,1667 @@
+{
+ "nodes": [
+  {
+   "id": "file:app/__init__.py",
+   "type": "file",
+   "name": "__init__.py",
+   "filePath": "app/__init__.py",
+   "summary": "app paketinin boş init dosyası; app.* modüllerinin import edilebilir paket olarak görülmesini sağlar.",
+   "tags": [
+    "python-paketi",
+    "modul-isaretcisi",
+    "init"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:app/auth.py",
+   "type": "file",
+   "name": "auth.py",
+   "filePath": "app/auth.py",
+   "summary": "Worker API anahtarı hattı: ocrk_ önekli anahtar üretimi, veritabanında yalnız SHA-256 hash tutulması, sabit zamanlı doğrulama, anahtar başına token bucket hız limiti ve ADMIN_TOKEN tabanlı yönetici oturumları.",
+   "tags": [
+    "auth",
+    "api-key",
+    "rate-limit",
+    "guvenlik",
+    "oturum"
+   ],
+   "complexity": "complex",
+   "languageNotes": "Karşılaştırmalar hmac.compare_digest ile sabit zamanda; token bucket ve oturumlar bellek içi, süreçle birlikte yok olur."
+  },
+  {
+   "id": "function:app/auth.py:generate_key",
+   "type": "function",
+   "name": "generate_key",
+   "filePath": "app/auth.py",
+   "lineRange": [
+    28,
+    30
+   ],
+   "summary": "ocrk_ öneki + 40 hex rastgele düz metin API anahtarı üretir.",
+   "tags": [
+    "api-key",
+    "uretim",
+    "utility"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:app/auth.py:hash_key",
+   "type": "function",
+   "name": "hash_key",
+   "filePath": "app/auth.py",
+   "lineRange": [
+    33,
+    35
+   ],
+   "summary": "Anahtarın düz metninin hex SHA-256'sını döndürür; veritabanı yalnız bu hash'i görür.",
+   "tags": [
+    "api-key",
+    "hash",
+    "guvenlik"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:app/auth.py:create_key",
+   "type": "function",
+   "name": "create_key",
+   "filePath": "app/auth.py",
+   "lineRange": [
+    38,
+    46
+   ],
+   "summary": "Worker için yeni anahtar kaydı açar; (key_id, düz metin) döner ve düz metin yalnız bu kez görünür.",
+   "tags": [
+    "api-key",
+    "kayit",
+    "veritabani"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:app/auth.py:verify",
+   "type": "function",
+   "name": "verify",
+   "filePath": "app/auth.py",
+   "lineRange": [
+    49,
+    63
+   ],
+   "summary": "Aday anahtarın hash'ini kayıtlarla sabit zamanda karşılaştırır; iptal edilen ya da tanımsız anahtarı reddeder.",
+   "tags": [
+    "dogrulama",
+    "guvenlik",
+    "sabit-zaman"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:app/auth.py:revoke_key",
+   "type": "function",
+   "name": "revoke_key",
+   "filePath": "app/auth.py",
+   "lineRange": [
+    66,
+    72
+   ],
+   "summary": "Anahtar kaydını revoked işaretler; bir sonraki doğrulamada geçersiz olur.",
+   "tags": [
+    "api-key",
+    "iptal",
+    "veritabani"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:app/auth.py:authorize",
+   "type": "function",
+   "name": "authorize",
+   "filePath": "app/auth.py",
+   "lineRange": [
+    86,
+    103
+   ],
+   "summary": "Anahtar doğrulaması ile token bucket kontrolünü tek kararda birleştirir; reddedilen istek için Retry-After süresi üretir ve anahtar satırını döner.",
+   "tags": [
+    "auth",
+    "rate-limit",
+    "token-bucket"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:app/auth.py:admin_configured",
+   "type": "function",
+   "name": "admin_configured",
+   "filePath": "app/auth.py",
+   "lineRange": [
+    125,
+    127
+   ],
+   "summary": "ADMIN_TOKEN ayarlı olup olmadığını döner.",
+   "tags": [
+    "admin",
+    "yapilandirma",
+    "guvenlik"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:app/auth.py:admin_token_ok",
+   "type": "function",
+   "name": "admin_token_ok",
+   "filePath": "app/auth.py",
+   "lineRange": [
+    130,
+    141
+   ],
+   "summary": "Girilen yönetici token'ını hmac.compare_digest ile sabit zamanda doğrular.",
+   "tags": [
+    "admin",
+    "guvenlik",
+    "sabit-zaman"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:app/auth.py:start_session",
+   "type": "function",
+   "name": "start_session",
+   "filePath": "app/auth.py",
+   "lineRange": [
+    144,
+    152
+   ],
+   "summary": "Rastgele oturum kimliği üretir, TTL ile bellekteki oturumlara ekler ve süresi geçenleri süpürür.",
+   "tags": [
+    "admin",
+    "oturum",
+    "guvenlik"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:app/auth.py:session_ok",
+   "type": "function",
+   "name": "session_ok",
+   "filePath": "app/auth.py",
+   "lineRange": [
+    155,
+    167
+   ],
+   "summary": "Oturum kimliği süresi içindeyse geçerler, aksi hâlde oturumu bellekten siler.",
+   "tags": [
+    "admin",
+    "oturum",
+    "dogrulama"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:app/auth.py:end_session",
+   "type": "function",
+   "name": "end_session",
+   "filePath": "app/auth.py",
+   "lineRange": [
+    170,
+    173
+   ],
+   "summary": "Çıkışta oturumu bellekten kaldırır.",
+   "tags": [
+    "admin",
+    "oturum",
+    "guvenlik"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:app/db.py",
+   "type": "file",
+   "name": "db.py",
+   "filePath": "app/db.py",
+   "summary": "SQLite (WAL) depolama katmanı: PRAGMA user_version ile idempotent şema migrasyonları ve api_keys, jobs, corrections, events tablolarında durum geçişlerini ISO-8601 UTC damgalayan job yardımcıları.",
+   "tags": [
+    "veritabani",
+    "sqlite",
+    "migrasyon",
+    "data-model"
+   ],
+   "complexity": "complex",
+   "languageNotes": "connect() tek giriş noktası: dizini oluşturur, WAL + foreign keys açar, migrasyonları idempotent uygular; JSON alanları metin sütunlarda taşınır."
+  },
+  {
+   "id": "function:app/db.py:connect",
+   "type": "function",
+   "name": "connect",
+   "filePath": "app/db.py",
+   "lineRange": [
+    109,
+    121
+   ],
+   "summary": "Veritabanı dosyası ve ana dizinini oluşturur; WAL + foreign keys açıp migrasyonları idempotent uygular — tek giriş noktası.",
+   "tags": [
+    "veritabani",
+    "sqlite",
+    "baglanti"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:app/db.py:list_keys",
+   "type": "function",
+   "name": "list_keys",
+   "filePath": "app/db.py",
+   "lineRange": [
+    136,
+    145
+   ],
+   "summary": "Anahtar kimliklerini (worker, tarih, iptal) listeler; sır asla dönmez.",
+   "tags": [
+    "api-key",
+    "liste",
+    "veritabani"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:app/db.py:create_job",
+   "type": "function",
+   "name": "create_job",
+   "filePath": "app/db.py",
+   "lineRange": [
+    151,
+    174
+   ],
+   "summary": "Kuyruk satırını oluşturur; job_id yoksa uuid üretir, varsayılanları doldurur, kaydı döner.",
+   "tags": [
+    "job",
+    "olusturma",
+    "kuyruk"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:app/db.py:get_job",
+   "type": "function",
+   "name": "get_job",
+   "filePath": "app/db.py",
+   "lineRange": [
+    177,
+    179
+   ],
+   "summary": "Job satırını id ile tekil getirir (dict).",
+   "tags": [
+    "job",
+    "okuma",
+    "veritabani"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:app/db.py:find_job_by_client_ref",
+   "type": "function",
+   "name": "find_job_by_client_ref",
+   "filePath": "app/db.py",
+   "lineRange": [
+    182,
+    192
+   ],
+   "summary": "Aynı anahtar altında client_ref ile iş arar; idempotent teslimin belirleyicisi.",
+   "tags": [
+    "job",
+    "arama",
+    "idempotens"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:app/db.py:list_jobs",
+   "type": "function",
+   "name": "list_jobs",
+   "filePath": "app/db.py",
+   "lineRange": [
+    195,
+    223
+   ],
+   "summary": "Durum, worker, anahtar ve tarih filtresiyle en yeniden eskiye sayfalı iş listesi kurar.",
+   "tags": [
+    "job",
+    "liste",
+    "filtreleme"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:app/db.py:queue_depth",
+   "type": "function",
+   "name": "queue_depth",
+   "filePath": "app/db.py",
+   "lineRange": [
+    226,
+    234
+   ],
+   "summary": "Kuyruktaki (queued) iş sayısını döner.",
+   "tags": [
+    "kuyruk",
+    "metrik",
+    "veritabani"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:app/db.py:update_job",
+   "type": "function",
+   "name": "update_job",
+   "filePath": "app/db.py",
+   "lineRange": [
+    237,
+    246
+   ],
+   "summary": "Job alanlarını toplu günceller; durum/id/created_at değişikliklerini reddeder.",
+   "tags": [
+    "job",
+    "guncelleme",
+    "dogrulama"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:app/db.py:set_status",
+   "type": "function",
+   "name": "set_status",
+   "filePath": "app/db.py",
+   "lineRange": [
+    249,
+    270
+   ],
+   "summary": "Tek çağrıda durumu geçirir, started/finished damgalarını basar ve ek alan güncellemelerini taşır.",
+   "tags": [
+    "job",
+    "durum-gecis",
+    "veritabani"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:app/db.py:_update",
+   "type": "function",
+   "name": "_update",
+   "filePath": "app/db.py",
+   "lineRange": [
+    279,
+    288
+   ],
+   "summary": "SET cümlesini kurup güncellemeyi uygular; değişmez alan muhafızının ardında çalışır.",
+   "tags": [
+    "job",
+    "guncelleme",
+    "sql"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:app/db.py:add_correction",
+   "type": "function",
+   "name": "add_correction",
+   "filePath": "app/db.py",
+   "lineRange": [
+    294,
+    313
+   ],
+   "summary": "Alan düzeltmesini kim ve ne zaman bilgisiyle corrections tablosuna yazar.",
+   "tags": [
+    "duzeltme",
+    "kayit",
+    "veritabani"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:app/db.py:log_event",
+   "type": "function",
+   "name": "log_event",
+   "filePath": "app/db.py",
+   "lineRange": [
+    319,
+    326
+   ],
+   "summary": "Olay günlüğü satırı ekler (tip, iş, ayrıntı).",
+   "tags": [
+    "log",
+    "olay",
+    "veritabani"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:app/keys_cli.py",
+   "type": "file",
+   "name": "keys_cli.py",
+   "filePath": "app/keys_cli.py",
+   "summary": "Uçtan uca worker anahtarı yönetimi CLI'si (python -m app.keys_cli): add düz anahtarı yalnızca bir kez basar, list yalnız kimlikleri gösterir, revoke bir sonraki doğrulamada geçersiz kılar.",
+   "tags": [
+    "cli",
+    "api-key",
+    "yonetici-araclari",
+    "auth"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:app/keys_cli.py:_cmd_add",
+   "type": "function",
+   "name": "_cmd_add",
+   "filePath": "app/keys_cli.py",
+   "lineRange": [
+    18,
+    33
+   ],
+   "summary": "add komutu: anahtarı oluşturur ve düz metni kopyalama uyarısıyla yalnız bir kez basar.",
+   "tags": [
+    "cli",
+    "api-key",
+    "cikti"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:app/keys_cli.py:_cmd_list",
+   "type": "function",
+   "name": "_cmd_list",
+   "filePath": "app/keys_cli.py",
+   "lineRange": [
+    36,
+    50
+   ],
+   "summary": "list komutu: yalnız kimlikleri (id, worker, tarih, iptal) tablolar.",
+   "tags": [
+    "cli",
+    "api-key",
+    "liste"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:app/keys_cli.py:main",
+   "type": "function",
+   "name": "main",
+   "filePath": "app/keys_cli.py",
+   "lineRange": [
+    61,
+    86
+   ],
+   "summary": "argparse ile add|list|revoke alt komutlarını çözer, veritabanını açar ve seçilen komutu çalıştırır.",
+   "tags": [
+    "cli",
+    "entry-point",
+    "argparse"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:app/main.py",
+   "type": "file",
+   "name": "main.py",
+   "filePath": "app/main.py",
+   "summary": "FastAPI uygulama fabrikası: auth + hız limiti middleware'i, yönetici oturum koruması, yükleme sınırı, güvenlik başlıkları, istek logu ve tek tip JSON hata zarfıyla /v1, /api/me ve /admin yüzeylerini kurar.",
+   "tags": [
+    "api-handler",
+    "uygulama-fabrikasi",
+    "middleware",
+    "entry-point"
+   ],
+   "complexity": "complex",
+   "languageNotes": "Middleware sırası dıştan içe sabittir; CSP, PWA kabuğundaki inline bloklar nedeniyle script/style için unsafe-inline içerir."
+  },
+  {
+   "id": "function:app/main.py:create_app",
+   "type": "function",
+   "name": "create_app",
+   "filePath": "app/main.py",
+   "lineRange": [
+    65,
+    103
+   ],
+   "summary": "Tüm HTTP uygulamasını kuran fabrika: router'ları bağlar, middleware zincirini kurar, hata zarfını, statik PWA'yı ve contract açıklamasını ekler.",
+   "tags": [
+    "uygulama-fabrikasi",
+    "api-handler",
+    "middleware"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:app/main.py:_add_auth_middleware",
+   "type": "function",
+   "name": "_add_auth_middleware",
+   "filePath": "app/main.py",
+   "lineRange": [
+    112,
+    131
+   ],
+   "summary": "/v1 ve /api/me için API anahtarı + hız limiti denetleyen middleware; authorize kararını 401/429 zarflarına çevirip anahtar satırını request.state'e bırakır.",
+   "tags": [
+    "middleware",
+    "auth",
+    "rate-limit"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:app/main.py:_add_admin_guard",
+   "type": "function",
+   "name": "_add_admin_guard",
+   "filePath": "app/main.py",
+   "lineRange": [
+    134,
+    144
+   ],
+   "summary": "/admin/api isteklerini yönetici oturum çerezine karşı koruyan middleware.",
+   "tags": [
+    "middleware",
+    "admin",
+    "guvenlik"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:app/main.py:_add_upload_cap",
+   "type": "function",
+   "name": "_add_upload_cap",
+   "filePath": "app/main.py",
+   "lineRange": [
+    147,
+    157
+   ],
+   "summary": "Content-Length beyanı sınırın üstünde olan istekleri gövde tamponlanmadan 413 ile reddeder.",
+   "tags": [
+    "middleware",
+    "yukleme",
+    "validasyon"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:app/main.py:_add_request_logging",
+   "type": "function",
+   "name": "_add_request_logging",
+   "filePath": "app/main.py",
+   "lineRange": [
+    171,
+    184
+   ],
+   "summary": "Her istek için job id, yöntem, durum ve süreyi tek satır loglayan middleware.",
+   "tags": [
+    "middleware",
+    "log",
+    "gozlemlenebilirlik"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:app/main.py:_log_request",
+   "type": "function",
+   "name": "_log_request",
+   "filePath": "app/main.py",
+   "lineRange": [
+    197,
+    207
+   ],
+   "summary": "İstek günlüğü satırını formatlar; job id yolu regex'ten çıkarılır.",
+   "tags": [
+    "log",
+    "utility",
+    "gozlemlenebilirlik"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:app/main.py:_add_error_envelope",
+   "type": "function",
+   "name": "_add_error_envelope",
+   "filePath": "app/main.py",
+   "lineRange": [
+    231,
+    256
+   ],
+   "summary": "HTTP ve beklenmeyen hataları tek tip JSON hata zarfına dönüştüren handler'ları kaydeder.",
+   "tags": [
+    "hata-yonetimi",
+    "api",
+    "middleware"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:app/main.py:_describe_contract",
+   "type": "function",
+   "name": "_describe_contract",
+   "filePath": "app/main.py",
+   "lineRange": [
+    280,
+    290
+   ],
+   "summary": "OpenAPI belgesini contract v1 bilgileriyle zenginleştirir.",
+   "tags": [
+    "openapi",
+    "dokumentasyon",
+    "api"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:tests/test_admin_auth.py",
+   "type": "file",
+   "name": "test_admin_auth.py",
+   "filePath": "tests/test_admin_auth.py",
+   "summary": "Yönetici oturum akışının (giriş/çıkış, httpOnly oturum çerezi, korumalı kapılar) gerçek uygulama üzerinde testleri; token karşılaştırmasının sabit zamanlı olduğunun kanıtı da burada.",
+   "tags": [
+    "test",
+    "admin",
+    "auth",
+    "oturum"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_admin_auth.py:test_login_compares_the_token_in_constant_time",
+   "type": "function",
+   "name": "test_login_compares_the_token_in_constant_time",
+   "filePath": "tests/test_admin_auth.py",
+   "lineRange": [
+    106,
+    118
+   ],
+   "summary": "Girişin token karşılaştırmasını hmac.compare_digest üzerinden yaptığı, sahte karşılaştırıcıyla kanıtlanır.",
+   "tags": [
+    "test",
+    "guvenlik",
+    "sabit-zaman"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:tests/test_admin_detail.py",
+   "type": "file",
+   "name": "test_admin_detail.py",
+   "filePath": "tests/test_admin_detail.py",
+   "summary": "T36 yönetici iş detayı testleri: tek GET'in sözleşme zarfı + görsel baytları + doğrulama bloğunu birlikte vermesi ve oturumsuz erişimin engellenmesi; korpus demo seed.",
+   "tags": [
+    "test",
+    "admin",
+    "detay",
+    "sozlesme"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_admin_detail.py:env",
+   "type": "function",
+   "name": "env",
+   "filePath": "tests/test_admin_detail.py",
+   "lineRange": [
+    28,
+    41
+   ],
+   "summary": "Demo seed'i, test istemcisini ve yönetici oturumunu birlikte kuran ortam fixture'ı.",
+   "tags": [
+    "fixture",
+    "test-hazirlik",
+    "admin"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_admin_detail.py:test_the_detail_is_the_contract_envelope_plus_where_the_image_lives",
+   "type": "function",
+   "name": "test_the_detail_is_the_contract_envelope_plus_where_the_image_lives",
+   "filePath": "tests/test_admin_detail.py",
+   "lineRange": [
+    57,
+    68
+   ],
+   "summary": "Detay GET'inin contract v1 zarfını ve görselin sunucu yolunu birlikte taşıdığı doğrulanır.",
+   "tags": [
+    "test",
+    "detay",
+    "sozlesme"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_admin_detail.py:test_the_detail_reads_the_row_again_so_a_written_result_shows_up",
+   "type": "function",
+   "name": "test_the_detail_reads_the_row_again_so_a_written_result_shows_up",
+   "filePath": "tests/test_admin_detail.py",
+   "lineRange": [
+    80,
+    89
+   ],
+   "summary": "Satır her istekte yeniden okunduğu için sonradan yazılan sonucun detaya yansıdığı doğrulanır.",
+   "tags": [
+    "test",
+    "detay",
+    "tazelik"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_admin_detail.py:test_neither_the_detail_nor_the_image_open_without_a_session",
+   "type": "function",
+   "name": "test_neither_the_detail_nor_the_image_open_without_a_session",
+   "filePath": "tests/test_admin_detail.py",
+   "lineRange": [
+    135,
+    145
+   ],
+   "summary": "Oturum çerezi olmadan hem detayın hem görsel kapısının reddedildiği doğrulanır.",
+   "tags": [
+    "test",
+    "guvenlik",
+    "erisim-kontrol"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_admin_detail.py:test_the_page_holds_the_detail_controls",
+   "type": "function",
+   "name": "test_the_page_holds_the_detail_controls",
+   "filePath": "tests/test_admin_detail.py",
+   "lineRange": [
+    151,
+    176
+   ],
+   "summary": "Detay sayfası HTML'sinin beklenen düzeltme/yeniden çalıştırma kontrollerini barındırdığı doğrulanır.",
+   "tags": [
+    "test",
+    "ui",
+    "admin"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:tests/test_admin_keys.py",
+   "type": "file",
+   "name": "test_admin_keys.py",
+   "filePath": "tests/test_admin_keys.py",
+   "summary": "T39 anahtar yönetimi API testleri: oluştur/listele/iptal uçları, düz anahtarın telle bir kez geçmesi ve iptalin bir sonraki PWA çağrısında etkili olması.",
+   "tags": [
+    "test",
+    "admin",
+    "api-key",
+    "guvenlik"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_admin_keys.py:env",
+   "type": "function",
+   "name": "env",
+   "filePath": "tests/test_admin_keys.py",
+   "lineRange": [
+    21,
+    33
+   ],
+   "summary": "Test anahtarları, temiz kovalar ve yönetici oturumu kuran ortam fixture'ı.",
+   "tags": [
+    "fixture",
+    "test-hazirlik",
+    "api-key"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_admin_keys.py:test_the_list_holds_identities_and_never_a_secret",
+   "type": "function",
+   "name": "test_the_list_holds_identities_and_never_a_secret",
+   "filePath": "tests/test_admin_keys.py",
+   "lineRange": [
+    83,
+    92
+   ],
+   "summary": "Anahtar listesinin yalnız kimlik taşıdığı, sır ya da hash sızdırmadığı doğrulanır.",
+   "tags": [
+    "test",
+    "api-key",
+    "guvenlik"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_admin_keys.py:test_a_revoked_key_is_401_on_the_very_next_pwa_call",
+   "type": "function",
+   "name": "test_a_revoked_key_is_401_on_the_very_next_pwa_call",
+   "filePath": "tests/test_admin_keys.py",
+   "lineRange": [
+    106,
+    116
+   ],
+   "summary": "İptal edilen anahtarla yapılan ilk PWA çağrısının hemen 401 aldığı doğrulanır.",
+   "tags": [
+    "test",
+    "api-key",
+    "iptal"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_admin_keys.py:test_the_page_holds_the_key_controls",
+   "type": "function",
+   "name": "test_the_page_holds_the_key_controls",
+   "filePath": "tests/test_admin_keys.py",
+   "lineRange": [
+    140,
+    153
+   ],
+   "summary": "Anahtarlar sayfasının ekle/listele/iptal kontrollerini barındırdığı doğrulanır.",
+   "tags": [
+    "test",
+    "ui",
+    "admin"
+   ],
+   "complexity": "simple"
+  }
+ ],
+ "edges": [
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:generate_key",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:hash_key",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:create_key",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:verify",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:revoke_key",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:authorize",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:admin_configured",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:admin_token_ok",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:start_session",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:session_ok",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:end_session",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:generate_key",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:hash_key",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:create_key",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:verify",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:revoke_key",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:authorize",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:admin_configured",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:admin_token_ok",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:start_session",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:session_ok",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "function:app/auth.py:end_session",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "file:app/config.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "file:app/db.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:connect",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:list_keys",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:create_job",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:get_job",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:find_job_by_client_ref",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:list_jobs",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:queue_depth",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:update_job",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:set_status",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:_update",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:add_correction",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:log_event",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:connect",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:list_keys",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:create_job",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:get_job",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:find_job_by_client_ref",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:list_jobs",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:queue_depth",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:update_job",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:set_status",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:add_correction",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "function:app/db.py:log_event",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "file:app/config.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/keys_cli.py",
+   "target": "function:app/keys_cli.py:_cmd_add",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/keys_cli.py",
+   "target": "function:app/keys_cli.py:_cmd_list",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/keys_cli.py",
+   "target": "function:app/keys_cli.py:main",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/keys_cli.py",
+   "target": "function:app/keys_cli.py:main",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/keys_cli.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/keys_cli.py",
+   "target": "file:app/auth.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/keys_cli.py",
+   "target": "file:app/db.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/keys_cli.py",
+   "target": "function:app/auth.py:create_key",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/keys_cli.py",
+   "target": "function:app/auth.py:revoke_key",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/keys_cli.py",
+   "target": "function:app/db.py:connect",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "function:app/main.py:create_app",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "function:app/main.py:_add_auth_middleware",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "function:app/main.py:_add_admin_guard",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "function:app/main.py:_add_upload_cap",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "function:app/main.py:_add_request_logging",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "function:app/main.py:_log_request",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "function:app/main.py:_add_error_envelope",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "function:app/main.py:_describe_contract",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "function:app/main.py:create_app",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "file:app/auth.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "file:app/config.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "file:app/contract.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "file:app/db.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "file:app/routes_admin.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "file:app/routes_jobs.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "file:app/routes_worker.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "function:app/auth.py:authorize",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "function:app/auth.py:session_ok",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "function:app/db.py:connect",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_admin_auth.py",
+   "target": "function:tests/test_admin_auth.py:test_login_compares_the_token_in_constant_time",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_admin_auth.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_admin_auth.py",
+   "target": "file:app/auth.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_admin_auth.py",
+   "target": "file:app/db.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_admin_auth.py",
+   "target": "file:app/main.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "file:tests/test_admin_auth.py",
+   "type": "tested_by",
+   "direction": "forward",
+   "weight": 0.5
+  },
+  {
+   "source": "file:tests/test_admin_auth.py",
+   "target": "function:app/main.py:create_app",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_admin_auth.py",
+   "target": "function:app/auth.py:create_key",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_admin_detail.py",
+   "target": "function:tests/test_admin_detail.py:env",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_admin_detail.py",
+   "target": "function:tests/test_admin_detail.py:test_the_detail_is_the_contract_envelope_plus_where_the_image_lives",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_admin_detail.py",
+   "target": "function:tests/test_admin_detail.py:test_the_detail_reads_the_row_again_so_a_written_result_shows_up",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_admin_detail.py",
+   "target": "function:tests/test_admin_detail.py:test_neither_the_detail_nor_the_image_open_without_a_session",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_admin_detail.py",
+   "target": "function:tests/test_admin_detail.py:test_the_page_holds_the_detail_controls",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_admin_detail.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_admin_detail.py",
+   "target": "file:app/auth.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_admin_detail.py",
+   "target": "file:app/contract.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_admin_detail.py",
+   "target": "file:app/db.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_admin_detail.py",
+   "target": "file:app/main.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_admin_detail.py",
+   "target": "file:scripts/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_admin_detail.py",
+   "target": "file:scripts/serve_demo.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/routes_admin.py",
+   "target": "file:tests/test_admin_detail.py",
+   "type": "tested_by",
+   "direction": "forward",
+   "weight": 0.5
+  },
+  {
+   "source": "file:tests/test_admin_detail.py",
+   "target": "function:app/main.py:create_app",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_admin_detail.py",
+   "target": "function:scripts/serve_demo.py:seed_jobs",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_admin_keys.py",
+   "target": "function:tests/test_admin_keys.py:env",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_admin_keys.py",
+   "target": "function:tests/test_admin_keys.py:test_the_list_holds_identities_and_never_a_secret",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_admin_keys.py",
+   "target": "function:tests/test_admin_keys.py:test_a_revoked_key_is_401_on_the_very_next_pwa_call",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_admin_keys.py",
+   "target": "function:tests/test_admin_keys.py:test_the_page_holds_the_key_controls",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_admin_keys.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_admin_keys.py",
+   "target": "file:app/auth.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_admin_keys.py",
+   "target": "file:app/db.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_admin_keys.py",
+   "target": "file:app/main.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/routes_admin.py",
+   "target": "file:tests/test_admin_keys.py",
+   "type": "tested_by",
+   "direction": "forward",
+   "weight": 0.5
+  },
+  {
+   "source": "file:tests/test_admin_keys.py",
+   "target": "function:app/main.py:create_app",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_admin_keys.py",
+   "target": "function:app/auth.py:hash_key",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  }
+ ]
+}

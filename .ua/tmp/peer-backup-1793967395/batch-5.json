@@ -1,0 +1,948 @@
+{
+  "nodes": [
+    {
+      "id": "document:CONTRACT.md",
+      "type": "document",
+      "name": "CONTRACT.md",
+      "filePath": "CONTRACT.md",
+      "summary": "Entegratörler için sözleşme v1'in insan okunur referansı: endpoint tablosu, job envelope ile result/validation/meta alan şemaları ve ok | mismatch | unreadable karar kuralları. `/v1` donmuş sürüm kuralını, düzeltmelerin /admin/api altında olmasını ve Türkçe fiş sayı formatlarının (1.046,40 / %20 / 198,82 TL) normalize edilmesini belgeler.",
+      "tags": [
+        "dokumentasyon",
+        "api-contract",
+        "şema",
+        "entegrasyon",
+        "sürümleme"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Alan adları fişin kendi Türkçe terimleri (ara_toplam, iskonto, kdv, okunamayan); pydantic tek doğruluk kaynağıdır ve JSON Schema ile bu belge ikisi birlikte üretilir. Arithmetiği LLM değil validator üretir: validation.expected her zaman items[] üzerinden yeniden hesaplanır."
+    },
+    {
+      "id": "document:HIZLI-BASLANGIC.md",
+      "type": "document",
+      "name": "HIZLI-BASLANGIC.md",
+      "filePath": "HIZLI-BASLANGIC.md",
+      "summary": "Eren'e yönelik Türkçe hızlı başlangıç rehberi: model indirmeden demo sunucuyla beş dakikada deneme, gerçek hatla run.py çalıştırma, çalışan API anahtarı üretme, telefona PWA kurma ve küçükten büyüğe kontrol komutları. Kabul edilmiş açıkların ve sorun çıkarsa bakılacak yerlerin özetini taşır.",
+      "tags": [
+        "dokumentasyon",
+        "hızlı-başlangıç",
+        "kurulum",
+        "pwa",
+        "operasyon"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "İngilizce ana dokümanın (README.md) yanında tek kişiye yönelik, komut odaklı bir giriş katmanı; bilinen açıkları REVIEW.md'ye atıfla açıkça listeler."
+    },
+    {
+      "id": "document:OPERATIONS.md",
+      "type": "document",
+      "name": "OPERATIONS.md",
+      "filePath": "OPERATIONS.md",
+      "summary": "Tek makineyi deployment'ın kendisi sayan operasyon kılavuzu: data/ yedeği, çalışan anahtarı ve ADMIN_TOKEN rotasyonu, log konumları, model ve binary yolları, VRAM bütçesi ile tek komutluk günlük kabul kontrolü. KVKK gereği data/ altının gitignore'da kalması gerektiğini vurgular.",
+      "tags": [
+        "dokumentasyon",
+        "operasyon",
+        "yedekleme",
+        "güvenlik",
+        "izleme"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "SQLite WAL modunda çalıştığı için yedek ocr.db, -wal ve -shm üçlüsünü bir arada almayı zorunlu kılar; OCR CPU'da (-ngl 0) çalışarak 32 GB kartı Strata ile paylaşır."
+    },
+    {
+      "id": "document:PLAN.md",
+      "type": "document",
+      "name": "PLAN.md",
+      "filePath": "PLAN.md",
+      "summary": "Mimari ve modül sözleşmeleri belgesi: üç aşamalı hattın şeması, dosya yapısı, on tasarım kararı (CPU'da OCR, contract'ın koddan üretilmesi, idempotency, SHA-256 anahtarlar, EXIF temizliği) ve modüller arası on veri şekli. Bir alan değiştiğinde birlikte dokunulması gereken yerleri 'wholes' başlığıyla listeler.",
+      "tags": [
+        "dokumentasyon",
+        "mimari",
+        "tasarım-kararları",
+        "modül-sözleşmeleri",
+        "kilometre-taşı"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Wholes listesi, tek bir sözleşme alanı değişikliğinin temas yüzünü (contract.py, şema, CONTRACT.md, admin ekranı, export sütunları, PWA) önceden sabitleyerek yarım kalan değişiklikleri engelleyen bir tasarım sözleşmesidir."
+    },
+    {
+      "id": "document:PROJECT_BRIEF.md",
+      "type": "document",
+      "name": "PROJECT_BRIEF.md",
+      "filePath": "PROJECT_BRIEF.md",
+      "summary": "İş gereksinimleri dokümanı: hedef, üç kullanıcı tipi (saha çalışanı, admin/entegratör, dış entegratör geliştirici), v1 kapsamı ve kapsam dışındakiler, stack ile VRAM/ağ kısıtları, arayüzler, on kabul testi, kilometre taşları ve açık riskler. Ürünün sürümlenmiş JSON sözleşme olduğunu ve aritmetiğin deterministik Python'da kaldığını sabitler.",
+      "tags": [
+        "dokumentasyon",
+        "gereksinimler",
+        "kapsam",
+        "kabul-testleri",
+        "risk"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Kapsam dışı listesi (webhook, native uygulama, çok kiracılı SaaS, bulut OCR) kadar 'asla' maddeleri de içerir: bulut OCR ve telemetry hiç yok, v1'de açık internete çıkış yok."
+    },
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "Projenin ana giriş noktası: sistemin ne yaptığı, PowerShell quickstart'ı (.env ve uv ile kurulum), PWA kurulumu, entegratör rehberi (idempotency ve tek tip hata zarfı dahil), Tailscale ile tailnet üzerinde HTTPS ve semptom-çözüm tablolu sorun giderme. Diğer dört dokümana yönlendirme yaparak dokümantasyonun navigasyon katmanı olur.",
+      "tags": [
+        "dokumentasyon",
+        "entry-point",
+        "kurulum",
+        "entegrasyon",
+        "sorun-giderme"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Tailscale 'serve' ile 'funnel' ayrımını KVKK gerekçesiyle açıkça yazar: funnel, fiş görüntülerini ve API'yi tüm internete açan tek komuttur ve v1'de yasaktır."
+    },
+    {
+      "id": "document:REVIEW.md",
+      "type": "document",
+      "name": "REVIEW.md",
+      "filePath": "REVIEW.md",
+      "summary": "M1'in (T01-T18) kabul incelemesi: 665 pytest ve 192 node testi yeşilken T11'in geç gelmesinin ortaya çıkardığı üç sınır hatası — B1 unreadable'ın failed'a dönüşmesi, B2 gerçek Structurer'ın uçtan uca kapıdan geçmemesi, B3 resim yazılmadan kuyruk satırının commit edilmesi. Kabul edilmiş riskleri ve eksik testleri düzeltme görevlerine bağlar.",
+      "tags": [
+        "dokumentasyon",
+        "kod-incelemesi",
+        "hata-raporu",
+        "test",
+        "milestone"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Bulgular ASSUMPTION yorumlarıyla birlikte denetlenir: hangi varsayımların artık yanlış olduğu (B1/B2) ile sağlam kalanlar ayrı ayrı belirtilir, her bulgu doğrudan bir T6x görevine bağlanır."
+    },
+    {
+      "id": "document:TASKS.md",
+      "type": "document",
+      "name": "TASKS.md",
+      "filePath": "TASKS.md",
+      "summary": "M1-M4 yapımlık görev defteri: her görev tek satırda kök neden, beklenen davranış ve `accept:` doğrulama komutu olarak yazılı. T01-T69 tamamlanmış; REVIEW bulguları (T65-T67) ve canlı test bulguları (T68 thinking token, T69 KDV dahil taban) aynı deftere eklenmiştir.",
+      "tags": [
+        "dokumentasyon",
+        "görev-defteri",
+        "yapım-sırası",
+        "doğrulama",
+        "kilometre-taşı"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "`accept:` alanı görevin bitiş koşulunu çalıştırılabilir bir pytest/node komutuyla sabitler; görev metni düzeltilecek satır aralığını (pipeline.py:47-50) ve eskimiş test beklentilerini de adıyla sayar."
+    },
+    {
+      "id": "config:package.json",
+      "type": "config",
+      "name": "package.json",
+      "filePath": "package.json",
+      "summary": "Depoyu Node için ESM ilan eden üç alanlık bildirim dosyası (name, private, type: module). Bağımlılık ve build adımı içermez; JS mantığı bundler'sız ES modülü olarak yazılır ve testler `node --test` ile koşar.",
+      "tags": [
+        "configuration",
+        "esm",
+        "node",
+        "build-system"
+      ],
+      "complexity": "simple",
+      "languageNotes": "node_modules ve package-lock bulunmaz; `type: module` tek başına, tests/js altındaki node testlerinin static/ altındaki ES modüllerini import edebilmesinin tek koşuludur."
+    },
+    {
+      "id": "config:pyproject.toml",
+      "type": "config",
+      "name": "pyproject.toml",
+      "filePath": "pyproject.toml",
+      "summary": "Yalnızca pytest yapılandırması taşıyan iki satırlık manifest: testpaths = [\"tests\"] ile `python -m pytest` keşfini tests/ dizinine sabitler. Bağımlılık tablosu içermez.",
+      "tags": [
+        "configuration",
+        "pytest",
+        "test",
+        "build-system"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Bağımlılıklar burada değil README'deki `uv pip install` satırında listelenir; venv'in kendi pip'i yoktur. Uygulama yapılandırması pyproject'te değil app/config.py üzerinden .env ile okunur."
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:CONTRACT.md",
+      "target": "file:app/contract.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CONTRACT.md",
+      "target": "schema:contract/contract_v1.schema.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CONTRACT.md",
+      "target": "file:scripts/gen_contract_doc.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CONTRACT.md",
+      "target": "file:app/validator.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CONTRACT.md",
+      "target": "file:app/routes_jobs.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CONTRACT.md",
+      "target": "file:app/routes_admin.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:OPERATIONS.md",
+      "target": "file:app/config.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:OPERATIONS.md",
+      "target": "file:app/keys_cli.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:OPERATIONS.md",
+      "target": "file:run.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:OPERATIONS.md",
+      "target": "file:scripts/acceptance.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:OPERATIONS.md",
+      "target": "file:scripts/tailscale_serve.ps1",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:OPERATIONS.md",
+      "target": "document:spike/REPORT.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:OPERATIONS.md",
+      "target": "document:CONTRACT.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:OPERATIONS.md",
+      "target": "document:README.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:HIZLI-BASLANGIC.md",
+      "target": "file:scripts/serve_demo.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:HIZLI-BASLANGIC.md",
+      "target": "file:run.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:HIZLI-BASLANGIC.md",
+      "target": "file:app/keys_cli.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:HIZLI-BASLANGIC.md",
+      "target": "file:scripts/tailscale_serve.ps1",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:HIZLI-BASLANGIC.md",
+      "target": "file:scripts/acceptance.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:HIZLI-BASLANGIC.md",
+      "target": "file:scripts/smoke_e2e.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:HIZLI-BASLANGIC.md",
+      "target": "document:README.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:HIZLI-BASLANGIC.md",
+      "target": "document:CONTRACT.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:HIZLI-BASLANGIC.md",
+      "target": "document:OPERATIONS.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:run.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:app/config.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:app/contract.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:app/validator.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:app/db.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:app/auth.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:app/ocr_client.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:app/structurer.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:app/pipeline.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:app/queue_worker.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:app/routes_jobs.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:app/routes_worker.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:app/routes_admin.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:app/exports.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:app/status.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:app/keys_cli.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:app/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:scripts/fake_models.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:scripts/smoke_e2e.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:scripts/serve_demo.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "file:scripts/acceptance.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "document:spike/REPORT.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PLAN.md",
+      "target": "document:CONTRACT.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PROJECT_BRIEF.md",
+      "target": "file:app/contract.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PROJECT_BRIEF.md",
+      "target": "file:app/validator.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PROJECT_BRIEF.md",
+      "target": "file:app/routes_jobs.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PROJECT_BRIEF.md",
+      "target": "file:app/auth.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PROJECT_BRIEF.md",
+      "target": "file:app/queue_worker.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PROJECT_BRIEF.md",
+      "target": "file:app/exports.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PROJECT_BRIEF.md",
+      "target": "file:app/status.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PROJECT_BRIEF.md",
+      "target": "file:app/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PROJECT_BRIEF.md",
+      "target": "file:run.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PROJECT_BRIEF.md",
+      "target": "document:PLAN.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:PROJECT_BRIEF.md",
+      "target": "document:CONTRACT.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:app/config.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:app/validator.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:app/contract.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "schema:contract/contract_v1.schema.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:scripts/gen_contract_doc.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:run.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:scripts/serve_demo.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:scripts/smoke_e2e.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:scripts/acceptance.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:scripts/tailscale_serve.ps1",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:app/keys_cli.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "document:PLAN.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "document:CONTRACT.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "document:OPERATIONS.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "document:HIZLI-BASLANGIC.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "document:PROJECT_BRIEF.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:REVIEW.md",
+      "target": "file:app/pipeline.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:REVIEW.md",
+      "target": "file:app/queue_worker.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:REVIEW.md",
+      "target": "file:app/structurer.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:REVIEW.md",
+      "target": "file:app/routes_jobs.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:REVIEW.md",
+      "target": "file:app/keys_cli.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:REVIEW.md",
+      "target": "file:scripts/smoke_e2e.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:REVIEW.md",
+      "target": "document:TASKS.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:REVIEW.md",
+      "target": "document:CONTRACT.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:REVIEW.md",
+      "target": "document:PLAN.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:app/config.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:app/numbers.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:app/contract.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:app/validator.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:app/db.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:app/auth.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:app/ocr_client.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:app/structurer.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:app/pipeline.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:app/queue_worker.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:app/keys_cli.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:app/routes_worker.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:app/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:app/routes_jobs.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:app/exports.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:app/status.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:run.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:scripts/gen_contract_doc.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:scripts/fake_models.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:scripts/serve_demo.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:scripts/smoke_e2e.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:scripts/acceptance.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "file:scripts/tailscale_serve.ps1",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "document:spike/CANLI_TEST_RAPORU.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "document:README.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:TASKS.md",
+      "target": "document:OPERATIONS.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:package.json",
+      "target": "document:PLAN.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:package.json",
+      "target": "document:TASKS.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:pyproject.toml",
+      "target": "document:TASKS.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:pyproject.toml",
+      "target": "document:HIZLI-BASLANGIC.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

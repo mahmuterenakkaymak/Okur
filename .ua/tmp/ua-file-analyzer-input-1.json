@@ -1,0 +1,374 @@
+{
+  "projectRoot": "C:/Users/PC/Documents/GitHub/ocr-app",
+  "batchFiles": [
+    {
+      "path": "app/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/auth.py",
+      "language": "python",
+      "sizeLines": 173,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/db.py",
+      "language": "python",
+      "sizeLines": 326,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/keys_cli.py",
+      "language": "python",
+      "sizeLines": 90,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/main.py",
+      "language": "python",
+      "sizeLines": 290,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_admin_auth.py",
+      "language": "python",
+      "sizeLines": 176,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_admin_detail.py",
+      "language": "python",
+      "sizeLines": 192,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_admin_keys.py",
+      "language": "python",
+      "sizeLines": 163,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_admin_list.py",
+      "language": "python",
+      "sizeLines": 280,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_admin_sort_date.py",
+      "language": "python",
+      "sizeLines": 82,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_auth.py",
+      "language": "python",
+      "sizeLines": 140,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_captured_at_survives.py",
+      "language": "python",
+      "sizeLines": 135,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_corrections.py",
+      "language": "python",
+      "sizeLines": 402,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_db.py",
+      "language": "python",
+      "sizeLines": 275,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_exports.py",
+      "language": "python",
+      "sizeLines": 323,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_hardening.py",
+      "language": "python",
+      "sizeLines": 247,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_keys_cli.py",
+      "language": "python",
+      "sizeLines": 143,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_main_app.py",
+      "language": "python",
+      "sizeLines": 172,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_pwa_empty_states.py",
+      "language": "python",
+      "sizeLines": 75,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_pwa_history.py",
+      "language": "python",
+      "sizeLines": 185,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_pwa_shell.py",
+      "language": "python",
+      "sizeLines": 90,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_pwa_submit_flow.py",
+      "language": "python",
+      "sizeLines": 121,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_queue_worker.py",
+      "language": "python",
+      "sizeLines": 287,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_rate_limit.py",
+      "language": "python",
+      "sizeLines": 113,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_routes_jobs.py",
+      "language": "python",
+      "sizeLines": 291,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_routes_worker.py",
+      "language": "python",
+      "sizeLines": 267,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_serve_demo.py",
+      "language": "python",
+      "sizeLines": 98,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_status.py",
+      "language": "python",
+      "sizeLines": 192,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_upload_atomic_orphan.py",
+      "language": "python",
+      "sizeLines": 77,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_upload_exif_stripped.py",
+      "language": "python",
+      "sizeLines": 127,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "app/__init__.py": [],
+    "app/auth.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/db.py"
+    ],
+    "app/db.py": [
+      "app/__init__.py",
+      "app/config.py"
+    ],
+    "app/keys_cli.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py"
+    ],
+    "app/main.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/config.py",
+      "app/contract.py",
+      "app/db.py",
+      "app/routes_admin.py",
+      "app/routes_jobs.py",
+      "app/routes_worker.py"
+    ],
+    "tests/test_admin_auth.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/main.py"
+    ],
+    "tests/test_admin_detail.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/contract.py",
+      "app/db.py",
+      "app/main.py",
+      "scripts/__init__.py",
+      "scripts/serve_demo.py"
+    ],
+    "tests/test_admin_keys.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/main.py"
+    ],
+    "tests/test_admin_list.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/main.py",
+      "scripts/__init__.py",
+      "scripts/serve_demo.py"
+    ],
+    "tests/test_admin_sort_date.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/main.py"
+    ],
+    "tests/test_auth.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/config.py",
+      "app/db.py"
+    ],
+    "tests/test_captured_at_survives.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/config.py",
+      "app/db.py",
+      "app/main.py",
+      "app/pipeline.py",
+      "app/queue_worker.py"
+    ],
+    "tests/test_corrections.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/contract.py",
+      "app/db.py",
+      "app/main.py",
+      "scripts/__init__.py",
+      "scripts/serve_demo.py"
+    ],
+    "tests/test_db.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/db.py"
+    ],
+    "tests/test_exports.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/contract.py",
+      "app/db.py",
+      "app/exports.py",
+      "app/main.py",
+      "scripts/__init__.py",
+      "scripts/serve_demo.py"
+    ],
+    "tests/test_hardening.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/main.py"
+    ],
+    "tests/test_keys_cli.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/keys_cli.py"
+    ],
+    "tests/test_main_app.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/main.py"
+    ],
+    "tests/test_pwa_empty_states.py": [
+      "app/main.py"
+    ],
+    "tests/test_pwa_history.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/main.py"
+    ],
+    "tests/test_pwa_shell.py": [
+      "app/main.py"
+    ],
+    "tests/test_pwa_submit_flow.py": [
+      "app/main.py"
+    ],
+    "tests/test_queue_worker.py": [
+      "app/__init__.py",
+      "app/db.py",
+      "app/queue_worker.py"
+    ],
+    "tests/test_rate_limit.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/config.py",
+      "app/db.py"
+    ],
+    "tests/test_routes_jobs.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/main.py"
+    ],
+    "tests/test_routes_worker.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/config.py",
+      "app/db.py",
+      "app/main.py"
+    ],
+    "tests/test_serve_demo.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/config.py",
+      "app/db.py",
+      "app/main.py",
+      "app/validator.py",
+      "scripts/__init__.py",
+      "scripts/serve_demo.py"
+    ],
+    "tests/test_status.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/main.py",
+      "app/status.py"
+    ],
+    "tests/test_upload_atomic_orphan.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/config.py",
+      "app/db.py",
+      "app/main.py",
+      "app/routes_jobs.py"
+    ],
+    "tests/test_upload_exif_stripped.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/main.py"
+    ]
+  }
+}

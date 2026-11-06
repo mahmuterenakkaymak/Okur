@@ -1,0 +1,50 @@
+{
+  "batchIndex": 9,
+  "files": [
+    {
+      "path": "fixtures/fis_benzin_clean.json",
+      "language": "json",
+      "sizeLines": 28,
+      "fileCategory": "config"
+    },
+    {
+      "path": "fixtures/fis_benzin_foto.json",
+      "language": "json",
+      "sizeLines": 28,
+      "fileCategory": "config"
+    },
+    {
+      "path": "fixtures/fis_market_clean.json",
+      "language": "json",
+      "sizeLines": 58,
+      "fileCategory": "config"
+    },
+    {
+      "path": "fixtures/fis_market_foto.json",
+      "language": "json",
+      "sizeLines": 58,
+      "fileCategory": "config"
+    },
+    {
+      "path": "fixtures/fis_restoran_clean.json",
+      "language": "json",
+      "sizeLines": 58,
+      "fileCategory": "config"
+    },
+    {
+      "path": "fixtures/fis_restoran_foto.json",
+      "language": "json",
+      "sizeLines": 58,
+      "fileCategory": "config"
+    }
+  ],
+  "batchImportData": {
+    "fixtures/fis_benzin_clean.json": [],
+    "fixtures/fis_benzin_foto.json": [],
+    "fixtures/fis_market_clean.json": [],
+    "fixtures/fis_market_foto.json": [],
+    "fixtures/fis_restoran_clean.json": [],
+    "fixtures/fis_restoran_foto.json": []
+  },
+  "neighborMap": {}
+}

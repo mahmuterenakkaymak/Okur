@@ -1,0 +1,964 @@
+{
+ "nodes": [
+  {
+   "id": "file:tests/test_routes_jobs.py",
+   "type": "file",
+   "name": "test_routes_jobs.py",
+   "filePath": "tests/test_routes_jobs.py",
+   "summary": "/api/me iş rotaları testleri: POST'un 202 + queued zarfı, görselin diske saklanması, GET'in olgunlaşmış zarfı, client_ref idempotansı ve tarih/sayfalama davranışları.",
+   "tags": [
+    "test",
+    "api",
+    "is-rotalari",
+    "yukleme"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:tests/test_routes_jobs.py:env",
+   "type": "function",
+   "name": "env",
+   "filePath": "tests/test_routes_jobs.py",
+   "lineRange": [
+    26,
+    36
+   ],
+   "summary": "Anahtar, TestClient ve görsel yardımcılarını kuran ortam fixture'ı.",
+   "tags": [
+    "fixture",
+    "test-hazirlik",
+    "api"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_routes_jobs.py:test_post_returns_202_with_queued_envelope",
+   "type": "function",
+   "name": "test_post_returns_202_with_queued_envelope",
+   "filePath": "tests/test_routes_jobs.py",
+   "lineRange": [
+    60,
+    74
+   ],
+   "summary": "POST'un 202 ile queued zarf döndürdüğü doğrulanır.",
+   "tags": [
+    "test",
+    "api",
+    "202"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_routes_jobs.py:test_post_stores_the_image_for_the_worker",
+   "type": "function",
+   "name": "test_post_stores_the_image_for_the_worker",
+   "filePath": "tests/test_routes_jobs.py",
+   "lineRange": [
+    77,
+    86
+   ],
+   "summary": "POST'un görseli worker için diske yazdığı doğrulanır.",
+   "tags": [
+    "test",
+    "yukleme",
+    "gorsel"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_routes_jobs.py:test_get_job_returns_the_matured_envelope",
+   "type": "function",
+   "name": "test_get_job_returns_the_matured_envelope",
+   "filePath": "tests/test_routes_jobs.py",
+   "lineRange": [
+    185,
+    217
+   ],
+   "summary": "GET'in olgunlaşmış (done) zarfı döndürdüğü doğrulanır.",
+   "tags": [
+    "test",
+    "api",
+    "zarf"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:tests/test_routes_worker.py",
+   "type": "file",
+   "name": "test_routes_worker.py",
+   "filePath": "tests/test_routes_worker.py",
+   "summary": "Worker API rotaları testleri: anahtara göre süzülmüş hafif liste, queued iste verdict/toplam olmaması, detayın görsel URL'i, dekode edilemeyen görselin kendi baytlarıyla sunulması.",
+   "tags": [
+    "test",
+    "api",
+    "worker",
+    "erisim-kontrol"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:tests/test_routes_worker.py:env",
+   "type": "function",
+   "name": "env",
+   "filePath": "tests/test_routes_worker.py",
+   "lineRange": [
+    29,
+    40
+   ],
+   "summary": "Worker anahtarı ve TestClient ile görüntüleme ortamı kuran fixture.",
+   "tags": [
+    "fixture",
+    "test-hazirlik",
+    "worker"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_routes_worker.py:finish",
+   "type": "function",
+   "name": "finish",
+   "filePath": "tests/test_routes_worker.py",
+   "lineRange": [
+    56,
+    67
+   ],
+   "summary": "İşi done durumuna tamamlayıp sonucu yazan yardımcı.",
+   "tags": [
+    "test-yardimci",
+    "kuyruk",
+    "yardimci"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_routes_worker.py:test_list_returns_lite_rows_scoped_to_the_key",
+   "type": "function",
+   "name": "test_list_returns_lite_rows_scoped_to_the_key",
+   "filePath": "tests/test_routes_worker.py",
+   "lineRange": [
+    73,
+    82
+   ],
+   "summary": "Listenin anahtara göre süzülmüş hafif satırlar döndürdüğü doğrulanır.",
+   "tags": [
+    "test",
+    "liste",
+    "erisim-kontrol"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_routes_worker.py:test_queued_job_has_no_verdict_or_toplam_yet",
+   "type": "function",
+   "name": "test_queued_job_has_no_verdict_or_toplam_yet",
+   "filePath": "tests/test_routes_worker.py",
+   "lineRange": [
+    94,
+    104
+   ],
+   "summary": "Queued işte henüz verdict/toplam bulunmadığı doğrulanır.",
+   "tags": [
+    "test",
+    "durum",
+    "zarf"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_routes_worker.py:test_detail_returns_the_envelope_plus_image_url",
+   "type": "function",
+   "name": "test_detail_returns_the_envelope_plus_image_url",
+   "filePath": "tests/test_routes_worker.py",
+   "lineRange": [
+    137,
+    151
+   ],
+   "summary": "Detayın zarfa ek olarak görsel URL'i verdiği doğrulanır.",
+   "tags": [
+    "test",
+    "detay",
+    "gorsel"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_routes_worker.py:test_undecodable_image_still_serves_its_bytes",
+   "type": "function",
+   "name": "test_undecodable_image_still_serves_its_bytes",
+   "filePath": "tests/test_routes_worker.py",
+   "lineRange": [
+    202,
+    211
+   ],
+   "summary": "Kodlanamayan görselin kendi baytlarının hâlâ sunulduğu doğrulanır.",
+   "tags": [
+    "test",
+    "gorsel",
+    "hata-yonetimi"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:tests/test_serve_demo.py",
+   "type": "file",
+   "name": "test_serve_demo.py",
+   "filePath": "tests/test_serve_demo.py",
+   "summary": "Demo sunucusu testleri: seed'in her kuyruk durumu ve verdict'u kapsadığı, demo rotalarının config ve örnekleri sunduğu, --check'in gerçek yığında 0 çıkış verdiği.",
+   "tags": [
+    "test",
+    "demo",
+    "seed",
+    "saglik-kontrolu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_serve_demo.py:test_seed_covers_every_state_and_verdict",
+   "type": "function",
+   "name": "test_seed_covers_every_state_and_verdict",
+   "filePath": "tests/test_serve_demo.py",
+   "lineRange": [
+    29,
+    41
+   ],
+   "summary": "Seed'in her kuyruk durumu ve verdict'u kapsadığı doğrulanır.",
+   "tags": [
+    "test",
+    "demo",
+    "seed"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_serve_demo.py:test_demo_routes_serve_config_and_samples",
+   "type": "function",
+   "name": "test_demo_routes_serve_config_and_samples",
+   "filePath": "tests/test_serve_demo.py",
+   "lineRange": [
+    64,
+    77
+   ],
+   "summary": "Demo rotalarının config ve örnekleri sunduğu doğrulanır.",
+   "tags": [
+    "test",
+    "demo",
+    "rotalar"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_serve_demo.py:test_check_boots_probes_and_exits_zero",
+   "type": "function",
+   "name": "test_check_boots_probes_and_exits_zero",
+   "filePath": "tests/test_serve_demo.py",
+   "lineRange": [
+    80,
+    89
+   ],
+   "summary": "--check'in gerçek yığında probe'ları koşturup 0 çıktığı doğrulanır.",
+   "tags": [
+    "test",
+    "demo",
+    "saglik-kontrolu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:tests/test_status.py",
+   "type": "file",
+   "name": "test_status.py",
+   "filePath": "tests/test_status.py",
+   "summary": "T40 durum testi: servis yoklamalarının sözleşme yükü, durum rotasının cevabı ve Durum sayfası kontrolleri; hiçbir durum okumasının asla raise etmemesi sözü.",
+   "tags": [
+    "test",
+    "durum",
+    "gozlemlenebilirlik",
+    "admin"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_status.py:tasima",
+   "type": "function",
+   "name": "tasima",
+   "filePath": "tests/test_status.py",
+   "lineRange": [
+    25,
+    34
+   ],
+   "summary": "Durum testleri için gereken iş/olayları üreten yardımcı.",
+   "tags": [
+    "test-yardimci",
+    "durum",
+    "yardimci"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_status.py:test_probe_all_holds_the_contract_payload",
+   "type": "function",
+   "name": "test_probe_all_holds_the_contract_payload",
+   "filePath": "tests/test_status.py",
+   "lineRange": [
+    107,
+    117
+   ],
+   "summary": "probe_all'ın sözleşme yükünü taşıdığı doğrulanır.",
+   "tags": [
+    "test",
+    "durum",
+    "sozlesme"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_status.py:env",
+   "type": "function",
+   "name": "env",
+   "filePath": "tests/test_status.py",
+   "lineRange": [
+    124,
+    142
+   ],
+   "summary": "App, veritabanı ve temiz oturumlarla durum testlerinin ortamını kuran fixture.",
+   "tags": [
+    "fixture",
+    "test-hazirlik",
+    "durum"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_status.py:test_the_status_route_answers_the_contract_payload",
+   "type": "function",
+   "name": "test_the_status_route_answers_the_contract_payload",
+   "filePath": "tests/test_status.py",
+   "lineRange": [
+    145,
+    154
+   ],
+   "summary": "Durum rotasının sözleşme yüküyle cevap verdiği doğrulanır.",
+   "tags": [
+    "test",
+    "durum",
+    "api"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_status.py:test_the_page_holds_the_status_controls",
+   "type": "function",
+   "name": "test_the_page_holds_the_status_controls",
+   "filePath": "tests/test_status.py",
+   "lineRange": [
+    171,
+    184
+   ],
+   "summary": "Durum sayfasının göstergeleri barındırdığı doğrulanır.",
+   "tags": [
+    "test",
+    "ui",
+    "durum"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:tests/test_upload_atomic_orphan.py",
+   "type": "file",
+   "name": "test_upload_atomic_orphan.py",
+   "filePath": "tests/test_upload_atomic_orphan.py",
+   "summary": "T67: kuyruk satırının görselsiz kalma penceresini kapatan sıra testleri — önce baytlar, sonra onlara işaret eden satır; _strip_exif hatası hiç iş satırı bırakmaz.",
+   "tags": [
+    "test",
+    "yukleme",
+    "atomiklik",
+    "kuyruk"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_upload_atomic_orphan.py:env",
+   "type": "function",
+   "name": "env",
+   "filePath": "tests/test_upload_atomic_orphan.py",
+   "lineRange": [
+    20,
+    30
+   ],
+   "summary": "Rota ve veritabanını taklitsiz kuran yükleme test ortamı.",
+   "tags": [
+    "fixture",
+    "test-hazirlik",
+    "yukleme"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_upload_atomic_orphan.py:test_a_strip_exif_failure_leaves_no_job_row",
+   "type": "function",
+   "name": "test_a_strip_exif_failure_leaves_no_job_row",
+   "filePath": "tests/test_upload_atomic_orphan.py",
+   "lineRange": [
+    47,
+    58
+   ],
+   "summary": "_strip_exif hatasının hiç iş satırı bırakmadığı doğrulanır.",
+   "tags": [
+    "test",
+    "atomiklik",
+    "hata-yonetimi"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_upload_atomic_orphan.py:test_the_row_lands_already_pointing_at_bytes_that_exist",
+   "type": "function",
+   "name": "test_the_row_lands_already_pointing_at_bytes_that_exist",
+   "filePath": "tests/test_upload_atomic_orphan.py",
+   "lineRange": [
+    61,
+    77
+   ],
+   "summary": "Satır oluştuğu anda var olan baytlara işaret ettiği doğrulanır.",
+   "tags": [
+    "test",
+    "atomiklik",
+    "yukleme"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:tests/test_upload_exif_stripped.py",
+   "type": "file",
+   "name": "test_upload_exif_stripped.py",
+   "filePath": "tests/test_upload_exif_stripped.py",
+   "summary": "PLAN kararı 7: kaydedilen fotoğraftan EXIF/GPS meta verisinin düştüğünü (KVKK yüzeyi) hem dosya yolu hem rota üzerinden doğrulayan test.",
+   "tags": [
+    "test",
+    "exif",
+    "kvkk",
+    "gizlilik"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_upload_exif_stripped.py:env",
+   "type": "function",
+   "name": "env",
+   "filePath": "tests/test_upload_exif_stripped.py",
+   "lineRange": [
+    25,
+    35
+   ],
+   "summary": "Telefon fotoğrafı yüklenen PWA test ortamı.",
+   "tags": [
+    "fixture",
+    "test-hazirlik",
+    "exif"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_upload_exif_stripped.py:phone_photo",
+   "type": "function",
+   "name": "phone_photo",
+   "filePath": "tests/test_upload_exif_stripped.py",
+   "lineRange": [
+    38,
+    51
+   ],
+   "summary": "EXIF/GPS etiketli sahte telefon fotoğrafı baytları üreten yardımcı.",
+   "tags": [
+    "test-yardimci",
+    "exif",
+    "gorsel"
+   ],
+   "complexity": "moderate"
+  }
+ ],
+ "edges": [
+  {
+   "source": "file:tests/test_routes_jobs.py",
+   "target": "function:tests/test_routes_jobs.py:env",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_routes_jobs.py",
+   "target": "function:tests/test_routes_jobs.py:test_post_returns_202_with_queued_envelope",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_routes_jobs.py",
+   "target": "function:tests/test_routes_jobs.py:test_post_stores_the_image_for_the_worker",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_routes_jobs.py",
+   "target": "function:tests/test_routes_jobs.py:test_get_job_returns_the_matured_envelope",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_routes_jobs.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_routes_jobs.py",
+   "target": "file:app/auth.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_routes_jobs.py",
+   "target": "file:app/db.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_routes_jobs.py",
+   "target": "file:app/main.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/routes_jobs.py",
+   "target": "file:tests/test_routes_jobs.py",
+   "type": "tested_by",
+   "direction": "forward",
+   "weight": 0.5
+  },
+  {
+   "source": "file:tests/test_routes_jobs.py",
+   "target": "function:app/main.py:create_app",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_routes_worker.py",
+   "target": "function:tests/test_routes_worker.py:env",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_routes_worker.py",
+   "target": "function:tests/test_routes_worker.py:finish",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_routes_worker.py",
+   "target": "function:tests/test_routes_worker.py:test_list_returns_lite_rows_scoped_to_the_key",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_routes_worker.py",
+   "target": "function:tests/test_routes_worker.py:test_queued_job_has_no_verdict_or_toplam_yet",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_routes_worker.py",
+   "target": "function:tests/test_routes_worker.py:test_detail_returns_the_envelope_plus_image_url",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_routes_worker.py",
+   "target": "function:tests/test_routes_worker.py:test_undecodable_image_still_serves_its_bytes",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_routes_worker.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_routes_worker.py",
+   "target": "file:app/auth.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_routes_worker.py",
+   "target": "file:app/config.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_routes_worker.py",
+   "target": "file:app/db.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_routes_worker.py",
+   "target": "file:app/main.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/routes_worker.py",
+   "target": "file:tests/test_routes_worker.py",
+   "type": "tested_by",
+   "direction": "forward",
+   "weight": 0.5
+  },
+  {
+   "source": "file:tests/test_routes_worker.py",
+   "target": "function:app/main.py:create_app",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_serve_demo.py",
+   "target": "function:tests/test_serve_demo.py:test_seed_covers_every_state_and_verdict",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_serve_demo.py",
+   "target": "function:tests/test_serve_demo.py:test_demo_routes_serve_config_and_samples",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_serve_demo.py",
+   "target": "function:tests/test_serve_demo.py:test_check_boots_probes_and_exits_zero",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_serve_demo.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_serve_demo.py",
+   "target": "file:app/auth.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_serve_demo.py",
+   "target": "file:app/config.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_serve_demo.py",
+   "target": "file:app/db.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_serve_demo.py",
+   "target": "file:app/main.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_serve_demo.py",
+   "target": "file:app/validator.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_serve_demo.py",
+   "target": "file:scripts/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_serve_demo.py",
+   "target": "file:scripts/serve_demo.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:scripts/serve_demo.py",
+   "target": "file:tests/test_serve_demo.py",
+   "type": "tested_by",
+   "direction": "forward",
+   "weight": 0.5
+  },
+  {
+   "source": "file:tests/test_serve_demo.py",
+   "target": "function:scripts/serve_demo.py:seed_jobs",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_serve_demo.py",
+   "target": "function:scripts/serve_demo.py:main",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_status.py",
+   "target": "function:tests/test_status.py:tasima",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_status.py",
+   "target": "function:tests/test_status.py:test_probe_all_holds_the_contract_payload",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_status.py",
+   "target": "function:tests/test_status.py:env",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_status.py",
+   "target": "function:tests/test_status.py:test_the_status_route_answers_the_contract_payload",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_status.py",
+   "target": "function:tests/test_status.py:test_the_page_holds_the_status_controls",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_status.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_status.py",
+   "target": "file:app/auth.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_status.py",
+   "target": "file:app/db.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_status.py",
+   "target": "file:app/main.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_status.py",
+   "target": "file:app/status.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/status.py",
+   "target": "file:tests/test_status.py",
+   "type": "tested_by",
+   "direction": "forward",
+   "weight": 0.5
+  },
+  {
+   "source": "file:tests/test_status.py",
+   "target": "function:app/status.py:probe_all",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_status.py",
+   "target": "function:app/db.py:queue_depth",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_upload_atomic_orphan.py",
+   "target": "function:tests/test_upload_atomic_orphan.py:env",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_upload_atomic_orphan.py",
+   "target": "function:tests/test_upload_atomic_orphan.py:test_a_strip_exif_failure_leaves_no_job_row",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_upload_atomic_orphan.py",
+   "target": "function:tests/test_upload_atomic_orphan.py:test_the_row_lands_already_pointing_at_bytes_that_exist",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_upload_atomic_orphan.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_upload_atomic_orphan.py",
+   "target": "file:app/auth.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_upload_atomic_orphan.py",
+   "target": "file:app/config.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_upload_atomic_orphan.py",
+   "target": "file:app/db.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_upload_atomic_orphan.py",
+   "target": "file:app/main.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_upload_atomic_orphan.py",
+   "target": "file:app/routes_jobs.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/routes_jobs.py",
+   "target": "file:tests/test_upload_atomic_orphan.py",
+   "type": "tested_by",
+   "direction": "forward",
+   "weight": 0.5
+  },
+  {
+   "source": "file:tests/test_upload_atomic_orphan.py",
+   "target": "function:app/main.py:create_app",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_upload_exif_stripped.py",
+   "target": "function:tests/test_upload_exif_stripped.py:env",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_upload_exif_stripped.py",
+   "target": "function:tests/test_upload_exif_stripped.py:phone_photo",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_upload_exif_stripped.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_upload_exif_stripped.py",
+   "target": "file:app/auth.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_upload_exif_stripped.py",
+   "target": "file:app/db.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_upload_exif_stripped.py",
+   "target": "file:app/main.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/routes_jobs.py",
+   "target": "file:tests/test_upload_exif_stripped.py",
+   "type": "tested_by",
+   "direction": "forward",
+   "weight": 0.5
+  },
+  {
+   "source": "file:tests/test_upload_exif_stripped.py",
+   "target": "function:app/main.py:create_app",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  }
+ ]
+}

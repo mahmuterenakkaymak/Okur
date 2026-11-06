@@ -1,0 +1,8 @@
+{
+ "batchImportData": {
+  "fixtures_hard/el_yazisi_liste.json": [],
+  "fixtures_hard/el_yazisi_not.json": [],
+  "fixtures_hard/fis_kotu_cekim.json": []
+ },
+ "neighborMap": {}
+}

@@ -1,0 +1,4698 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 13,
+  "filesSkipped": [],
+  "filesUnreadable": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 13,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 13,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "app/validator.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 108,
+      "nonEmptyLines": 89,
+      "functions": [
+        {
+          "name": "validate",
+          "startLine": 25,
+          "endLine": 78,
+          "params": [
+            "result"
+          ]
+        },
+        {
+          "name": "_bases",
+          "startLine": 81,
+          "endLine": 99,
+          "params": [
+            "gross",
+            "iskonto",
+            "printed"
+          ]
+        },
+        {
+          "name": "_distance",
+          "startLine": 102,
+          "endLine": 104,
+          "params": [
+            "base",
+            "printed"
+          ]
+        },
+        {
+          "name": "_close",
+          "startLine": 107,
+          "endLine": 108,
+          "params": [
+            "actual",
+            "expected"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "validate",
+          "line": 25,
+          "isDefault": false
+        },
+        {
+          "name": "_bases",
+          "line": 81,
+          "isDefault": false
+        },
+        {
+          "name": "_distance",
+          "line": 102,
+          "isDefault": false
+        },
+        {
+          "name": "_close",
+          "line": 107,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "validate",
+          "callee": "isinstance",
+          "lineNumber": 27
+        },
+        {
+          "caller": "validate",
+          "callee": "contract.Result.parse",
+          "lineNumber": 27
+        },
+        {
+          "caller": "validate",
+          "callee": "contract.Validation(\n            verdict=\"unreadable\",\n            expected=contract.TotalsBlock(),\n            actual=contract.TotalsBlock(\n                ara_toplam=printed.ara_toplam,\n                iskonto=printed.iskonto,\n                kdv=printed.kdv,\n                toplam=printed.toplam,\n            ),\n            fields=[],\n        ).model_dump",
+          "lineNumber": 33
+        },
+        {
+          "caller": "validate",
+          "callee": "contract.Validation",
+          "lineNumber": 33
+        },
+        {
+          "caller": "validate",
+          "callee": "contract.TotalsBlock",
+          "lineNumber": 35
+        },
+        {
+          "caller": "validate",
+          "callee": "contract.TotalsBlock",
+          "lineNumber": 36
+        },
+        {
+          "caller": "validate",
+          "callee": "enumerate",
+          "lineNumber": 47
+        },
+        {
+          "caller": "validate",
+          "callee": "round",
+          "lineNumber": 49
+        },
+        {
+          "caller": "validate",
+          "callee": "_close",
+          "lineNumber": 50
+        },
+        {
+          "caller": "validate",
+          "callee": "fields.append",
+          "lineNumber": 51
+        },
+        {
+          "caller": "validate",
+          "callee": "abs",
+          "lineNumber": 56
+        },
+        {
+          "caller": "validate",
+          "callee": "min",
+          "lineNumber": 57
+        },
+        {
+          "caller": "validate",
+          "callee": "_bases",
+          "lineNumber": 57
+        },
+        {
+          "caller": "validate",
+          "callee": "_distance",
+          "lineNumber": 57
+        },
+        {
+          "caller": "validate",
+          "callee": "_close",
+          "lineNumber": 60
+        },
+        {
+          "caller": "validate",
+          "callee": "getattr",
+          "lineNumber": 60
+        },
+        {
+          "caller": "validate",
+          "callee": "getattr",
+          "lineNumber": 60
+        },
+        {
+          "caller": "validate",
+          "callee": "fields.append",
+          "lineNumber": 61
+        },
+        {
+          "caller": "validate",
+          "callee": "contract.Validation(\n        verdict=\"ok\" if not fields else \"mismatch\",\n        expected=contract.TotalsBlock(\n            ara_toplam=round(base.ara_toplam, 2),\n            iskonto=iskonto,\n            kdv=base.kdv,\n            toplam=round(base.toplam, 2),\n        ),\n        actual=contract.TotalsBlock(\n            ara_toplam=printed.ara_toplam,\n            iskonto=printed.iskonto,\n            kdv=printed.kdv,\n            toplam=printed.toplam,\n        ),\n        fields=fields,\n    ).model_dump",
+          "lineNumber": 63
+        },
+        {
+          "caller": "validate",
+          "callee": "contract.Validation",
+          "lineNumber": 63
+        },
+        {
+          "caller": "validate",
+          "callee": "contract.TotalsBlock",
+          "lineNumber": 65
+        },
+        {
+          "caller": "validate",
+          "callee": "round",
+          "lineNumber": 66
+        },
+        {
+          "caller": "validate",
+          "callee": "round",
+          "lineNumber": 69
+        },
+        {
+          "caller": "validate",
+          "callee": "contract.TotalsBlock",
+          "lineNumber": 71
+        },
+        {
+          "caller": "_bases",
+          "callee": "_Base",
+          "lineNumber": 88
+        },
+        {
+          "caller": "_bases",
+          "callee": "round",
+          "lineNumber": 90
+        },
+        {
+          "caller": "_bases",
+          "callee": "round",
+          "lineNumber": 94
+        },
+        {
+          "caller": "_bases",
+          "callee": "_Base",
+          "lineNumber": 96
+        },
+        {
+          "caller": "_bases",
+          "callee": "_Base",
+          "lineNumber": 97
+        },
+        {
+          "caller": "_bases",
+          "callee": "_Base",
+          "lineNumber": 98
+        },
+        {
+          "caller": "_distance",
+          "callee": "sum",
+          "lineNumber": 104
+        },
+        {
+          "caller": "_distance",
+          "callee": "abs",
+          "lineNumber": 104
+        },
+        {
+          "caller": "_distance",
+          "callee": "getattr",
+          "lineNumber": 104
+        },
+        {
+          "caller": "_distance",
+          "callee": "getattr",
+          "lineNumber": 104
+        },
+        {
+          "caller": "_close",
+          "callee": "abs",
+          "lineNumber": 108
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 4,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "scripts/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 0,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "scripts/acceptance.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 508,
+      "nonEmptyLines": 428,
+      "functions": [
+        {
+          "name": "check_contract",
+          "startLine": 129,
+          "endLine": 135,
+          "params": [
+            "inst"
+          ]
+        },
+        {
+          "name": "check_verdict_ok",
+          "startLine": 138,
+          "endLine": 147,
+          "params": [
+            "inst"
+          ]
+        },
+        {
+          "name": "check_tampered_kdv",
+          "startLine": 150,
+          "endLine": 164,
+          "params": [
+            "inst"
+          ]
+        },
+        {
+          "name": "check_auth",
+          "startLine": 167,
+          "endLine": 190,
+          "params": [
+            "inst"
+          ]
+        },
+        {
+          "name": "check_idempotent",
+          "startLine": 193,
+          "endLine": 208,
+          "params": [
+            "inst"
+          ]
+        },
+        {
+          "name": "check_export_parity",
+          "startLine": 211,
+          "endLine": 250,
+          "params": [
+            "inst"
+          ]
+        },
+        {
+          "name": "check_validator_edges",
+          "startLine": 253,
+          "endLine": 262,
+          "params": [
+            "_inst"
+          ]
+        },
+        {
+          "name": "_variant",
+          "startLine": 309,
+          "endLine": 314,
+          "params": [
+            "base",
+            "line"
+          ]
+        },
+        {
+          "name": "_issue_key",
+          "startLine": 348,
+          "endLine": 353,
+          "params": [
+            "inst"
+          ]
+        },
+        {
+          "name": "_expect",
+          "startLine": 356,
+          "endLine": 360,
+          "params": [
+            "resp",
+            "status",
+            "what"
+          ]
+        },
+        {
+          "name": "_ok",
+          "startLine": 363,
+          "endLine": 366,
+          "params": [
+            "resp",
+            "what"
+          ]
+        },
+        {
+          "name": "_body",
+          "startLine": 369,
+          "endLine": 370,
+          "params": [
+            "resp"
+          ]
+        },
+        {
+          "name": "_reason",
+          "startLine": 373,
+          "endLine": 378,
+          "params": [
+            "resp"
+          ]
+        },
+        {
+          "name": "_csv_rows",
+          "startLine": 381,
+          "endLine": 382,
+          "params": [
+            "payload"
+          ]
+        },
+        {
+          "name": "_xlsx_rows",
+          "startLine": 385,
+          "endLine": 388,
+          "params": [
+            "sheet"
+          ]
+        },
+        {
+          "name": "_exact",
+          "startLine": 391,
+          "endLine": 395,
+          "params": [
+            "rows",
+            "wanted",
+            "fmt"
+          ]
+        },
+        {
+          "name": "_boot_demo",
+          "startLine": 401,
+          "endLine": 416,
+          "params": []
+        },
+        {
+          "name": "_live",
+          "startLine": 419,
+          "endLine": 436,
+          "params": [
+            "base_url",
+            "api_key"
+          ]
+        },
+        {
+          "name": "_attempt",
+          "startLine": 439,
+          "endLine": 443,
+          "params": [
+            "check",
+            "inst"
+          ]
+        },
+        {
+          "name": "_row",
+          "startLine": 446,
+          "endLine": 448,
+          "params": [
+            "rows",
+            "name",
+            "ok",
+            "detail"
+          ]
+        },
+        {
+          "name": "_summary",
+          "startLine": 451,
+          "endLine": 459,
+          "params": [
+            "rows",
+            "started"
+          ]
+        },
+        {
+          "name": "main",
+          "startLine": 462,
+          "endLine": 501,
+          "params": [
+            "argv"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "CheckError",
+          "startLine": 52,
+          "endLine": 53,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "Instance",
+          "startLine": 59,
+          "endLine": 123,
+          "methods": [
+            "__init__",
+            "close",
+            "admin",
+            "get",
+            "submit",
+            "envelope",
+            "job_to_done"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "CheckError",
+          "line": 52,
+          "isDefault": false
+        },
+        {
+          "name": "Instance",
+          "line": 59,
+          "isDefault": false
+        },
+        {
+          "name": "check_contract",
+          "line": 129,
+          "isDefault": false
+        },
+        {
+          "name": "check_verdict_ok",
+          "line": 138,
+          "isDefault": false
+        },
+        {
+          "name": "check_tampered_kdv",
+          "line": 150,
+          "isDefault": false
+        },
+        {
+          "name": "check_auth",
+          "line": 167,
+          "isDefault": false
+        },
+        {
+          "name": "check_idempotent",
+          "line": 193,
+          "isDefault": false
+        },
+        {
+          "name": "check_export_parity",
+          "line": 211,
+          "isDefault": false
+        },
+        {
+          "name": "check_validator_edges",
+          "line": 253,
+          "isDefault": false
+        },
+        {
+          "name": "_variant",
+          "line": 309,
+          "isDefault": false
+        },
+        {
+          "name": "_issue_key",
+          "line": 348,
+          "isDefault": false
+        },
+        {
+          "name": "_expect",
+          "line": 356,
+          "isDefault": false
+        },
+        {
+          "name": "_ok",
+          "line": 363,
+          "isDefault": false
+        },
+        {
+          "name": "_body",
+          "line": 369,
+          "isDefault": false
+        },
+        {
+          "name": "_reason",
+          "line": 373,
+          "isDefault": false
+        },
+        {
+          "name": "_csv_rows",
+          "line": 381,
+          "isDefault": false
+        },
+        {
+          "name": "_xlsx_rows",
+          "line": 385,
+          "isDefault": false
+        },
+        {
+          "name": "_exact",
+          "line": 391,
+          "isDefault": false
+        },
+        {
+          "name": "_boot_demo",
+          "line": 401,
+          "isDefault": false
+        },
+        {
+          "name": "_live",
+          "line": 419,
+          "isDefault": false
+        },
+        {
+          "name": "_attempt",
+          "line": 439,
+          "isDefault": false
+        },
+        {
+          "name": "_row",
+          "line": 446,
+          "isDefault": false
+        },
+        {
+          "name": "_summary",
+          "line": 451,
+          "isDefault": false
+        },
+        {
+          "name": "main",
+          "line": 462,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "httpx.Client",
+          "lineNumber": 65
+        },
+        {
+          "caller": "close",
+          "callee": "self.api.close",
+          "lineNumber": 69
+        },
+        {
+          "caller": "close",
+          "callee": "self._admin.close",
+          "lineNumber": 71
+        },
+        {
+          "caller": "admin",
+          "callee": "httpx.Client",
+          "lineNumber": 76
+        },
+        {
+          "caller": "admin",
+          "callee": "client.post",
+          "lineNumber": 77
+        },
+        {
+          "caller": "admin",
+          "callee": "config.admin_token",
+          "lineNumber": 77
+        },
+        {
+          "caller": "admin",
+          "callee": "client.close",
+          "lineNumber": 79
+        },
+        {
+          "caller": "admin",
+          "callee": "CheckError",
+          "lineNumber": 80
+        },
+        {
+          "caller": "admin",
+          "callee": "_reason",
+          "lineNumber": 81
+        },
+        {
+          "caller": "get",
+          "callee": "self.api.get",
+          "lineNumber": 88
+        },
+        {
+          "caller": "submit",
+          "callee": "self.api.post",
+          "lineNumber": 92
+        },
+        {
+          "caller": "submit",
+          "callee": "png.read_bytes",
+          "lineNumber": 95
+        },
+        {
+          "caller": "envelope",
+          "callee": "_body",
+          "lineNumber": 101
+        },
+        {
+          "caller": "envelope",
+          "callee": "jsonschema.validate",
+          "lineNumber": 103
+        },
+        {
+          "caller": "envelope",
+          "callee": "CheckError",
+          "lineNumber": 105
+        },
+        {
+          "caller": "job_to_done",
+          "callee": "self.envelope",
+          "lineNumber": 112
+        },
+        {
+          "caller": "job_to_done",
+          "callee": "self.submit",
+          "lineNumber": 112
+        },
+        {
+          "caller": "job_to_done",
+          "callee": "time.monotonic",
+          "lineNumber": 113
+        },
+        {
+          "caller": "job_to_done",
+          "callee": "time.monotonic",
+          "lineNumber": 115
+        },
+        {
+          "caller": "job_to_done",
+          "callee": "CheckError",
+          "lineNumber": 116
+        },
+        {
+          "caller": "job_to_done",
+          "callee": "time.sleep",
+          "lineNumber": 119
+        },
+        {
+          "caller": "job_to_done",
+          "callee": "self.envelope",
+          "lineNumber": 120
+        },
+        {
+          "caller": "job_to_done",
+          "callee": "self.get",
+          "lineNumber": 120
+        },
+        {
+          "caller": "job_to_done",
+          "callee": "CheckError",
+          "lineNumber": 122
+        },
+        {
+          "caller": "check_contract",
+          "callee": "inst.envelope",
+          "lineNumber": 131
+        },
+        {
+          "caller": "check_contract",
+          "callee": "inst.submit",
+          "lineNumber": 131
+        },
+        {
+          "caller": "check_contract",
+          "callee": "CheckError",
+          "lineNumber": 133
+        },
+        {
+          "caller": "check_contract",
+          "callee": "inst.envelope",
+          "lineNumber": 134
+        },
+        {
+          "caller": "check_contract",
+          "callee": "inst.get",
+          "lineNumber": 134
+        },
+        {
+          "caller": "check_verdict_ok",
+          "callee": "inst.job_to_done",
+          "lineNumber": 140
+        },
+        {
+          "caller": "check_verdict_ok",
+          "callee": "block.get",
+          "lineNumber": 142
+        },
+        {
+          "caller": "check_verdict_ok",
+          "callee": "block.get",
+          "lineNumber": 142
+        },
+        {
+          "caller": "check_verdict_ok",
+          "callee": "CheckError",
+          "lineNumber": 143
+        },
+        {
+          "caller": "check_verdict_ok",
+          "callee": "block.get",
+          "lineNumber": 143
+        },
+        {
+          "caller": "check_verdict_ok",
+          "callee": "block.get",
+          "lineNumber": 143
+        },
+        {
+          "caller": "check_verdict_ok",
+          "callee": "result.get",
+          "lineNumber": 145
+        },
+        {
+          "caller": "check_verdict_ok",
+          "callee": "result.get",
+          "lineNumber": 145
+        },
+        {
+          "caller": "check_verdict_ok",
+          "callee": "CheckError",
+          "lineNumber": 146
+        },
+        {
+          "caller": "check_tampered_kdv",
+          "callee": "inst.job_to_done",
+          "lineNumber": 152
+        },
+        {
+          "caller": "check_tampered_kdv",
+          "callee": "inst.admin().patch",
+          "lineNumber": 153
+        },
+        {
+          "caller": "check_tampered_kdv",
+          "callee": "inst.admin",
+          "lineNumber": 153
+        },
+        {
+          "caller": "check_tampered_kdv",
+          "callee": "CheckError",
+          "lineNumber": 157
+        },
+        {
+          "caller": "check_tampered_kdv",
+          "callee": "_reason",
+          "lineNumber": 157
+        },
+        {
+          "caller": "check_tampered_kdv",
+          "callee": "inst.envelope",
+          "lineNumber": 158
+        },
+        {
+          "caller": "check_tampered_kdv",
+          "callee": "inst.get",
+          "lineNumber": 158
+        },
+        {
+          "caller": "check_tampered_kdv",
+          "callee": "block.get",
+          "lineNumber": 159
+        },
+        {
+          "caller": "check_tampered_kdv",
+          "callee": "block.get",
+          "lineNumber": 159
+        },
+        {
+          "caller": "check_tampered_kdv",
+          "callee": "CheckError",
+          "lineNumber": 160
+        },
+        {
+          "caller": "check_tampered_kdv",
+          "callee": "block.get",
+          "lineNumber": 160
+        },
+        {
+          "caller": "check_tampered_kdv",
+          "callee": "block.get",
+          "lineNumber": 160
+        },
+        {
+          "caller": "check_tampered_kdv",
+          "callee": "CheckError",
+          "lineNumber": 163
+        },
+        {
+          "caller": "check_auth",
+          "callee": "_expect",
+          "lineNumber": 169
+        },
+        {
+          "caller": "check_auth",
+          "callee": "inst.api.get",
+          "lineNumber": 169
+        },
+        {
+          "caller": "check_auth",
+          "callee": "_expect",
+          "lineNumber": 170
+        },
+        {
+          "caller": "check_auth",
+          "callee": "inst.api.get",
+          "lineNumber": 171
+        },
+        {
+          "caller": "check_auth",
+          "callee": "_issue_key",
+          "lineNumber": 175
+        },
+        {
+          "caller": "check_auth",
+          "callee": "config.rate_capacity",
+          "lineNumber": 176
+        },
+        {
+          "caller": "check_auth",
+          "callee": "range",
+          "lineNumber": 177
+        },
+        {
+          "caller": "check_auth",
+          "callee": "inst.api.get",
+          "lineNumber": 178
+        },
+        {
+          "caller": "check_auth",
+          "callee": "_expect",
+          "lineNumber": 181
+        },
+        {
+          "caller": "check_auth",
+          "callee": "CheckError",
+          "lineNumber": 183
+        },
+        {
+          "caller": "check_auth",
+          "callee": "config.rate_capacity",
+          "lineNumber": 184
+        },
+        {
+          "caller": "check_auth",
+          "callee": "resp.headers.get",
+          "lineNumber": 186
+        },
+        {
+          "caller": "check_auth",
+          "callee": "CheckError",
+          "lineNumber": 188
+        },
+        {
+          "caller": "check_auth",
+          "callee": "inst.admin().post",
+          "lineNumber": 189
+        },
+        {
+          "caller": "check_auth",
+          "callee": "inst.admin",
+          "lineNumber": 189
+        },
+        {
+          "caller": "check_idempotent",
+          "callee": "inst.submit",
+          "lineNumber": 196
+        },
+        {
+          "caller": "check_idempotent",
+          "callee": "_expect",
+          "lineNumber": 197
+        },
+        {
+          "caller": "check_idempotent",
+          "callee": "inst.envelope",
+          "lineNumber": 198
+        },
+        {
+          "caller": "check_idempotent",
+          "callee": "inst.submit",
+          "lineNumber": 199
+        },
+        {
+          "caller": "check_idempotent",
+          "callee": "_expect",
+          "lineNumber": 200
+        },
+        {
+          "caller": "check_idempotent",
+          "callee": "inst.envelope",
+          "lineNumber": 201
+        },
+        {
+          "caller": "check_idempotent",
+          "callee": "CheckError",
+          "lineNumber": 203
+        },
+        {
+          "caller": "check_idempotent",
+          "callee": "_body",
+          "lineNumber": 204
+        },
+        {
+          "caller": "check_idempotent",
+          "callee": "inst.get",
+          "lineNumber": 204
+        },
+        {
+          "caller": "check_idempotent",
+          "callee": "len",
+          "lineNumber": 206
+        },
+        {
+          "caller": "check_idempotent",
+          "callee": "CheckError",
+          "lineNumber": 207
+        },
+        {
+          "caller": "check_idempotent",
+          "callee": "len",
+          "lineNumber": 207
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "inst.job_to_done",
+          "lineNumber": 215
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "inst.admin",
+          "lineNumber": 217
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "_csv_rows",
+          "lineNumber": 218
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "_ok",
+          "lineNumber": 219
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "admin.get",
+          "lineNumber": 220
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "\",\".join",
+          "lineNumber": 220
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "_exact",
+          "lineNumber": 224
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "abs",
+          "lineNumber": 228
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "float",
+          "lineNumber": 228
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "CheckError",
+          "lineNumber": 229
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "_xlsx_rows",
+          "lineNumber": 230
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "load_workbook",
+          "lineNumber": 231
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "io.BytesIO",
+          "lineNumber": 232
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "_ok",
+          "lineNumber": 233
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "admin.get",
+          "lineNumber": 234
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "\",\".join",
+          "lineNumber": 236
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "_exact",
+          "lineNumber": 243
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "isinstance",
+          "lineNumber": 246
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "CheckError",
+          "lineNumber": 247
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "type",
+          "lineNumber": 248
+        },
+        {
+          "caller": "check_export_parity",
+          "callee": "len",
+          "lineNumber": 250
+        },
+        {
+          "caller": "check_validator_edges",
+          "callee": "validator.validate",
+          "lineNumber": 256
+        },
+        {
+          "caller": "check_validator_edges",
+          "callee": "CheckError",
+          "lineNumber": 258
+        },
+        {
+          "caller": "check_validator_edges",
+          "callee": "len",
+          "lineNumber": 262
+        },
+        {
+          "caller": "_variant",
+          "callee": "dict",
+          "lineNumber": 311
+        },
+        {
+          "caller": "_issue_key",
+          "callee": "inst.admin().post",
+          "lineNumber": 350
+        },
+        {
+          "caller": "_issue_key",
+          "callee": "inst.admin",
+          "lineNumber": 350
+        },
+        {
+          "caller": "_issue_key",
+          "callee": "CheckError",
+          "lineNumber": 352
+        },
+        {
+          "caller": "_issue_key",
+          "callee": "_reason",
+          "lineNumber": 352
+        },
+        {
+          "caller": "_issue_key",
+          "callee": "resp.json",
+          "lineNumber": 353
+        },
+        {
+          "caller": "_issue_key",
+          "callee": "resp.json",
+          "lineNumber": 353
+        },
+        {
+          "caller": "_expect",
+          "callee": "CheckError",
+          "lineNumber": 358
+        },
+        {
+          "caller": "_expect",
+          "callee": "_reason",
+          "lineNumber": 359
+        },
+        {
+          "caller": "_ok",
+          "callee": "CheckError",
+          "lineNumber": 365
+        },
+        {
+          "caller": "_ok",
+          "callee": "_reason",
+          "lineNumber": 365
+        },
+        {
+          "caller": "_body",
+          "callee": "_ok(resp, f\"{resp.request.method} {resp.request.url.path}\").json",
+          "lineNumber": 370
+        },
+        {
+          "caller": "_body",
+          "callee": "_ok",
+          "lineNumber": 370
+        },
+        {
+          "caller": "_reason",
+          "callee": "str",
+          "lineNumber": 376
+        },
+        {
+          "caller": "_reason",
+          "callee": "resp.json",
+          "lineNumber": 376
+        },
+        {
+          "caller": "_csv_rows",
+          "callee": "list",
+          "lineNumber": 382
+        },
+        {
+          "caller": "_csv_rows",
+          "callee": "csv.DictReader",
+          "lineNumber": 382
+        },
+        {
+          "caller": "_csv_rows",
+          "callee": "io.StringIO",
+          "lineNumber": 382
+        },
+        {
+          "caller": "_csv_rows",
+          "callee": "payload.decode",
+          "lineNumber": 382
+        },
+        {
+          "caller": "_xlsx_rows",
+          "callee": "list",
+          "lineNumber": 386
+        },
+        {
+          "caller": "_xlsx_rows",
+          "callee": "sheet.iter_rows",
+          "lineNumber": 386
+        },
+        {
+          "caller": "_xlsx_rows",
+          "callee": "str",
+          "lineNumber": 387
+        },
+        {
+          "caller": "_xlsx_rows",
+          "callee": "dict",
+          "lineNumber": 388
+        },
+        {
+          "caller": "_xlsx_rows",
+          "callee": "zip",
+          "lineNumber": 388
+        },
+        {
+          "caller": "_exact",
+          "callee": "len",
+          "lineNumber": 392
+        },
+        {
+          "caller": "_exact",
+          "callee": "len",
+          "lineNumber": 392
+        },
+        {
+          "caller": "_exact",
+          "callee": "set",
+          "lineNumber": 392
+        },
+        {
+          "caller": "_exact",
+          "callee": "CheckError",
+          "lineNumber": 393
+        },
+        {
+          "caller": "_exact",
+          "callee": "len",
+          "lineNumber": 394
+        },
+        {
+          "caller": "_exact",
+          "callee": "len",
+          "lineNumber": 394
+        },
+        {
+          "caller": "_boot_demo",
+          "callee": "tempfile.TemporaryDirectory",
+          "lineNumber": 403
+        },
+        {
+          "caller": "_boot_demo",
+          "callee": "os.environ.setdefault",
+          "lineNumber": 408
+        },
+        {
+          "caller": "_boot_demo",
+          "callee": "serve_demo._boot",
+          "lineNumber": 409
+        },
+        {
+          "caller": "_boot_demo",
+          "callee": "pathlib.Path",
+          "lineNumber": 409
+        },
+        {
+          "caller": "teardown",
+          "callee": "worker.stop",
+          "lineNumber": 412
+        },
+        {
+          "caller": "teardown",
+          "callee": "models.shutdown",
+          "lineNumber": 413
+        },
+        {
+          "caller": "teardown",
+          "callee": "workdir.cleanup",
+          "lineNumber": 414
+        },
+        {
+          "caller": "_boot_demo",
+          "callee": "Instance",
+          "lineNumber": 416
+        },
+        {
+          "caller": "_boot_demo",
+          "callee": "serve_demo._url",
+          "lineNumber": 416
+        },
+        {
+          "caller": "_live",
+          "callee": "Instance",
+          "lineNumber": 427
+        },
+        {
+          "caller": "_live",
+          "callee": "httpx.get",
+          "lineNumber": 429
+        },
+        {
+          "caller": "_live",
+          "callee": "resp.raise_for_status",
+          "lineNumber": 430
+        },
+        {
+          "caller": "_live",
+          "callee": "Instance",
+          "lineNumber": 431
+        },
+        {
+          "caller": "_live",
+          "callee": "resp.json",
+          "lineNumber": 431
+        },
+        {
+          "caller": "_live",
+          "callee": "CheckError",
+          "lineNumber": 433
+        },
+        {
+          "caller": "_attempt",
+          "callee": "check",
+          "lineNumber": 441
+        },
+        {
+          "caller": "_attempt",
+          "callee": "str",
+          "lineNumber": 443
+        },
+        {
+          "caller": "_row",
+          "callee": "rows.append",
+          "lineNumber": 447
+        },
+        {
+          "caller": "_row",
+          "callee": "print",
+          "lineNumber": 448
+        },
+        {
+          "caller": "_row",
+          "callee": "name.ljust",
+          "lineNumber": 448
+        },
+        {
+          "caller": "_summary",
+          "callee": "print",
+          "lineNumber": 453
+        },
+        {
+          "caller": "_summary",
+          "callee": "print",
+          "lineNumber": 454
+        },
+        {
+          "caller": "_summary",
+          "callee": "len",
+          "lineNumber": 455
+        },
+        {
+          "caller": "_summary",
+          "callee": "len",
+          "lineNumber": 455
+        },
+        {
+          "caller": "_summary",
+          "callee": "len",
+          "lineNumber": 455
+        },
+        {
+          "caller": "_summary",
+          "callee": "time.monotonic",
+          "lineNumber": 455
+        },
+        {
+          "caller": "_summary",
+          "callee": "', '.join",
+          "lineNumber": 456
+        },
+        {
+          "caller": "main",
+          "callee": "argparse.ArgumentParser",
+          "lineNumber": 463
+        },
+        {
+          "caller": "main",
+          "callee": "parser.add_argument",
+          "lineNumber": 466
+        },
+        {
+          "caller": "main",
+          "callee": "parser.add_argument",
+          "lineNumber": 471
+        },
+        {
+          "caller": "main",
+          "callee": "config.app_base_url",
+          "lineNumber": 473
+        },
+        {
+          "caller": "main",
+          "callee": "parser.add_argument",
+          "lineNumber": 476
+        },
+        {
+          "caller": "main",
+          "callee": "config.env_str",
+          "lineNumber": 478
+        },
+        {
+          "caller": "main",
+          "callee": "parser.parse_args",
+          "lineNumber": 481
+        },
+        {
+          "caller": "main",
+          "callee": "time.monotonic",
+          "lineNumber": 482
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 484
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 485
+        },
+        {
+          "caller": "main",
+          "callee": "'check'.ljust",
+          "lineNumber": 485
+        },
+        {
+          "caller": "main",
+          "callee": "_boot_demo",
+          "lineNumber": 489
+        },
+        {
+          "caller": "main",
+          "callee": "_live",
+          "lineNumber": 489
+        },
+        {
+          "caller": "main",
+          "callee": "_row",
+          "lineNumber": 492
+        },
+        {
+          "caller": "main",
+          "callee": "str",
+          "lineNumber": 492
+        },
+        {
+          "caller": "main",
+          "callee": "_summary",
+          "lineNumber": 493
+        },
+        {
+          "caller": "main",
+          "callee": "_row",
+          "lineNumber": 496
+        },
+        {
+          "caller": "main",
+          "callee": "_attempt",
+          "lineNumber": 496
+        },
+        {
+          "caller": "main",
+          "callee": "inst.close",
+          "lineNumber": 498
+        },
+        {
+          "caller": "main",
+          "callee": "teardown",
+          "lineNumber": 500
+        },
+        {
+          "caller": "main",
+          "callee": "_summary",
+          "lineNumber": 501
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 24,
+        "functionCount": 22,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "scripts/gen_contract_doc.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 166,
+      "nonEmptyLines": 130,
+      "functions": [
+        {
+          "name": "_type_name",
+          "startLine": 112,
+          "endLine": 122,
+          "params": [
+            "node"
+          ]
+        },
+        {
+          "name": "_default",
+          "startLine": 125,
+          "endLine": 129,
+          "params": [
+            "model",
+            "name",
+            "type_name"
+          ]
+        },
+        {
+          "name": "_table",
+          "startLine": 132,
+          "endLine": 139,
+          "params": [
+            "model",
+            "node"
+          ]
+        },
+        {
+          "name": "doc_text",
+          "startLine": 142,
+          "endLine": 149,
+          "params": []
+        },
+        {
+          "name": "_write",
+          "startLine": 152,
+          "endLine": 154,
+          "params": [
+            "path",
+            "text"
+          ]
+        },
+        {
+          "name": "main",
+          "startLine": 157,
+          "endLine": 162,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "_type_name",
+          "line": 112,
+          "isDefault": false
+        },
+        {
+          "name": "_default",
+          "line": 125,
+          "isDefault": false
+        },
+        {
+          "name": "_table",
+          "line": 132,
+          "isDefault": false
+        },
+        {
+          "name": "doc_text",
+          "line": 142,
+          "isDefault": false
+        },
+        {
+          "name": "_write",
+          "line": 152,
+          "isDefault": false
+        },
+        {
+          "name": "main",
+          "line": 157,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_type_name",
+          "callee": "\" \\\\| \".join",
+          "lineNumber": 115
+        },
+        {
+          "caller": "_type_name",
+          "callee": "node[\"$ref\"].rsplit",
+          "lineNumber": 117
+        },
+        {
+          "caller": "_type_name",
+          "callee": "\" \\\\| \".join",
+          "lineNumber": 119
+        },
+        {
+          "caller": "_type_name",
+          "callee": "_type_name",
+          "lineNumber": 119
+        },
+        {
+          "caller": "_type_name",
+          "callee": "node.get",
+          "lineNumber": 120
+        },
+        {
+          "caller": "_type_name",
+          "callee": "_type_name",
+          "lineNumber": 121
+        },
+        {
+          "caller": "_type_name",
+          "callee": "_TYPE_NAMES.get",
+          "lineNumber": 122
+        },
+        {
+          "caller": "_type_name",
+          "callee": "node.get",
+          "lineNumber": 122
+        },
+        {
+          "caller": "_default",
+          "callee": "type_name.endswith",
+          "lineNumber": 128
+        },
+        {
+          "caller": "_default",
+          "callee": "json.dumps",
+          "lineNumber": 129
+        },
+        {
+          "caller": "_table",
+          "callee": "node[\"properties\"].items",
+          "lineNumber": 134
+        },
+        {
+          "caller": "_table",
+          "callee": "_type_name",
+          "lineNumber": 135
+        },
+        {
+          "caller": "_table",
+          "callee": "lines.append",
+          "lineNumber": 136
+        },
+        {
+          "caller": "_table",
+          "callee": "_default",
+          "lineNumber": 137
+        },
+        {
+          "caller": "_table",
+          "callee": "\"\\n\".join",
+          "lineNumber": 139
+        },
+        {
+          "caller": "doc_text",
+          "callee": "contract.JobEnvelope.model_json_schema",
+          "lineNumber": 143
+        },
+        {
+          "caller": "doc_text",
+          "callee": "parts.append",
+          "lineNumber": 147
+        },
+        {
+          "caller": "doc_text",
+          "callee": "_table",
+          "lineNumber": 147
+        },
+        {
+          "caller": "doc_text",
+          "callee": "parts.append",
+          "lineNumber": 148
+        },
+        {
+          "caller": "doc_text",
+          "callee": "\"\\n\\n\".join(parts).rstrip",
+          "lineNumber": 149
+        },
+        {
+          "caller": "doc_text",
+          "callee": "\"\\n\\n\".join",
+          "lineNumber": 149
+        },
+        {
+          "caller": "_write",
+          "callee": "path.write_text",
+          "lineNumber": 154
+        },
+        {
+          "caller": "main",
+          "callee": "contract.SCHEMA_PATH.parent.mkdir",
+          "lineNumber": 158
+        },
+        {
+          "caller": "main",
+          "callee": "_write",
+          "lineNumber": 159
+        },
+        {
+          "caller": "main",
+          "callee": "contract.schema_text",
+          "lineNumber": 159
+        },
+        {
+          "caller": "main",
+          "callee": "_write",
+          "lineNumber": 160
+        },
+        {
+          "caller": "main",
+          "callee": "doc_text",
+          "lineNumber": 160
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 161
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 162
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 6,
+        "functionCount": 6,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/test_acceptance.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 166,
+      "nonEmptyLines": 125,
+      "functions": [
+        {
+          "name": "_instance",
+          "startLine": 23,
+          "endLine": 25,
+          "params": []
+        },
+        {
+          "name": "_envelope",
+          "startLine": 28,
+          "endLine": 36,
+          "params": []
+        },
+        {
+          "name": "_response",
+          "startLine": 39,
+          "endLine": 42,
+          "params": [
+            "payload"
+          ]
+        },
+        {
+          "name": "_export_row",
+          "startLine": 45,
+          "endLine": 63,
+          "params": [
+            "job_id"
+          ]
+        },
+        {
+          "name": "test_acceptance_passes_against_a_booted_demo",
+          "startLine": 69,
+          "endLine": 80,
+          "params": []
+        },
+        {
+          "name": "test_main_exits_nonzero_when_a_check_fails",
+          "startLine": 83,
+          "endLine": 93,
+          "params": [
+            "monkeypatch",
+            "capsys"
+          ]
+        },
+        {
+          "name": "test_main_reports_an_unreachable_instance_without_a_traceback",
+          "startLine": 96,
+          "endLine": 102,
+          "params": [
+            "monkeypatch",
+            "capsys"
+          ]
+        },
+        {
+          "name": "test_an_envelope_outside_contract_v1_fails",
+          "startLine": 108,
+          "endLine": 112,
+          "params": []
+        },
+        {
+          "name": "test_verdict_check_fails_when_the_validator_disagrees",
+          "startLine": 115,
+          "endLine": 123,
+          "params": [
+            "monkeypatch"
+          ]
+        },
+        {
+          "name": "test_verdict_check_fails_on_amounts_outside_ground_truth",
+          "startLine": 126,
+          "endLine": 135,
+          "params": [
+            "monkeypatch"
+          ]
+        },
+        {
+          "name": "test_validator_edge_suite_passes_as_written",
+          "startLine": 138,
+          "endLine": 139,
+          "params": []
+        },
+        {
+          "name": "test_validator_edge_suite_fails_when_the_validator_stops_recomputing",
+          "startLine": 142,
+          "endLine": 145,
+          "params": [
+            "monkeypatch"
+          ]
+        },
+        {
+          "name": "test_export_readers_see_the_rows_the_app_writes",
+          "startLine": 151,
+          "endLine": 161,
+          "params": []
+        },
+        {
+          "name": "test_parity_fails_when_a_selected_row_is_missing_from_the_file",
+          "startLine": 164,
+          "endLine": 166,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "_instance",
+          "line": 23,
+          "isDefault": false
+        },
+        {
+          "name": "_envelope",
+          "line": 28,
+          "isDefault": false
+        },
+        {
+          "name": "_response",
+          "line": 39,
+          "isDefault": false
+        },
+        {
+          "name": "_export_row",
+          "line": 45,
+          "isDefault": false
+        },
+        {
+          "name": "test_acceptance_passes_against_a_booted_demo",
+          "line": 69,
+          "isDefault": false
+        },
+        {
+          "name": "test_main_exits_nonzero_when_a_check_fails",
+          "line": 83,
+          "isDefault": false
+        },
+        {
+          "name": "test_main_reports_an_unreachable_instance_without_a_traceback",
+          "line": 96,
+          "isDefault": false
+        },
+        {
+          "name": "test_an_envelope_outside_contract_v1_fails",
+          "line": 108,
+          "isDefault": false
+        },
+        {
+          "name": "test_verdict_check_fails_when_the_validator_disagrees",
+          "line": 115,
+          "isDefault": false
+        },
+        {
+          "name": "test_verdict_check_fails_on_amounts_outside_ground_truth",
+          "line": 126,
+          "isDefault": false
+        },
+        {
+          "name": "test_validator_edge_suite_passes_as_written",
+          "line": 138,
+          "isDefault": false
+        },
+        {
+          "name": "test_validator_edge_suite_fails_when_the_validator_stops_recomputing",
+          "line": 142,
+          "isDefault": false
+        },
+        {
+          "name": "test_export_readers_see_the_rows_the_app_writes",
+          "line": 151,
+          "isDefault": false
+        },
+        {
+          "name": "test_parity_fails_when_a_selected_row_is_missing_from_the_file",
+          "line": 164,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_instance",
+          "callee": "acceptance.Instance",
+          "lineNumber": 25
+        },
+        {
+          "caller": "_response",
+          "callee": "httpx.Response",
+          "lineNumber": 40
+        },
+        {
+          "caller": "_response",
+          "callee": "httpx.Request",
+          "lineNumber": 41
+        },
+        {
+          "caller": "test_acceptance_passes_against_a_booted_demo",
+          "callee": "subprocess.run",
+          "lineNumber": 70
+        },
+        {
+          "caller": "test_acceptance_passes_against_a_booted_demo",
+          "callee": "str",
+          "lineNumber": 71
+        },
+        {
+          "caller": "boom",
+          "callee": "acceptance.CheckError",
+          "lineNumber": 85
+        },
+        {
+          "caller": "test_main_exits_nonzero_when_a_check_fails",
+          "callee": "monkeypatch.setattr",
+          "lineNumber": 87
+        },
+        {
+          "caller": "test_main_exits_nonzero_when_a_check_fails",
+          "callee": "monkeypatch.setattr",
+          "lineNumber": 88
+        },
+        {
+          "caller": "test_main_exits_nonzero_when_a_check_fails",
+          "callee": "_instance",
+          "lineNumber": 89
+        },
+        {
+          "caller": "test_main_exits_nonzero_when_a_check_fails",
+          "callee": "acceptance.main",
+          "lineNumber": 91
+        },
+        {
+          "caller": "test_main_exits_nonzero_when_a_check_fails",
+          "callee": "capsys.readouterr",
+          "lineNumber": 92
+        },
+        {
+          "caller": "no_boot",
+          "callee": "acceptance.CheckError",
+          "lineNumber": 98
+        },
+        {
+          "caller": "test_main_reports_an_unreachable_instance_without_a_traceback",
+          "callee": "monkeypatch.setattr",
+          "lineNumber": 100
+        },
+        {
+          "caller": "test_main_reports_an_unreachable_instance_without_a_traceback",
+          "callee": "acceptance.main",
+          "lineNumber": 101
+        },
+        {
+          "caller": "test_main_reports_an_unreachable_instance_without_a_traceback",
+          "callee": "capsys.readouterr",
+          "lineNumber": 102
+        },
+        {
+          "caller": "test_an_envelope_outside_contract_v1_fails",
+          "callee": "_envelope",
+          "lineNumber": 109
+        },
+        {
+          "caller": "test_an_envelope_outside_contract_v1_fails",
+          "callee": "pytest.raises",
+          "lineNumber": 111
+        },
+        {
+          "caller": "test_an_envelope_outside_contract_v1_fails",
+          "callee": "_instance().envelope",
+          "lineNumber": 112
+        },
+        {
+          "caller": "test_an_envelope_outside_contract_v1_fails",
+          "callee": "_instance",
+          "lineNumber": 112
+        },
+        {
+          "caller": "test_an_envelope_outside_contract_v1_fails",
+          "callee": "_response",
+          "lineNumber": 112
+        },
+        {
+          "caller": "test_verdict_check_fails_when_the_validator_disagrees",
+          "callee": "_instance",
+          "lineNumber": 116
+        },
+        {
+          "caller": "test_verdict_check_fails_when_the_validator_disagrees",
+          "callee": "monkeypatch.setattr",
+          "lineNumber": 117
+        },
+        {
+          "caller": "test_verdict_check_fails_when_the_validator_disagrees",
+          "callee": "pytest.raises",
+          "lineNumber": 122
+        },
+        {
+          "caller": "test_verdict_check_fails_when_the_validator_disagrees",
+          "callee": "acceptance.check_verdict_ok",
+          "lineNumber": 123
+        },
+        {
+          "caller": "test_verdict_check_fails_on_amounts_outside_ground_truth",
+          "callee": "_instance",
+          "lineNumber": 127
+        },
+        {
+          "caller": "test_verdict_check_fails_on_amounts_outside_ground_truth",
+          "callee": "monkeypatch.setattr",
+          "lineNumber": 133
+        },
+        {
+          "caller": "test_verdict_check_fails_on_amounts_outside_ground_truth",
+          "callee": "pytest.raises",
+          "lineNumber": 134
+        },
+        {
+          "caller": "test_verdict_check_fails_on_amounts_outside_ground_truth",
+          "callee": "acceptance.check_verdict_ok",
+          "lineNumber": 135
+        },
+        {
+          "caller": "test_validator_edge_suite_passes_as_written",
+          "callee": "acceptance.check_validator_edges",
+          "lineNumber": 139
+        },
+        {
+          "caller": "test_validator_edge_suite_fails_when_the_validator_stops_recomputing",
+          "callee": "monkeypatch.setattr",
+          "lineNumber": 143
+        },
+        {
+          "caller": "test_validator_edge_suite_fails_when_the_validator_stops_recomputing",
+          "callee": "pytest.raises",
+          "lineNumber": 144
+        },
+        {
+          "caller": "test_validator_edge_suite_fails_when_the_validator_stops_recomputing",
+          "callee": "acceptance.check_validator_edges",
+          "lineNumber": 145
+        },
+        {
+          "caller": "test_export_readers_see_the_rows_the_app_writes",
+          "callee": "_export_row",
+          "lineNumber": 152
+        },
+        {
+          "caller": "test_export_readers_see_the_rows_the_app_writes",
+          "callee": "_export_row",
+          "lineNumber": 152
+        },
+        {
+          "caller": "test_export_readers_see_the_rows_the_app_writes",
+          "callee": "acceptance._csv_rows",
+          "lineNumber": 153
+        },
+        {
+          "caller": "test_export_readers_see_the_rows_the_app_writes",
+          "callee": "exports.to_csv",
+          "lineNumber": 153
+        },
+        {
+          "caller": "test_export_readers_see_the_rows_the_app_writes",
+          "callee": "acceptance._xlsx_rows",
+          "lineNumber": 157
+        },
+        {
+          "caller": "test_export_readers_see_the_rows_the_app_writes",
+          "callee": "load_workbook",
+          "lineNumber": 158
+        },
+        {
+          "caller": "test_export_readers_see_the_rows_the_app_writes",
+          "callee": "io.BytesIO",
+          "lineNumber": 158
+        },
+        {
+          "caller": "test_export_readers_see_the_rows_the_app_writes",
+          "callee": "exports.to_xlsx",
+          "lineNumber": 158
+        },
+        {
+          "caller": "test_parity_fails_when_a_selected_row_is_missing_from_the_file",
+          "callee": "pytest.raises",
+          "lineNumber": 165
+        },
+        {
+          "caller": "test_parity_fails_when_a_selected_row_is_missing_from_the_file",
+          "callee": "acceptance._exact",
+          "lineNumber": 166
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 14,
+        "functionCount": 14,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/test_acceptance_live_key.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 115,
+      "nonEmptyLines": 83,
+      "functions": [
+        {
+          "name": "_fake_get",
+          "startLine": 29,
+          "endLine": 38,
+          "params": [
+            "monkeypatch",
+            "status",
+            "payload"
+          ]
+        },
+        {
+          "name": "_stop_at_live",
+          "startLine": 41,
+          "endLine": 51,
+          "params": [
+            "monkeypatch"
+          ]
+        },
+        {
+          "name": "test_a_given_key_never_probes_the_demo_endpoint",
+          "startLine": 57,
+          "endLine": 64,
+          "params": [
+            "monkeypatch"
+          ]
+        },
+        {
+          "name": "test_a_demo_instance_still_hands_its_key_over",
+          "startLine": 67,
+          "endLine": 74,
+          "params": [
+            "monkeypatch"
+          ]
+        },
+        {
+          "name": "test_the_keyless_failure_names_the_flag_that_fixes_it",
+          "startLine": 77,
+          "endLine": 83,
+          "params": [
+            "monkeypatch",
+            "capsys"
+          ]
+        },
+        {
+          "name": "test_the_env_key_is_the_default_for_the_flag",
+          "startLine": 86,
+          "endLine": 90,
+          "params": [
+            "monkeypatch"
+          ]
+        },
+        {
+          "name": "test_the_command_line_key_beats_the_env",
+          "startLine": 93,
+          "endLine": 97,
+          "params": [
+            "monkeypatch"
+          ]
+        },
+        {
+          "name": "test_no_key_at_all_reaches_the_demo_handshake_as_empty",
+          "startLine": 100,
+          "endLine": 104,
+          "params": [
+            "monkeypatch"
+          ]
+        },
+        {
+          "name": "test_every_documented_live_check_carries_a_key",
+          "startLine": 110,
+          "endLine": 115,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "_fake_get",
+          "line": 29,
+          "isDefault": false
+        },
+        {
+          "name": "_stop_at_live",
+          "line": 41,
+          "isDefault": false
+        },
+        {
+          "name": "test_a_given_key_never_probes_the_demo_endpoint",
+          "line": 57,
+          "isDefault": false
+        },
+        {
+          "name": "test_a_demo_instance_still_hands_its_key_over",
+          "line": 67,
+          "isDefault": false
+        },
+        {
+          "name": "test_the_keyless_failure_names_the_flag_that_fixes_it",
+          "line": 77,
+          "isDefault": false
+        },
+        {
+          "name": "test_the_env_key_is_the_default_for_the_flag",
+          "line": 86,
+          "isDefault": false
+        },
+        {
+          "name": "test_the_command_line_key_beats_the_env",
+          "line": 93,
+          "isDefault": false
+        },
+        {
+          "name": "test_no_key_at_all_reaches_the_demo_handshake_as_empty",
+          "line": 100,
+          "isDefault": false
+        },
+        {
+          "name": "test_every_documented_live_check_carries_a_key",
+          "line": 110,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "fake_get",
+          "callee": "asked.append",
+          "lineNumber": 34
+        },
+        {
+          "caller": "fake_get",
+          "callee": "httpx.Response",
+          "lineNumber": 35
+        },
+        {
+          "caller": "fake_get",
+          "callee": "httpx.Request",
+          "lineNumber": 35
+        },
+        {
+          "caller": "_fake_get",
+          "callee": "monkeypatch.setattr",
+          "lineNumber": 37
+        },
+        {
+          "caller": "fake_live",
+          "callee": "acceptance.CheckError",
+          "lineNumber": 48
+        },
+        {
+          "caller": "_stop_at_live",
+          "callee": "monkeypatch.setattr",
+          "lineNumber": 50
+        },
+        {
+          "caller": "test_a_given_key_never_probes_the_demo_endpoint",
+          "callee": "_fake_get",
+          "lineNumber": 58
+        },
+        {
+          "caller": "test_a_given_key_never_probes_the_demo_endpoint",
+          "callee": "acceptance._live",
+          "lineNumber": 59
+        },
+        {
+          "caller": "test_a_given_key_never_probes_the_demo_endpoint",
+          "callee": "inst.close",
+          "lineNumber": 64
+        },
+        {
+          "caller": "test_a_demo_instance_still_hands_its_key_over",
+          "callee": "_fake_get",
+          "lineNumber": 68
+        },
+        {
+          "caller": "test_a_demo_instance_still_hands_its_key_over",
+          "callee": "acceptance._live",
+          "lineNumber": 69
+        },
+        {
+          "caller": "test_a_demo_instance_still_hands_its_key_over",
+          "callee": "inst.close",
+          "lineNumber": 74
+        },
+        {
+          "caller": "test_the_keyless_failure_names_the_flag_that_fixes_it",
+          "callee": "monkeypatch.delenv",
+          "lineNumber": 78
+        },
+        {
+          "caller": "test_the_keyless_failure_names_the_flag_that_fixes_it",
+          "callee": "_fake_get",
+          "lineNumber": 79
+        },
+        {
+          "caller": "test_the_keyless_failure_names_the_flag_that_fixes_it",
+          "callee": "acceptance.main",
+          "lineNumber": 80
+        },
+        {
+          "caller": "test_the_keyless_failure_names_the_flag_that_fixes_it",
+          "callee": "capsys.readouterr",
+          "lineNumber": 81
+        },
+        {
+          "caller": "test_the_env_key_is_the_default_for_the_flag",
+          "callee": "monkeypatch.setenv",
+          "lineNumber": 87
+        },
+        {
+          "caller": "test_the_env_key_is_the_default_for_the_flag",
+          "callee": "_stop_at_live",
+          "lineNumber": 88
+        },
+        {
+          "caller": "test_the_env_key_is_the_default_for_the_flag",
+          "callee": "acceptance.main",
+          "lineNumber": 89
+        },
+        {
+          "caller": "test_the_command_line_key_beats_the_env",
+          "callee": "monkeypatch.setenv",
+          "lineNumber": 94
+        },
+        {
+          "caller": "test_the_command_line_key_beats_the_env",
+          "callee": "_stop_at_live",
+          "lineNumber": 95
+        },
+        {
+          "caller": "test_the_command_line_key_beats_the_env",
+          "callee": "acceptance.main",
+          "lineNumber": 96
+        },
+        {
+          "caller": "test_no_key_at_all_reaches_the_demo_handshake_as_empty",
+          "callee": "monkeypatch.delenv",
+          "lineNumber": 101
+        },
+        {
+          "caller": "test_no_key_at_all_reaches_the_demo_handshake_as_empty",
+          "callee": "_stop_at_live",
+          "lineNumber": 102
+        },
+        {
+          "caller": "test_no_key_at_all_reaches_the_demo_handshake_as_empty",
+          "callee": "acceptance.main",
+          "lineNumber": 103
+        },
+        {
+          "caller": "test_every_documented_live_check_carries_a_key",
+          "callee": "_FENCE.findall",
+          "lineNumber": 111
+        },
+        {
+          "caller": "test_every_documented_live_check_carries_a_key",
+          "callee": "len",
+          "lineNumber": 113
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 9,
+        "functionCount": 9,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/test_contract_doc_endpoints.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 64,
+      "nonEmptyLines": 52,
+      "functions": [
+        {
+          "name": "_doc_rows",
+          "startLine": 28,
+          "endLine": 35,
+          "params": []
+        },
+        {
+          "name": "_app_routes",
+          "startLine": 38,
+          "endLine": 48,
+          "params": []
+        },
+        {
+          "name": "test_doc_endpoint_table_is_readable",
+          "startLine": 51,
+          "endLine": 54,
+          "params": []
+        },
+        {
+          "name": "test_every_doc_endpoint_is_registered",
+          "startLine": 57,
+          "endLine": 64,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "_doc_rows",
+          "line": 28,
+          "isDefault": false
+        },
+        {
+          "name": "_app_routes",
+          "line": 38,
+          "isDefault": false
+        },
+        {
+          "name": "test_doc_endpoint_table_is_readable",
+          "line": 51,
+          "isDefault": false
+        },
+        {
+          "name": "test_every_doc_endpoint_is_registered",
+          "line": 57,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_doc_rows",
+          "callee": "gen_contract_doc.DOC_PATH.read_text",
+          "lineNumber": 29
+        },
+        {
+          "caller": "_doc_rows",
+          "callee": "text.splitlines",
+          "lineNumber": 31
+        },
+        {
+          "caller": "_doc_rows",
+          "callee": "_ROW.match",
+          "lineNumber": 32
+        },
+        {
+          "caller": "_doc_rows",
+          "callee": "rows.append",
+          "lineNumber": 34
+        },
+        {
+          "caller": "_app_routes",
+          "callee": "_PARAM.sub",
+          "lineNumber": 44
+        },
+        {
+          "caller": "_app_routes",
+          "callee": "create_app().openapi()[\"paths\"].items",
+          "lineNumber": 45
+        },
+        {
+          "caller": "_app_routes",
+          "callee": "create_app().openapi",
+          "lineNumber": 45
+        },
+        {
+          "caller": "_app_routes",
+          "callee": "create_app",
+          "lineNumber": 45
+        },
+        {
+          "caller": "_app_routes",
+          "callee": "method.lower",
+          "lineNumber": 47
+        },
+        {
+          "caller": "test_doc_endpoint_table_is_readable",
+          "callee": "_doc_rows",
+          "lineNumber": 52
+        },
+        {
+          "caller": "test_doc_endpoint_table_is_readable",
+          "callee": "set",
+          "lineNumber": 54
+        },
+        {
+          "caller": "test_every_doc_endpoint_is_registered",
+          "callee": "_app_routes",
+          "lineNumber": 58
+        },
+        {
+          "caller": "test_every_doc_endpoint_is_registered",
+          "callee": "_doc_rows",
+          "lineNumber": 61
+        },
+        {
+          "caller": "test_every_doc_endpoint_is_registered",
+          "callee": "_PARAM.sub",
+          "lineNumber": 62
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 4,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/test_contract_export.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 93,
+      "nonEmptyLines": 71,
+      "functions": [
+        {
+          "name": "_result_schema",
+          "startLine": 27,
+          "endLine": 29,
+          "params": []
+        },
+        {
+          "name": "test_fixtures_present",
+          "startLine": 32,
+          "endLine": 33,
+          "params": []
+        },
+        {
+          "name": "test_committed_schema_is_byte_stable_regeneration",
+          "startLine": 36,
+          "endLine": 37,
+          "params": []
+        },
+        {
+          "name": "test_schema_text_is_deterministic",
+          "startLine": 40,
+          "endLine": 41,
+          "params": []
+        },
+        {
+          "name": "test_regeneration_rewrites_identical_bytes",
+          "startLine": 44,
+          "endLine": 48,
+          "params": []
+        },
+        {
+          "name": "test_schema_root_is_job_envelope",
+          "startLine": 51,
+          "endLine": 62,
+          "params": []
+        },
+        {
+          "name": "test_fixture_parses_as_valid_result",
+          "startLine": 66,
+          "endLine": 71,
+          "params": [
+            "fixture"
+          ]
+        },
+        {
+          "name": "test_doc_tables_cover_every_contract_field",
+          "startLine": 74,
+          "endLine": 78,
+          "params": []
+        },
+        {
+          "name": "test_doc_covers_verdicts_endpoints_and_versioning",
+          "startLine": 81,
+          "endLine": 93,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "_result_schema",
+          "line": 27,
+          "isDefault": false
+        },
+        {
+          "name": "test_fixtures_present",
+          "line": 32,
+          "isDefault": false
+        },
+        {
+          "name": "test_committed_schema_is_byte_stable_regeneration",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "test_schema_text_is_deterministic",
+          "line": 40,
+          "isDefault": false
+        },
+        {
+          "name": "test_regeneration_rewrites_identical_bytes",
+          "line": 44,
+          "isDefault": false
+        },
+        {
+          "name": "test_schema_root_is_job_envelope",
+          "line": 51,
+          "isDefault": false
+        },
+        {
+          "name": "test_fixture_parses_as_valid_result",
+          "line": 65,
+          "isDefault": false
+        },
+        {
+          "name": "test_doc_tables_cover_every_contract_field",
+          "line": 74,
+          "isDefault": false
+        },
+        {
+          "name": "test_doc_covers_verdicts_endpoints_and_versioning",
+          "line": 81,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_result_schema",
+          "callee": "json.loads",
+          "lineNumber": 28
+        },
+        {
+          "caller": "_result_schema",
+          "callee": "contract.SCHEMA_PATH.read_text",
+          "lineNumber": 28
+        },
+        {
+          "caller": "test_committed_schema_is_byte_stable_regeneration",
+          "callee": "contract.SCHEMA_PATH.read_text",
+          "lineNumber": 37
+        },
+        {
+          "caller": "test_committed_schema_is_byte_stable_regeneration",
+          "callee": "contract.schema_text",
+          "lineNumber": 37
+        },
+        {
+          "caller": "test_schema_text_is_deterministic",
+          "callee": "contract.schema_text",
+          "lineNumber": 41
+        },
+        {
+          "caller": "test_schema_text_is_deterministic",
+          "callee": "contract.schema_text",
+          "lineNumber": 41
+        },
+        {
+          "caller": "test_regeneration_rewrites_identical_bytes",
+          "callee": "p.read_bytes",
+          "lineNumber": 46
+        },
+        {
+          "caller": "test_regeneration_rewrites_identical_bytes",
+          "callee": "gen_contract_doc.main",
+          "lineNumber": 47
+        },
+        {
+          "caller": "test_regeneration_rewrites_identical_bytes",
+          "callee": "p.read_bytes",
+          "lineNumber": 48
+        },
+        {
+          "caller": "test_schema_root_is_job_envelope",
+          "callee": "json.loads",
+          "lineNumber": 52
+        },
+        {
+          "caller": "test_schema_root_is_job_envelope",
+          "callee": "contract.SCHEMA_PATH.read_text",
+          "lineNumber": 52
+        },
+        {
+          "caller": "test_schema_root_is_job_envelope",
+          "callee": "set",
+          "lineNumber": 54
+        },
+        {
+          "caller": "test_fixture_parses_as_valid_result",
+          "callee": "json.loads",
+          "lineNumber": 67
+        },
+        {
+          "caller": "test_fixture_parses_as_valid_result",
+          "callee": "fixture.read_text",
+          "lineNumber": 67
+        },
+        {
+          "caller": "test_fixture_parses_as_valid_result",
+          "callee": "contract.Result.parse",
+          "lineNumber": 68
+        },
+        {
+          "caller": "test_fixture_parses_as_valid_result",
+          "callee": "jsonschema.validate",
+          "lineNumber": 71
+        },
+        {
+          "caller": "test_fixture_parses_as_valid_result",
+          "callee": "_result_schema",
+          "lineNumber": 71
+        },
+        {
+          "caller": "test_doc_tables_cover_every_contract_field",
+          "callee": "DOC_FILE.read_text",
+          "lineNumber": 75
+        },
+        {
+          "caller": "test_doc_covers_verdicts_endpoints_and_versioning",
+          "callee": "DOC_FILE.read_text",
+          "lineNumber": 82
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 9,
+        "functionCount": 9,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/test_quality_rerun.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 324,
+      "nonEmptyLines": 260,
+      "functions": [
+        {
+          "name": "kalite_bundle",
+          "startLine": 42,
+          "endLine": 55,
+          "params": [
+            "sonuc",
+            "ocr_ms",
+            "total_ms"
+          ]
+        },
+        {
+          "name": "env",
+          "startLine": 59,
+          "endLine": 85,
+          "params": [
+            "tmp_path",
+            "monkeypatch"
+          ]
+        },
+        {
+          "name": "yeni_sonuc",
+          "startLine": 88,
+          "endLine": 93,
+          "params": [
+            "conn",
+            "job_id",
+            "**toplam"
+          ]
+        },
+        {
+          "name": "rerun",
+          "startLine": 96,
+          "endLine": 97,
+          "params": [
+            "client",
+            "job_id"
+          ]
+        },
+        {
+          "name": "v1",
+          "startLine": 103,
+          "endLine": 106,
+          "params": [
+            "client",
+            "api_key",
+            "job_id"
+          ]
+        },
+        {
+          "name": "detay",
+          "startLine": 109,
+          "endLine": 112,
+          "params": [
+            "client",
+            "job_id"
+          ]
+        },
+        {
+          "name": "calisan_detay",
+          "startLine": 115,
+          "endLine": 118,
+          "params": [
+            "client",
+            "api_key",
+            "job_id"
+          ]
+        },
+        {
+          "name": "yonetici_satiri",
+          "startLine": 121,
+          "endLine": 124,
+          "params": [
+            "client",
+            "job_id"
+          ]
+        },
+        {
+          "name": "calisan_satiri",
+          "startLine": 127,
+          "endLine": 132,
+          "params": [
+            "client",
+            "api_key",
+            "job_id"
+          ]
+        },
+        {
+          "name": "bes_yuzey",
+          "startLine": 135,
+          "endLine": 152,
+          "params": [
+            "client",
+            "api_key",
+            "job_id"
+          ]
+        },
+        {
+          "name": "test_quality_rerun_replaces_the_result_and_every_view_follows",
+          "startLine": 158,
+          "endLine": 187,
+          "params": [
+            "env"
+          ]
+        },
+        {
+          "name": "test_the_verdict_after_a_rerun_is_the_verdict_of_the_new_numbers",
+          "startLine": 190,
+          "endLine": 202,
+          "params": [
+            "env"
+          ]
+        },
+        {
+          "name": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "startLine": 205,
+          "endLine": 241,
+          "params": [
+            "env"
+          ]
+        },
+        {
+          "name": "test_a_failed_job_comes_back_done_through_quality_mode",
+          "startLine": 244,
+          "endLine": 255,
+          "params": [
+            "env"
+          ]
+        },
+        {
+          "name": "test_a_failed_rerun_leaves_the_job_exactly_as_it_was",
+          "startLine": 261,
+          "endLine": 278,
+          "params": [
+            "env"
+          ]
+        },
+        {
+          "name": "test_a_job_still_in_the_queue_has_nothing_to_rerun",
+          "startLine": 281,
+          "endLine": 286,
+          "params": [
+            "env"
+          ]
+        },
+        {
+          "name": "test_the_rerun_door_is_the_admin_session_not_a_worker_key",
+          "startLine": 289,
+          "endLine": 298,
+          "params": [
+            "env"
+          ]
+        },
+        {
+          "name": "test_the_detail_page_hands_the_reviewer_a_confirmation_and_a_diff",
+          "startLine": 304,
+          "endLine": 324,
+          "params": [
+            "env"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "kalite_bundle",
+          "line": 42,
+          "isDefault": false
+        },
+        {
+          "name": "env",
+          "line": 58,
+          "isDefault": false
+        },
+        {
+          "name": "yeni_sonuc",
+          "line": 88,
+          "isDefault": false
+        },
+        {
+          "name": "rerun",
+          "line": 96,
+          "isDefault": false
+        },
+        {
+          "name": "v1",
+          "line": 103,
+          "isDefault": false
+        },
+        {
+          "name": "detay",
+          "line": 109,
+          "isDefault": false
+        },
+        {
+          "name": "calisan_detay",
+          "line": 115,
+          "isDefault": false
+        },
+        {
+          "name": "yonetici_satiri",
+          "line": 121,
+          "isDefault": false
+        },
+        {
+          "name": "calisan_satiri",
+          "line": 127,
+          "isDefault": false
+        },
+        {
+          "name": "bes_yuzey",
+          "line": 135,
+          "isDefault": false
+        },
+        {
+          "name": "test_quality_rerun_replaces_the_result_and_every_view_follows",
+          "line": 158,
+          "isDefault": false
+        },
+        {
+          "name": "test_the_verdict_after_a_rerun_is_the_verdict_of_the_new_numbers",
+          "line": 190,
+          "isDefault": false
+        },
+        {
+          "name": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "line": 205,
+          "isDefault": false
+        },
+        {
+          "name": "test_a_failed_job_comes_back_done_through_quality_mode",
+          "line": 244,
+          "isDefault": false
+        },
+        {
+          "name": "test_a_failed_rerun_leaves_the_job_exactly_as_it_was",
+          "line": 261,
+          "isDefault": false
+        },
+        {
+          "name": "test_a_job_still_in_the_queue_has_nothing_to_rerun",
+          "line": 281,
+          "isDefault": false
+        },
+        {
+          "name": "test_the_rerun_door_is_the_admin_session_not_a_worker_key",
+          "line": 289,
+          "isDefault": false
+        },
+        {
+          "name": "test_the_detail_page_hands_the_reviewer_a_confirmation_and_a_diff",
+          "line": 304,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "kalite_bundle",
+          "callee": "validator.validate",
+          "lineNumber": 46
+        },
+        {
+          "caller": "kalite_bundle",
+          "callee": "contract.JobMeta(\n            worker=serve_demo.WORKER,\n            ocr_ms=ocr_ms,\n            total_ms=total_ms,\n            model=config.unsloth_model(),\n            quality_mode=True,\n        ).model_dump",
+          "lineNumber": 47
+        },
+        {
+          "caller": "kalite_bundle",
+          "callee": "contract.JobMeta",
+          "lineNumber": 47
+        },
+        {
+          "caller": "kalite_bundle",
+          "callee": "config.unsloth_model",
+          "lineNumber": 51
+        },
+        {
+          "caller": "env",
+          "callee": "auth._sessions.clear",
+          "lineNumber": 61
+        },
+        {
+          "caller": "env",
+          "callee": "auth._buckets.clear",
+          "lineNumber": 62
+        },
+        {
+          "caller": "env",
+          "callee": "monkeypatch.setenv",
+          "lineNumber": 63
+        },
+        {
+          "caller": "env",
+          "callee": "monkeypatch.setenv",
+          "lineNumber": 64
+        },
+        {
+          "caller": "env",
+          "callee": "str",
+          "lineNumber": 64
+        },
+        {
+          "caller": "env",
+          "callee": "db.connect",
+          "lineNumber": 66
+        },
+        {
+          "caller": "env",
+          "callee": "auth.create_key",
+          "lineNumber": 67
+        },
+        {
+          "caller": "env",
+          "callee": "serve_demo.seed_jobs",
+          "lineNumber": 68
+        },
+        {
+          "caller": "env",
+          "callee": "kalite_bundle",
+          "lineNumber": 70
+        },
+        {
+          "caller": "runner",
+          "callee": "calls.append",
+          "lineNumber": 73
+        },
+        {
+          "caller": "env",
+          "callee": "TestClient",
+          "lineNumber": 78
+        },
+        {
+          "caller": "env",
+          "callee": "create_app",
+          "lineNumber": 79
+        },
+        {
+          "caller": "env",
+          "callee": "client.post",
+          "lineNumber": 81
+        },
+        {
+          "caller": "env",
+          "callee": "conn.close",
+          "lineNumber": 83
+        },
+        {
+          "caller": "env",
+          "callee": "auth._sessions.clear",
+          "lineNumber": 84
+        },
+        {
+          "caller": "env",
+          "callee": "auth._buckets.clear",
+          "lineNumber": 85
+        },
+        {
+          "caller": "yeni_sonuc",
+          "callee": "json.loads",
+          "lineNumber": 91
+        },
+        {
+          "caller": "yeni_sonuc",
+          "callee": "db.get_job",
+          "lineNumber": 91
+        },
+        {
+          "caller": "yeni_sonuc",
+          "callee": "sonuc[\"totals\"].update",
+          "lineNumber": 92
+        },
+        {
+          "caller": "rerun",
+          "callee": "client.post",
+          "lineNumber": 97
+        },
+        {
+          "caller": "v1",
+          "callee": "client.get",
+          "lineNumber": 104
+        },
+        {
+          "caller": "v1",
+          "callee": "yanit.json",
+          "lineNumber": 106
+        },
+        {
+          "caller": "detay",
+          "callee": "client.get",
+          "lineNumber": 110
+        },
+        {
+          "caller": "detay",
+          "callee": "yanit.json",
+          "lineNumber": 112
+        },
+        {
+          "caller": "calisan_detay",
+          "callee": "client.get",
+          "lineNumber": 116
+        },
+        {
+          "caller": "calisan_detay",
+          "callee": "yanit.json",
+          "lineNumber": 118
+        },
+        {
+          "caller": "yonetici_satiri",
+          "callee": "client.get",
+          "lineNumber": 122
+        },
+        {
+          "caller": "yonetici_satiri",
+          "callee": "next",
+          "lineNumber": 124
+        },
+        {
+          "caller": "yonetici_satiri",
+          "callee": "yanit.json",
+          "lineNumber": 124
+        },
+        {
+          "caller": "calisan_satiri",
+          "callee": "client.get",
+          "lineNumber": 128
+        },
+        {
+          "caller": "calisan_satiri",
+          "callee": "next",
+          "lineNumber": 132
+        },
+        {
+          "caller": "calisan_satiri",
+          "callee": "yanit.json",
+          "lineNumber": 132
+        },
+        {
+          "caller": "bes_yuzey",
+          "callee": "v1",
+          "lineNumber": 138
+        },
+        {
+          "caller": "bes_yuzey",
+          "callee": "detay",
+          "lineNumber": 139
+        },
+        {
+          "caller": "bes_yuzey",
+          "callee": "calisan_detay",
+          "lineNumber": 140
+        },
+        {
+          "caller": "bes_yuzey",
+          "callee": "yonetici_satiri",
+          "lineNumber": 143
+        },
+        {
+          "caller": "bes_yuzey",
+          "callee": "calisan_satiri",
+          "lineNumber": 144
+        },
+        {
+          "caller": "bes_yuzey",
+          "callee": "round",
+          "lineNumber": 148
+        },
+        {
+          "caller": "bes_yuzey",
+          "callee": "round",
+          "lineNumber": 151
+        },
+        {
+          "caller": "test_quality_rerun_replaces_the_result_and_every_view_follows",
+          "callee": "detay",
+          "lineNumber": 161
+        },
+        {
+          "caller": "test_quality_rerun_replaces_the_result_and_every_view_follows",
+          "callee": "kalite_bundle",
+          "lineNumber": 165
+        },
+        {
+          "caller": "test_quality_rerun_replaces_the_result_and_every_view_follows",
+          "callee": "yeni_sonuc",
+          "lineNumber": 165
+        },
+        {
+          "caller": "test_quality_rerun_replaces_the_result_and_every_view_follows",
+          "callee": "rerun",
+          "lineNumber": 167
+        },
+        {
+          "caller": "test_quality_rerun_replaces_the_result_and_every_view_follows",
+          "callee": "yanit.json",
+          "lineNumber": 170
+        },
+        {
+          "caller": "test_quality_rerun_replaces_the_result_and_every_view_follows",
+          "callee": "JobEnvelope.model_validate",
+          "lineNumber": 171
+        },
+        {
+          "caller": "test_quality_rerun_replaces_the_result_and_every_view_follows",
+          "callee": "config.unsloth_model",
+          "lineNumber": 175
+        },
+        {
+          "caller": "test_quality_rerun_replaces_the_result_and_every_view_follows",
+          "callee": "bes_yuzey",
+          "lineNumber": 177
+        },
+        {
+          "caller": "test_quality_rerun_replaces_the_result_and_every_view_follows",
+          "callee": "yonetici_satiri",
+          "lineNumber": 178
+        },
+        {
+          "caller": "test_quality_rerun_replaces_the_result_and_every_view_follows",
+          "callee": "db.get_job",
+          "lineNumber": 179
+        },
+        {
+          "caller": "test_quality_rerun_replaces_the_result_and_every_view_follows",
+          "callee": "pathlib.Path(job[\"image_path\"]).read_bytes",
+          "lineNumber": 183
+        },
+        {
+          "caller": "test_quality_rerun_replaces_the_result_and_every_view_follows",
+          "callee": "pathlib.Path",
+          "lineNumber": 183
+        },
+        {
+          "caller": "test_the_verdict_after_a_rerun_is_the_verdict_of_the_new_numbers",
+          "callee": "detay",
+          "lineNumber": 193
+        },
+        {
+          "caller": "test_the_verdict_after_a_rerun_is_the_verdict_of_the_new_numbers",
+          "callee": "kalite_bundle",
+          "lineNumber": 194
+        },
+        {
+          "caller": "test_the_verdict_after_a_rerun_is_the_verdict_of_the_new_numbers",
+          "callee": "yeni_sonuc",
+          "lineNumber": 194
+        },
+        {
+          "caller": "test_the_verdict_after_a_rerun_is_the_verdict_of_the_new_numbers",
+          "callee": "rerun(client, job[\"id\"]).json",
+          "lineNumber": 196
+        },
+        {
+          "caller": "test_the_verdict_after_a_rerun_is_the_verdict_of_the_new_numbers",
+          "callee": "rerun",
+          "lineNumber": 196
+        },
+        {
+          "caller": "test_the_verdict_after_a_rerun_is_the_verdict_of_the_new_numbers",
+          "callee": "calisan_satiri",
+          "lineNumber": 202
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "db.get_job",
+          "lineNumber": 208
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "db.update_job",
+          "lineNumber": 209
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "json.loads",
+          "lineNumber": 213
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "kalite_bundle",
+          "lineNumber": 217
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "yeni_sonuc",
+          "lineNumber": 217
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "rerun(client, job[\"id\"]).json",
+          "lineNumber": 219
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "rerun",
+          "lineNumber": 219
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "config.unsloth_model",
+          "lineNumber": 224
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "exports.row",
+          "lineNumber": 226
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "db.get_job",
+          "lineNumber": 226
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "client.get(\n        \"/admin/api/export\", params={\"format\": \"json\", \"ids\": job[\"id\"]}\n    ).json",
+          "lineNumber": 229
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "client.get",
+          "lineNumber": 229
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "client.get(\n        \"/admin/api/export\", params={\"format\": \"csv\", \"ids\": job[\"id\"]}\n    ).content.decode",
+          "lineNumber": 233
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "client.get",
+          "lineNumber": 233
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "list",
+          "lineNumber": 236
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "csv.reader",
+          "lineNumber": 236
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "io.StringIO",
+          "lineNumber": 236
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "exports.FIELDS.index",
+          "lineNumber": 237
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "client.get",
+          "lineNumber": 238
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "load_workbook",
+          "lineNumber": 240
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "io.BytesIO",
+          "lineNumber": 240
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "sayfa.cell",
+          "lineNumber": 241
+        },
+        {
+          "caller": "test_the_rerun_keeps_who_the_job_belongs_to_and_shows_quality_in_exports",
+          "callee": "exports.FIELDS.index",
+          "lineNumber": 241
+        },
+        {
+          "caller": "test_a_failed_job_comes_back_done_through_quality_mode",
+          "callee": "kalite_bundle",
+          "lineNumber": 248
+        },
+        {
+          "caller": "test_a_failed_job_comes_back_done_through_quality_mode",
+          "callee": "rerun(client, job[\"id\"]).json",
+          "lineNumber": 250
+        },
+        {
+          "caller": "test_a_failed_job_comes_back_done_through_quality_mode",
+          "callee": "rerun",
+          "lineNumber": 250
+        },
+        {
+          "caller": "test_a_failed_job_comes_back_done_through_quality_mode",
+          "callee": "db.get_job",
+          "lineNumber": 254
+        },
+        {
+          "caller": "test_a_failed_rerun_leaves_the_job_exactly_as_it_was",
+          "callee": "db.get_job",
+          "lineNumber": 264
+        },
+        {
+          "caller": "test_a_failed_rerun_leaves_the_job_exactly_as_it_was",
+          "callee": "rerun",
+          "lineNumber": 272
+        },
+        {
+          "caller": "test_a_failed_rerun_leaves_the_job_exactly_as_it_was",
+          "callee": "yanit.json",
+          "lineNumber": 275
+        },
+        {
+          "caller": "test_a_failed_rerun_leaves_the_job_exactly_as_it_was",
+          "callee": "db.get_job",
+          "lineNumber": 276
+        },
+        {
+          "caller": "test_a_job_still_in_the_queue_has_nothing_to_rerun",
+          "callee": "rerun",
+          "lineNumber": 283
+        },
+        {
+          "caller": "test_a_job_still_in_the_queue_has_nothing_to_rerun",
+          "callee": "rerun",
+          "lineNumber": 284
+        },
+        {
+          "caller": "test_a_job_still_in_the_queue_has_nothing_to_rerun",
+          "callee": "rerun",
+          "lineNumber": 285
+        },
+        {
+          "caller": "test_the_rerun_door_is_the_admin_session_not_a_worker_key",
+          "callee": "client.cookies.clear",
+          "lineNumber": 292
+        },
+        {
+          "caller": "test_the_rerun_door_is_the_admin_session_not_a_worker_key",
+          "callee": "rerun",
+          "lineNumber": 293
+        },
+        {
+          "caller": "test_the_rerun_door_is_the_admin_session_not_a_worker_key",
+          "callee": "yanit.json",
+          "lineNumber": 295
+        },
+        {
+          "caller": "test_the_rerun_door_is_the_admin_session_not_a_worker_key",
+          "callee": "client.post",
+          "lineNumber": 297
+        },
+        {
+          "caller": "test_the_detail_page_hands_the_reviewer_a_confirmation_and_a_diff",
+          "callee": "client.get",
+          "lineNumber": 306
+        },
+        {
+          "caller": "test_the_detail_page_hands_the_reviewer_a_confirmation_and_a_diff",
+          "callee": "client.get",
+          "lineNumber": 318
+        },
+        {
+          "caller": "test_the_detail_page_hands_the_reviewer_a_confirmation_and_a_diff",
+          "callee": "client.get",
+          "lineNumber": 323
+        }
+      ],
+      "metrics": {
+        "importCount": 10,
+        "exportCount": 18,
+        "functionCount": 18,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/test_serve_demo_live_states.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 80,
+      "nonEmptyLines": 67,
+      "functions": [
+        {
+          "name": "_statuses",
+          "startLine": 23,
+          "endLine": 31,
+          "params": [
+            "db_path"
+          ]
+        },
+        {
+          "name": "_upload",
+          "startLine": 34,
+          "endLine": 45,
+          "params": [
+            "base_url",
+            "api_key"
+          ]
+        },
+        {
+          "name": "_await_done",
+          "startLine": 48,
+          "endLine": 62,
+          "params": [
+            "base_url",
+            "api_key",
+            "job_id"
+          ]
+        },
+        {
+          "name": "test_queued_and_running_jobs_survive_the_worker",
+          "startLine": 65,
+          "endLine": 80,
+          "params": [
+            "tmp_path",
+            "monkeypatch"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_statuses",
+          "line": 23,
+          "isDefault": false
+        },
+        {
+          "name": "_upload",
+          "line": 34,
+          "isDefault": false
+        },
+        {
+          "name": "_await_done",
+          "line": 48,
+          "isDefault": false
+        },
+        {
+          "name": "test_queued_and_running_jobs_survive_the_worker",
+          "line": 65,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_statuses",
+          "callee": "db.connect",
+          "lineNumber": 24
+        },
+        {
+          "caller": "_statuses",
+          "callee": "db.list_jobs",
+          "lineNumber": 28
+        },
+        {
+          "caller": "_statuses",
+          "callee": "conn.close",
+          "lineNumber": 31
+        },
+        {
+          "caller": "_upload",
+          "callee": "httpx.post",
+          "lineNumber": 37
+        },
+        {
+          "caller": "_upload",
+          "callee": "png.read_bytes",
+          "lineNumber": 40
+        },
+        {
+          "caller": "_upload",
+          "callee": "resp.json",
+          "lineNumber": 45
+        },
+        {
+          "caller": "_await_done",
+          "callee": "time.monotonic",
+          "lineNumber": 49
+        },
+        {
+          "caller": "_await_done",
+          "callee": "time.monotonic",
+          "lineNumber": 50
+        },
+        {
+          "caller": "_await_done",
+          "callee": "httpx.get",
+          "lineNumber": 51
+        },
+        {
+          "caller": "_await_done",
+          "callee": "resp.json",
+          "lineNumber": 57
+        },
+        {
+          "caller": "_await_done",
+          "callee": "time.sleep",
+          "lineNumber": 61
+        },
+        {
+          "caller": "_await_done",
+          "callee": "AssertionError",
+          "lineNumber": 62
+        },
+        {
+          "caller": "test_queued_and_running_jobs_survive_the_worker",
+          "callee": "monkeypatch.setenv",
+          "lineNumber": 67
+        },
+        {
+          "caller": "test_queued_and_running_jobs_survive_the_worker",
+          "callee": "str",
+          "lineNumber": 67
+        },
+        {
+          "caller": "test_queued_and_running_jobs_survive_the_worker",
+          "callee": "serve_demo._boot",
+          "lineNumber": 68
+        },
+        {
+          "caller": "test_queued_and_running_jobs_survive_the_worker",
+          "callee": "serve_demo._url",
+          "lineNumber": 70
+        },
+        {
+          "caller": "test_queued_and_running_jobs_survive_the_worker",
+          "callee": "_await_done",
+          "lineNumber": 71
+        },
+        {
+          "caller": "test_queued_and_running_jobs_survive_the_worker",
+          "callee": "_upload",
+          "lineNumber": 71
+        },
+        {
+          "caller": "test_queued_and_running_jobs_survive_the_worker",
+          "callee": "_statuses",
+          "lineNumber": 72
+        },
+        {
+          "caller": "test_queued_and_running_jobs_survive_the_worker",
+          "callee": "serve_demo.LIVE_STATES.items",
+          "lineNumber": 74
+        },
+        {
+          "caller": "test_queued_and_running_jobs_survive_the_worker",
+          "callee": "set",
+          "lineNumber": 77
+        },
+        {
+          "caller": "test_queued_and_running_jobs_survive_the_worker",
+          "callee": "statuses.values",
+          "lineNumber": 77
+        },
+        {
+          "caller": "test_queued_and_running_jobs_survive_the_worker",
+          "callee": "worker.stop",
+          "lineNumber": 79
+        },
+        {
+          "caller": "test_queued_and_running_jobs_survive_the_worker",
+          "callee": "models.shutdown",
+          "lineNumber": 80
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 4,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/test_smoke_e2e.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 107,
+      "nonEmptyLines": 84,
+      "functions": [
+        {
+          "name": "_envelope",
+          "startLine": 23,
+          "endLine": 46,
+          "params": []
+        },
+        {
+          "name": "_response",
+          "startLine": 49,
+          "endLine": 52,
+          "params": [
+            "payload"
+          ]
+        },
+        {
+          "name": "_no_app",
+          "startLine": 55,
+          "endLine": 56,
+          "params": [
+            "*args",
+            "**kwargs"
+          ]
+        },
+        {
+          "name": "test_smoke_passes_over_real_http",
+          "startLine": 59,
+          "endLine": 68,
+          "params": []
+        },
+        {
+          "name": "test_smoke_exits_nonzero_when_a_stage_breaks",
+          "startLine": 71,
+          "endLine": 77,
+          "params": [
+            "monkeypatch",
+            "tmp_path"
+          ]
+        },
+        {
+          "name": "test_a_clean_envelope_is_accepted",
+          "startLine": 80,
+          "endLine": 81,
+          "params": []
+        },
+        {
+          "name": "test_amounts_disagreeing_with_ground_truth_fail",
+          "startLine": 84,
+          "endLine": 88,
+          "params": []
+        },
+        {
+          "name": "test_a_mismatch_verdict_fails",
+          "startLine": 91,
+          "endLine": 100,
+          "params": []
+        },
+        {
+          "name": "test_an_envelope_outside_contract_v1_fails",
+          "startLine": 103,
+          "endLine": 107,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "_envelope",
+          "line": 23,
+          "isDefault": false
+        },
+        {
+          "name": "_response",
+          "line": 49,
+          "isDefault": false
+        },
+        {
+          "name": "_no_app",
+          "line": 55,
+          "isDefault": false
+        },
+        {
+          "name": "test_smoke_passes_over_real_http",
+          "line": 59,
+          "isDefault": false
+        },
+        {
+          "name": "test_smoke_exits_nonzero_when_a_stage_breaks",
+          "line": 71,
+          "isDefault": false
+        },
+        {
+          "name": "test_a_clean_envelope_is_accepted",
+          "line": 80,
+          "isDefault": false
+        },
+        {
+          "name": "test_amounts_disagreeing_with_ground_truth_fail",
+          "line": 84,
+          "isDefault": false
+        },
+        {
+          "name": "test_a_mismatch_verdict_fails",
+          "line": 91,
+          "isDefault": false
+        },
+        {
+          "name": "test_an_envelope_outside_contract_v1_fails",
+          "line": 103,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_envelope",
+          "callee": "json.loads",
+          "lineNumber": 25
+        },
+        {
+          "caller": "_envelope",
+          "callee": "FIXTURE_JSON.read_text",
+          "lineNumber": 25
+        },
+        {
+          "caller": "_envelope",
+          "callee": "copy.deepcopy",
+          "lineNumber": 30
+        },
+        {
+          "caller": "_envelope",
+          "callee": "config.strata_model",
+          "lineNumber": 43
+        },
+        {
+          "caller": "_response",
+          "callee": "httpx.Response",
+          "lineNumber": 50
+        },
+        {
+          "caller": "_response",
+          "callee": "httpx.Request",
+          "lineNumber": 51
+        },
+        {
+          "caller": "_no_app",
+          "callee": "smoke.SmokeError",
+          "lineNumber": 56
+        },
+        {
+          "caller": "test_smoke_passes_over_real_http",
+          "callee": "subprocess.run",
+          "lineNumber": 60
+        },
+        {
+          "caller": "test_smoke_passes_over_real_http",
+          "callee": "str",
+          "lineNumber": 61
+        },
+        {
+          "caller": "test_smoke_exits_nonzero_when_a_stage_breaks",
+          "callee": "monkeypatch.setenv",
+          "lineNumber": 74
+        },
+        {
+          "caller": "test_smoke_exits_nonzero_when_a_stage_breaks",
+          "callee": "str",
+          "lineNumber": 74
+        },
+        {
+          "caller": "test_smoke_exits_nonzero_when_a_stage_breaks",
+          "callee": "monkeypatch.setattr",
+          "lineNumber": 75
+        },
+        {
+          "caller": "test_smoke_exits_nonzero_when_a_stage_breaks",
+          "callee": "monkeypatch.setattr",
+          "lineNumber": 76
+        },
+        {
+          "caller": "test_smoke_exits_nonzero_when_a_stage_breaks",
+          "callee": "smoke.main",
+          "lineNumber": 77
+        },
+        {
+          "caller": "test_a_clean_envelope_is_accepted",
+          "callee": "smoke._check",
+          "lineNumber": 81
+        },
+        {
+          "caller": "test_a_clean_envelope_is_accepted",
+          "callee": "_envelope",
+          "lineNumber": 81
+        },
+        {
+          "caller": "test_amounts_disagreeing_with_ground_truth_fail",
+          "callee": "_envelope",
+          "lineNumber": 85
+        },
+        {
+          "caller": "test_amounts_disagreeing_with_ground_truth_fail",
+          "callee": "pytest.raises",
+          "lineNumber": 87
+        },
+        {
+          "caller": "test_amounts_disagreeing_with_ground_truth_fail",
+          "callee": "smoke._check",
+          "lineNumber": 88
+        },
+        {
+          "caller": "test_a_mismatch_verdict_fails",
+          "callee": "_envelope",
+          "lineNumber": 92
+        },
+        {
+          "caller": "test_a_mismatch_verdict_fails",
+          "callee": "pytest.raises",
+          "lineNumber": 99
+        },
+        {
+          "caller": "test_a_mismatch_verdict_fails",
+          "callee": "smoke._check",
+          "lineNumber": 100
+        },
+        {
+          "caller": "test_an_envelope_outside_contract_v1_fails",
+          "callee": "_envelope",
+          "lineNumber": 104
+        },
+        {
+          "caller": "test_an_envelope_outside_contract_v1_fails",
+          "callee": "pytest.raises",
+          "lineNumber": 106
+        },
+        {
+          "caller": "test_an_envelope_outside_contract_v1_fails",
+          "callee": "smoke._validated",
+          "lineNumber": 107
+        },
+        {
+          "caller": "test_an_envelope_outside_contract_v1_fails",
+          "callee": "_response",
+          "lineNumber": 107
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 9,
+        "functionCount": 9,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/test_validator.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 99,
+      "nonEmptyLines": 70,
+      "functions": [
+        {
+          "name": "market",
+          "startLine": 14,
+          "endLine": 16,
+          "params": []
+        },
+        {
+          "name": "test_ground_truth_fixtures_validate_ok",
+          "startLine": 20,
+          "endLine": 23,
+          "params": [
+            "fixture"
+          ]
+        },
+        {
+          "name": "test_ok_report_carries_expected_and_actual_blocks",
+          "startLine": 26,
+          "endLine": 35,
+          "params": [
+            "market"
+          ]
+        },
+        {
+          "name": "test_tampered_line_total_names_the_item",
+          "startLine": 38,
+          "endLine": 44,
+          "params": [
+            "market"
+          ]
+        },
+        {
+          "name": "test_tampered_kdv_names_totals_kdv",
+          "startLine": 47,
+          "endLine": 52,
+          "params": [
+            "market"
+          ]
+        },
+        {
+          "name": "test_tampered_grand_total_names_totals_toplam",
+          "startLine": 55,
+          "endLine": 60,
+          "params": [
+            "market"
+          ]
+        },
+        {
+          "name": "test_tampered_ara_toplam_names_only_totals_ara_toplam",
+          "startLine": 63,
+          "endLine": 66,
+          "params": [
+            "market"
+          ]
+        },
+        {
+          "name": "test_kurus_drift_within_tolerance_stays_ok",
+          "startLine": 69,
+          "endLine": 72,
+          "params": [
+            "market"
+          ]
+        },
+        {
+          "name": "test_drift_beyond_tolerance_is_mismatch",
+          "startLine": 75,
+          "endLine": 78,
+          "params": [
+            "market"
+          ]
+        },
+        {
+          "name": "test_accepts_contract_model",
+          "startLine": 81,
+          "endLine": 82,
+          "params": [
+            "market"
+          ]
+        },
+        {
+          "name": "test_missing_totals_fall_back_to_house_defaults",
+          "startLine": 85,
+          "endLine": 89,
+          "params": []
+        },
+        {
+          "name": "test_input_is_not_mutated",
+          "startLine": 92,
+          "endLine": 95,
+          "params": [
+            "market"
+          ]
+        },
+        {
+          "name": "test_report_is_json_serializable",
+          "startLine": 98,
+          "endLine": 99,
+          "params": [
+            "market"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "market",
+          "line": 13,
+          "isDefault": false
+        },
+        {
+          "name": "test_ground_truth_fixtures_validate_ok",
+          "line": 19,
+          "isDefault": false
+        },
+        {
+          "name": "test_ok_report_carries_expected_and_actual_blocks",
+          "line": 26,
+          "isDefault": false
+        },
+        {
+          "name": "test_tampered_line_total_names_the_item",
+          "line": 38,
+          "isDefault": false
+        },
+        {
+          "name": "test_tampered_kdv_names_totals_kdv",
+          "line": 47,
+          "isDefault": false
+        },
+        {
+          "name": "test_tampered_grand_total_names_totals_toplam",
+          "line": 55,
+          "isDefault": false
+        },
+        {
+          "name": "test_tampered_ara_toplam_names_only_totals_ara_toplam",
+          "line": 63,
+          "isDefault": false
+        },
+        {
+          "name": "test_kurus_drift_within_tolerance_stays_ok",
+          "line": 69,
+          "isDefault": false
+        },
+        {
+          "name": "test_drift_beyond_tolerance_is_mismatch",
+          "line": 75,
+          "isDefault": false
+        },
+        {
+          "name": "test_accepts_contract_model",
+          "line": 81,
+          "isDefault": false
+        },
+        {
+          "name": "test_missing_totals_fall_back_to_house_defaults",
+          "line": 85,
+          "isDefault": false
+        },
+        {
+          "name": "test_input_is_not_mutated",
+          "line": 92,
+          "isDefault": false
+        },
+        {
+          "name": "test_report_is_json_serializable",
+          "line": 98,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "market",
+          "callee": "json.loads",
+          "lineNumber": 16
+        },
+        {
+          "caller": "market",
+          "callee": "path.read_text",
+          "lineNumber": 16
+        },
+        {
+          "caller": "test_ground_truth_fixtures_validate_ok",
+          "callee": "validator.validate",
+          "lineNumber": 21
+        },
+        {
+          "caller": "test_ground_truth_fixtures_validate_ok",
+          "callee": "json.loads",
+          "lineNumber": 21
+        },
+        {
+          "caller": "test_ground_truth_fixtures_validate_ok",
+          "callee": "fixture.read_text",
+          "lineNumber": 21
+        },
+        {
+          "caller": "test_ok_report_carries_expected_and_actual_blocks",
+          "callee": "validator.validate",
+          "lineNumber": 27
+        },
+        {
+          "caller": "test_tampered_line_total_names_the_item",
+          "callee": "validator.validate",
+          "lineNumber": 40
+        },
+        {
+          "caller": "test_tampered_kdv_names_totals_kdv",
+          "callee": "validator.validate",
+          "lineNumber": 49
+        },
+        {
+          "caller": "test_tampered_grand_total_names_totals_toplam",
+          "callee": "validator.validate",
+          "lineNumber": 57
+        },
+        {
+          "caller": "test_tampered_ara_toplam_names_only_totals_ara_toplam",
+          "callee": "validator.validate",
+          "lineNumber": 65
+        },
+        {
+          "caller": "test_kurus_drift_within_tolerance_stays_ok",
+          "callee": "validator.validate",
+          "lineNumber": 72
+        },
+        {
+          "caller": "test_drift_beyond_tolerance_is_mismatch",
+          "callee": "validator.validate",
+          "lineNumber": 77
+        },
+        {
+          "caller": "test_accepts_contract_model",
+          "callee": "validator.validate",
+          "lineNumber": 82
+        },
+        {
+          "caller": "test_accepts_contract_model",
+          "callee": "contract.Result.parse",
+          "lineNumber": 82
+        },
+        {
+          "caller": "test_accepts_contract_model",
+          "callee": "validator.validate",
+          "lineNumber": 82
+        },
+        {
+          "caller": "test_missing_totals_fall_back_to_house_defaults",
+          "callee": "validator.validate",
+          "lineNumber": 87
+        },
+        {
+          "caller": "test_input_is_not_mutated",
+          "callee": "copy.deepcopy",
+          "lineNumber": 93
+        },
+        {
+          "caller": "test_input_is_not_mutated",
+          "callee": "validator.validate",
+          "lineNumber": 94
+        },
+        {
+          "caller": "test_report_is_json_serializable",
+          "callee": "json.dumps",
+          "lineNumber": 99
+        },
+        {
+          "caller": "test_report_is_json_serializable",
+          "callee": "validator.validate",
+          "lineNumber": 99
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 13,
+        "functionCount": 13,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/test_validator_edges.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 230,
+      "nonEmptyLines": 189,
+      "functions": [
+        {
+          "name": "line_item",
+          "startLine": 9,
+          "endLine": 10,
+          "params": [
+            "ad",
+            "miktar",
+            "birim_fiyat",
+            "toplam"
+          ]
+        },
+        {
+          "name": "test_mixed_kdv_rate_receipt_validates_ok",
+          "startLine": 30,
+          "endLine": 33,
+          "params": []
+        },
+        {
+          "name": "test_mixed_kdv_rate_tampered_toplam_names_totals_toplam",
+          "startLine": 36,
+          "endLine": 41,
+          "params": []
+        },
+        {
+          "name": "test_mixed_kdv_rate_tampered_line_total_names_the_item",
+          "startLine": 44,
+          "endLine": 48,
+          "params": []
+        },
+        {
+          "name": "test_currency_forms_tl_and_lira_sign",
+          "startLine": 51,
+          "endLine": 71,
+          "params": []
+        },
+        {
+          "name": "test_zero_quantity_line_adds_nothing",
+          "startLine": 74,
+          "endLine": 79,
+          "params": []
+        },
+        {
+          "name": "test_zero_quantity_with_nonzero_line_total_names_the_item",
+          "startLine": 82,
+          "endLine": 88,
+          "params": []
+        },
+        {
+          "name": "test_kg_line_three_decimal_product_rounds_to_kurus",
+          "startLine": 91,
+          "endLine": 99,
+          "params": []
+        },
+        {
+          "name": "test_negative_iskonto_reduces_the_base_by_its_magnitude",
+          "startLine": 102,
+          "endLine": 116,
+          "params": []
+        },
+        {
+          "name": "test_missing_iskonto_defaults_to_zero",
+          "startLine": 119,
+          "endLine": 126,
+          "params": []
+        },
+        {
+          "name": "test_missing_totals_block_is_mismatch_not_crash",
+          "startLine": 129,
+          "endLine": 132,
+          "params": []
+        },
+        {
+          "name": "test_empty_items_is_unreadable_not_vacuous_ok",
+          "startLine": 135,
+          "endLine": 140,
+          "params": []
+        },
+        {
+          "name": "test_empty_items_with_printed_totals_stays_unreadable",
+          "startLine": 143,
+          "endLine": 151,
+          "params": []
+        },
+        {
+          "name": "test_kdv_dahil_receipt_validates_ok",
+          "startLine": 179,
+          "endLine": 189,
+          "params": []
+        },
+        {
+          "name": "test_kdv_dahil_ara_toplam_may_be_printed_net_of_the_tax",
+          "startLine": 192,
+          "endLine": 195,
+          "params": []
+        },
+        {
+          "name": "test_kdv_dahil_wrong_printed_toplam_still_mismatches",
+          "startLine": 198,
+          "endLine": 206,
+          "params": []
+        },
+        {
+          "name": "test_kdv_dahil_wrong_printed_kdv_still_mismatches",
+          "startLine": 209,
+          "endLine": 215,
+          "params": []
+        },
+        {
+          "name": "test_kdv_haric_receipt_keeps_the_exclusive_expected_block",
+          "startLine": 218,
+          "endLine": 230,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "line_item",
+          "line": 9,
+          "isDefault": false
+        },
+        {
+          "name": "test_mixed_kdv_rate_receipt_validates_ok",
+          "line": 30,
+          "isDefault": false
+        },
+        {
+          "name": "test_mixed_kdv_rate_tampered_toplam_names_totals_toplam",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "test_mixed_kdv_rate_tampered_line_total_names_the_item",
+          "line": 44,
+          "isDefault": false
+        },
+        {
+          "name": "test_currency_forms_tl_and_lira_sign",
+          "line": 51,
+          "isDefault": false
+        },
+        {
+          "name": "test_zero_quantity_line_adds_nothing",
+          "line": 74,
+          "isDefault": false
+        },
+        {
+          "name": "test_zero_quantity_with_nonzero_line_total_names_the_item",
+          "line": 82,
+          "isDefault": false
+        },
+        {
+          "name": "test_kg_line_three_decimal_product_rounds_to_kurus",
+          "line": 91,
+          "isDefault": false
+        },
+        {
+          "name": "test_negative_iskonto_reduces_the_base_by_its_magnitude",
+          "line": 102,
+          "isDefault": false
+        },
+        {
+          "name": "test_missing_iskonto_defaults_to_zero",
+          "line": 119,
+          "isDefault": false
+        },
+        {
+          "name": "test_missing_totals_block_is_mismatch_not_crash",
+          "line": 129,
+          "isDefault": false
+        },
+        {
+          "name": "test_empty_items_is_unreadable_not_vacuous_ok",
+          "line": 135,
+          "isDefault": false
+        },
+        {
+          "name": "test_empty_items_with_printed_totals_stays_unreadable",
+          "line": 143,
+          "isDefault": false
+        },
+        {
+          "name": "test_kdv_dahil_receipt_validates_ok",
+          "line": 179,
+          "isDefault": false
+        },
+        {
+          "name": "test_kdv_dahil_ara_toplam_may_be_printed_net_of_the_tax",
+          "line": 192,
+          "isDefault": false
+        },
+        {
+          "name": "test_kdv_dahil_wrong_printed_toplam_still_mismatches",
+          "line": 198,
+          "isDefault": false
+        },
+        {
+          "name": "test_kdv_dahil_wrong_printed_kdv_still_mismatches",
+          "line": 209,
+          "isDefault": false
+        },
+        {
+          "name": "test_kdv_haric_receipt_keeps_the_exclusive_expected_block",
+          "line": 218,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "test_mixed_kdv_rate_receipt_validates_ok",
+          "callee": "validator.validate",
+          "lineNumber": 31
+        },
+        {
+          "caller": "test_mixed_kdv_rate_receipt_validates_ok",
+          "callee": "copy.deepcopy",
+          "lineNumber": 31
+        },
+        {
+          "caller": "test_mixed_kdv_rate_tampered_toplam_names_totals_toplam",
+          "callee": "copy.deepcopy",
+          "lineNumber": 37
+        },
+        {
+          "caller": "test_mixed_kdv_rate_tampered_toplam_names_totals_toplam",
+          "callee": "validator.validate",
+          "lineNumber": 39
+        },
+        {
+          "caller": "test_mixed_kdv_rate_tampered_line_total_names_the_item",
+          "callee": "copy.deepcopy",
+          "lineNumber": 45
+        },
+        {
+          "caller": "test_mixed_kdv_rate_tampered_line_total_names_the_item",
+          "callee": "validator.validate",
+          "lineNumber": 47
+        },
+        {
+          "caller": "test_currency_forms_tl_and_lira_sign",
+          "callee": "validator.validate",
+          "lineNumber": 64
+        },
+        {
+          "caller": "test_zero_quantity_line_adds_nothing",
+          "callee": "line_item",
+          "lineNumber": 76
+        },
+        {
+          "caller": "test_zero_quantity_line_adds_nothing",
+          "callee": "line_item",
+          "lineNumber": 76
+        },
+        {
+          "caller": "test_zero_quantity_line_adds_nothing",
+          "callee": "validator.validate",
+          "lineNumber": 79
+        },
+        {
+          "caller": "test_zero_quantity_with_nonzero_line_total_names_the_item",
+          "callee": "line_item",
+          "lineNumber": 84
+        },
+        {
+          "caller": "test_zero_quantity_with_nonzero_line_total_names_the_item",
+          "callee": "line_item",
+          "lineNumber": 84
+        },
+        {
+          "caller": "test_zero_quantity_with_nonzero_line_total_names_the_item",
+          "callee": "validator.validate",
+          "lineNumber": 87
+        },
+        {
+          "caller": "test_kg_line_three_decimal_product_rounds_to_kurus",
+          "callee": "validator.validate",
+          "lineNumber": 96
+        },
+        {
+          "caller": "test_negative_iskonto_reduces_the_base_by_its_magnitude",
+          "callee": "line_item",
+          "lineNumber": 104
+        },
+        {
+          "caller": "test_negative_iskonto_reduces_the_base_by_its_magnitude",
+          "callee": "validator.validate",
+          "lineNumber": 113
+        },
+        {
+          "caller": "test_missing_iskonto_defaults_to_zero",
+          "callee": "line_item",
+          "lineNumber": 121
+        },
+        {
+          "caller": "test_missing_iskonto_defaults_to_zero",
+          "callee": "validator.validate",
+          "lineNumber": 124
+        },
+        {
+          "caller": "test_missing_totals_block_is_mismatch_not_crash",
+          "callee": "validator.validate",
+          "lineNumber": 130
+        },
+        {
+          "caller": "test_missing_totals_block_is_mismatch_not_crash",
+          "callee": "line_item",
+          "lineNumber": 130
+        },
+        {
+          "caller": "test_empty_items_is_unreadable_not_vacuous_ok",
+          "callee": "validator.validate",
+          "lineNumber": 136
+        },
+        {
+          "caller": "test_empty_items_is_unreadable_not_vacuous_ok",
+          "callee": "validator.validate",
+          "lineNumber": 139
+        },
+        {
+          "caller": "test_empty_items_is_unreadable_not_vacuous_ok",
+          "callee": "json.dumps",
+          "lineNumber": 140
+        },
+        {
+          "caller": "test_empty_items_with_printed_totals_stays_unreadable",
+          "callee": "validator.validate",
+          "lineNumber": 148
+        },
+        {
+          "caller": "test_kdv_dahil_receipt_validates_ok",
+          "callee": "validator.validate",
+          "lineNumber": 180
+        },
+        {
+          "caller": "test_kdv_dahil_receipt_validates_ok",
+          "callee": "copy.deepcopy",
+          "lineNumber": 180
+        },
+        {
+          "caller": "test_kdv_dahil_ara_toplam_may_be_printed_net_of_the_tax",
+          "callee": "copy.deepcopy",
+          "lineNumber": 193
+        },
+        {
+          "caller": "test_kdv_dahil_ara_toplam_may_be_printed_net_of_the_tax",
+          "callee": "validator.validate",
+          "lineNumber": 195
+        },
+        {
+          "caller": "test_kdv_dahil_wrong_printed_toplam_still_mismatches",
+          "callee": "copy.deepcopy",
+          "lineNumber": 199
+        },
+        {
+          "caller": "test_kdv_dahil_wrong_printed_toplam_still_mismatches",
+          "callee": "validator.validate",
+          "lineNumber": 201
+        },
+        {
+          "caller": "test_kdv_dahil_wrong_printed_kdv_still_mismatches",
+          "callee": "copy.deepcopy",
+          "lineNumber": 210
+        },
+        {
+          "caller": "test_kdv_dahil_wrong_printed_kdv_still_mismatches",
+          "callee": "validator.validate",
+          "lineNumber": 212
+        },
+        {
+          "caller": "test_kdv_haric_receipt_keeps_the_exclusive_expected_block",
+          "callee": "line_item",
+          "lineNumber": 220
+        },
+        {
+          "caller": "test_kdv_haric_receipt_keeps_the_exclusive_expected_block",
+          "callee": "validator.validate",
+          "lineNumber": 223
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 18,
+        "functionCount": 18,
+        "classCount": 0
+      }
+    }
+  ]
+}

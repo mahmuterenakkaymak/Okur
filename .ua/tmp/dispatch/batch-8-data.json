@@ -1,0 +1,15 @@
+{
+ "batchImportData": {
+  "CONTRACT.md": [],
+  "HIZLI-BASLANGIC.md": [],
+  "OPERATIONS.md": [],
+  "PLAN.md": [],
+  "PROJECT_BRIEF.md": [],
+  "README.md": [],
+  "REVIEW.md": [],
+  "TASKS.md": [],
+  "package.json": [],
+  "pyproject.toml": []
+ },
+ "neighborMap": {}
+}

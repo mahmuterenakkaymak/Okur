@@ -1,0 +1,2018 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/config.py",
+      "type": "file",
+      "name": "config.py",
+      "summary": "Tüm ayarların tek merkezi: her ortam değişkenini tipli bir değere (str/int/float/Path) çevirir ve PLAN.md'deki güvenli varsayılanıyla döndürür; sırlar (ADMIN_TOKEN) boş olmayan varsayana sahip değildir.",
+      "tags": [
+        "yapılandırma",
+        "environment",
+        "utility",
+        "tek-merkez"
+      ],
+      "complexity": "moderate",
+      "filePath": "app/config.py",
+      "languageNotes": "os.environ'ı okuyan tek modül: her ayar küçük bir erişim fonksiyonu olarak tembel okunur, böylece testler monkeypatch ile ortamı değiştirdiğinde değer anında yeniden çözülür. Göreceli yollar proje köküne göre çözümlenir."
+    },
+    {
+      "id": "file:app/contract.py",
+      "type": "file",
+      "name": "contract.py",
+      "summary": "Contract v1'in Pydantic şekilleri: fiş sonucu (Result), doğrulama bloğu (Validation) ve iş zarfı (JobEnvelope). Her alan bir ev varsayılanıyla geldiği için kısmi model çıktısı da eksiksiz bir nesneye dönüşür.",
+      "tags": [
+        "data-model",
+        "schema-definition",
+        "contract",
+        "validasyon"
+      ],
+      "complexity": "moderate",
+      "filePath": "app/contract.py",
+      "languageNotes": "Annotated + BeforeValidator ile alan tipleri (Text/Amount/Rate) fişin bastığı biçimleri tek ortak parserdan (app.numbers) geçirir; _null_is_missing ile null, alan yok demek sayılır."
+    },
+    {
+      "id": "class:app/contract.py:_Model",
+      "type": "class",
+      "name": "_Model",
+      "summary": "Tüm contract modellerinin tabanı: null değerleri 'yok sayılır' süzgecinden geçirir ve kısmi veriden tam nesne üreten parse() sınıf metodunu sağlar.",
+      "tags": [
+        "data-model",
+        "base-class",
+        "pydantic"
+      ],
+      "complexity": "simple",
+      "filePath": "app/contract.py",
+      "lineRange": [
+        56,
+        72
+      ]
+    },
+    {
+      "id": "class:app/contract.py:Header",
+      "type": "class",
+      "name": "Header",
+      "summary": "Fiş başlığı: firma adı, vergi dairesi ve vergi numarası; vergi_no sayı olarak gelse de metne döner.",
+      "tags": [
+        "data-model",
+        "contract",
+        "seri-devresi"
+      ],
+      "complexity": "simple",
+      "filePath": "app/contract.py",
+      "lineRange": [
+        75,
+        78
+      ]
+    },
+    {
+      "id": "class:app/contract.py:ReceiptMeta",
+      "type": "class",
+      "name": "ReceiptMeta",
+      "summary": "Fişin üst bilgisi: tarih, saat, fiş no ve tip alanları.",
+      "tags": [
+        "data-model",
+        "contract",
+        "meta"
+      ],
+      "complexity": "simple",
+      "filePath": "app/contract.py",
+      "lineRange": [
+        81,
+        85
+      ]
+    },
+    {
+      "id": "class:app/contract.py:Item",
+      "type": "class",
+      "name": "Item",
+      "summary": "Tek kalem satırı: ad, miktar, birim fiyat ve satır toplamı; tutarlar fişin bastığı biçimden normalize edilir.",
+      "tags": [
+        "data-model",
+        "contract",
+        "para-birimi"
+      ],
+      "complexity": "simple",
+      "filePath": "app/contract.py",
+      "lineRange": [
+        88,
+        92
+      ]
+    },
+    {
+      "id": "class:app/contract.py:Totals",
+      "type": "class",
+      "name": "Totals",
+      "summary": "Fişin toplam bloğu: ara toplam, iskonto, KDV, KDV oranı ve genel toplam.",
+      "tags": [
+        "data-model",
+        "contract",
+        "para-birimi"
+      ],
+      "complexity": "simple",
+      "filePath": "app/contract.py",
+      "lineRange": [
+        95,
+        100
+      ]
+    },
+    {
+      "id": "class:app/contract.py:Result",
+      "type": "class",
+      "name": "Result",
+      "summary": "Aşama 2'nin ürettiği sözleşme sonucu: başlık, meta, kalemler, toplamlar, para birimi ve okunamayan listesi. Validator'ın girdisi ve iş kaydının result bloğu budur.",
+      "tags": [
+        "data-model",
+        "contract",
+        "dogrulama"
+      ],
+      "complexity": "moderate",
+      "filePath": "app/contract.py",
+      "lineRange": [
+        103,
+        109
+      ]
+    },
+    {
+      "id": "class:app/contract.py:TotalsBlock",
+      "type": "class",
+      "name": "TotalsBlock",
+      "summary": "Validator'ın kalemlerden yeniden hesapladığı dört tutar; beklenen ve gerçek taraflar aynı bloğu kullanır.",
+      "tags": [
+        "data-model",
+        "contract",
+        "dogrulama"
+      ],
+      "complexity": "simple",
+      "filePath": "app/contract.py",
+      "lineRange": [
+        112,
+        118
+      ]
+    },
+    {
+      "id": "class:app/contract.py:Validation",
+      "type": "class",
+      "name": "Validation",
+      "summary": "Doğrulama sonucu: verdict (ok/mismatch/unreadable), beklenen ve gerçek tutar blokları ile uyuşmayan alan adları. Verdict yoksa varsayılan unreadable'dır, asla ima edilen ok değildir.",
+      "tags": [
+        "data-model",
+        "contract",
+        "dogrulama"
+      ],
+      "complexity": "simple",
+      "filePath": "app/contract.py",
+      "lineRange": [
+        121,
+        126
+      ]
+    },
+    {
+      "id": "class:app/contract.py:JobMeta",
+      "type": "class",
+      "name": "JobMeta",
+      "summary": "İşin çalışma meta verisi: çalışan adı, çekim/alım zamanları, OCR ve toplam süreler, kullanılan model ve kalite modu.",
+      "tags": [
+        "data-model",
+        "contract",
+        "meta"
+      ],
+      "complexity": "simple",
+      "filePath": "app/contract.py",
+      "lineRange": [
+        129,
+        136
+      ]
+    },
+    {
+      "id": "class:app/contract.py:JobEnvelope",
+      "type": "class",
+      "name": "JobEnvelope",
+      "summary": "API'lerin dışa verdiği iş zarfı: job_id, durum, client_ref, sonuç, doğrulama ve meta. JSON Şema bu modelden üretilir.",
+      "tags": [
+        "data-model",
+        "contract",
+        "api-schema"
+      ],
+      "complexity": "simple",
+      "filePath": "app/contract.py",
+      "lineRange": [
+        139,
+        145
+      ]
+    },
+    {
+      "id": "function:app/contract.py:schema_text",
+      "type": "function",
+      "name": "schema_text",
+      "summary": "İş zarfını kök alan JSON Schema (draft 2020-12) metnini bayt-deterministik üretir; sort_keys sayesinde yeniden üretim aynı baytları verir.",
+      "tags": [
+        "schema-definition",
+        "serializasyon",
+        "contract"
+      ],
+      "complexity": "simple",
+      "filePath": "app/contract.py",
+      "lineRange": [
+        151,
+        159
+      ]
+    },
+    {
+      "id": "function:app/contract.py:_lowered",
+      "type": "function",
+      "name": "_lowered",
+      "summary": "Alan tipi dönüştürücü: durum ve verdict değerlerini küçük harfe indirir.",
+      "tags": [
+        "parser",
+        "donusum",
+        "contract"
+      ],
+      "complexity": "simple",
+      "filePath": "app/contract.py",
+      "lineRange": [
+        25,
+        26
+      ]
+    },
+    {
+      "id": "function:app/contract.py:_to_text",
+      "type": "function",
+      "name": "_to_text",
+      "summary": "Alan tipi dönüştürücü: None'ı boş metne, sayısal vergi no'yu metne çevirir.",
+      "tags": [
+        "parser",
+        "donusum",
+        "contract"
+      ],
+      "complexity": "simple",
+      "filePath": "app/contract.py",
+      "lineRange": [
+        29,
+        34
+      ]
+    },
+    {
+      "id": "function:app/contract.py:_to_amount",
+      "type": "function",
+      "name": "_to_amount",
+      "summary": "Alan tipi dönüştürücü: fişin bastığı tutarı (1.046,40 / 149,00-) float'a çevirir; okunamayansa 0.0.",
+      "tags": [
+        "parser",
+        "donusum",
+        "contract"
+      ],
+      "complexity": "simple",
+      "filePath": "app/contract.py",
+      "lineRange": [
+        37,
+        41
+      ]
+    },
+    {
+      "id": "function:app/contract.py:_to_rate",
+      "type": "function",
+      "name": "_to_rate",
+      "summary": "Alan tipi dönüştürücü: KDV oranını kesre çevirir (%20 -> 0.2); okunamayansa 0.0.",
+      "tags": [
+        "parser",
+        "donusum",
+        "contract"
+      ],
+      "complexity": "simple",
+      "filePath": "app/contract.py",
+      "lineRange": [
+        44,
+        46
+      ]
+    },
+    {
+      "id": "file:app/ocr_client.py",
+      "type": "file",
+      "name": "ocr_client.py",
+      "summary": "Aşama 1: görüntüyü llama-server'ın OpenAI uyumlu /v1/chat/completions ucunda PaddleOCR-VL'ye gönderir ve ham masa metnini süreyle birlikte döndürür.",
+      "tags": [
+        "api-client",
+        "ocr",
+        "stage-1",
+        "servis"
+      ],
+      "complexity": "simple",
+      "filePath": "app/ocr_client.py",
+      "languageNotes": "Dış sınırı tek bir httpx.Client; testler transport enjekte ederek model çıktılarını HTTP katmanında yeniden oynatır."
+    },
+    {
+      "id": "class:app/ocr_client.py:OcrError",
+      "type": "class",
+      "name": "OcrError",
+      "summary": "OCR sunucusu arızası: zaman aşımı, bağlantı hatası, 2xx dışı yanıt veya bozuk gövde. Aşama 1'i failed iş yapar.",
+      "tags": [
+        "exception",
+        "hata-yonetimi",
+        "ocr"
+      ],
+      "complexity": "simple",
+      "filePath": "app/ocr_client.py",
+      "lineRange": [
+        19,
+        20
+      ]
+    },
+    {
+      "id": "class:app/ocr_client.py:OcrClient",
+      "type": "class",
+      "name": "OcrClient",
+      "summary": "PaddleOCR-VL HTTP istemcisi: görüntüyü base64 data URL yapıp 'Table Recognition:' istemiyle gönderir, metni ve geçen süreyi döner.",
+      "tags": [
+        "api-client",
+        "ocr",
+        "stage-1",
+        "servis"
+      ],
+      "complexity": "moderate",
+      "filePath": "app/ocr_client.py",
+      "lineRange": [
+        23,
+        65
+      ]
+    },
+    {
+      "id": "file:app/pipeline.py",
+      "type": "file",
+      "name": "pipeline.py",
+      "summary": "Aşama 1 → 2 → 3 orkestrasyonu: bir görüntü girer, sözleşmeye uygun {result, validation, meta, error} demeti çıkar. Raporlanan her tutarı validator kalemlerden yeniden hesaplar; modelin kendi toplamları yalnızca 'gerçek' tarafı olur.",
+      "tags": [
+        "orchestration",
+        "pipeline",
+        "entry-point",
+        "dogrulama"
+      ],
+      "complexity": "moderate",
+      "filePath": "app/pipeline.py",
+      "languageNotes": "Kötü foto veya çökmüş model sunucusu için asla istisna fırlatmaz — her yol bir demet döner, böylece hiçbir iş görüşlerin beklediği nesnenin olduğu yerde boşluk taşımaz."
+    },
+    {
+      "id": "function:app/pipeline.py:run",
+      "type": "function",
+      "name": "run",
+      "summary": "Üç aşamayı tek görüntü üzerinde çalıştırır: OCR metnini yapılandırıcıya verir, çıkan sözlüğü contract.Result ile süzer, sonra validator ile demeti kurar. UnreadableError işi done+unreadable yapar; diğer aşama 2 arızaları failed.",
+      "tags": [
+        "orchestration",
+        "pipeline",
+        "hata-yonetimi"
+      ],
+      "complexity": "complex",
+      "filePath": "app/pipeline.py",
+      "lineRange": [
+        25,
+        71
+      ]
+    },
+    {
+      "id": "function:app/pipeline.py:_bundle",
+      "type": "function",
+      "name": "_bundle",
+      "summary": "Demeti kurar: sonucu (yoksa boş Result) validator'dan geçirir, JobMeta'ya model/süre/kalite modunu yazar ve hata satırını taşır.",
+      "tags": [
+        "factory",
+        "pipeline",
+        "dogrulama"
+      ],
+      "complexity": "moderate",
+      "filePath": "app/pipeline.py",
+      "lineRange": [
+        83,
+        104
+      ]
+    },
+    {
+      "id": "function:app/pipeline.py:_default_structurer",
+      "type": "function",
+      "name": "_default_structurer",
+      "summary": "Kalite moduna göre gerçek Structurer'ı tembel içe aktarımla kurar; enjekte edilen istemciler bu modüle bağımlı kalmaz.",
+      "tags": [
+        "factory",
+        "pipeline",
+        "lazy-import"
+      ],
+      "complexity": "simple",
+      "filePath": "app/pipeline.py",
+      "lineRange": [
+        74,
+        80
+      ]
+    },
+    {
+      "id": "function:app/pipeline.py:_reason",
+      "type": "function",
+      "name": "_reason",
+      "summary": "Modelin şikâyetini PWA ve yönetici panelinin taşıyabileceği tek satıra indirir (REASON_MAX_CHARS).",
+      "tags": [
+        "utility",
+        "metin",
+        "pipeline"
+      ],
+      "complexity": "simple",
+      "filePath": "app/pipeline.py",
+      "lineRange": [
+        107,
+        110
+      ]
+    },
+    {
+      "id": "function:app/pipeline.py:_ms",
+      "type": "function",
+      "name": "_ms",
+      "summary": "OCR'ın bildirdiği süreyi güvenli pozitif tam sayıya çevirir; bozuk değer 0 olur.",
+      "tags": [
+        "utility",
+        "donusum",
+        "pipeline"
+      ],
+      "complexity": "simple",
+      "filePath": "app/pipeline.py",
+      "lineRange": [
+        113,
+        117
+      ]
+    },
+    {
+      "id": "file:app/queue_worker.py",
+      "type": "file",
+      "name": "queue_worker.py",
+      "summary": "SQLite kuyruğunu tüketen tek iş parçacığı: queued → running → done/failed. Kuyruk jobs tablosunun kendisidir; crash sonrası recover() çalışan işleri ya kuyruğa geri koyar ya da bayat sayıp failed yapar.",
+      "tags": [
+        "worker",
+        "queue",
+        "concurrency",
+        "servis"
+      ],
+      "complexity": "complex",
+      "filePath": "app/queue_worker.py",
+      "languageNotes": "sqlite bağlantısı iş parçacıkları arasında paylaşılamadığı için bağlantı threading.local'de tutulur; runner tek dikiş yeri olduğundan testler pipeline yerine sahte çalıştırıcı enjekte eder."
+    },
+    {
+      "id": "function:app/queue_worker.py:recover",
+      "type": "function",
+      "name": "recover",
+      "summary": "Yeniden başlama temizliği: running işlerin sahibi artık yok. Yaşı az olanlar kuyruğa döner, stale_job_minutes'i aşanlar aynı çökmeye sonsuz kez girmesin diye failed işaretlenir.",
+      "tags": [
+        "hata-kurtarma",
+        "queue",
+        "restart"
+      ],
+      "complexity": "moderate",
+      "filePath": "app/queue_worker.py",
+      "lineRange": [
+        27,
+        53
+      ]
+    },
+    {
+      "id": "class:app/queue_worker.py:QueueWorker",
+      "type": "class",
+      "name": "QueueWorker",
+      "summary": "Kuyruğu boşaltan daemon iş parçacığı: start() önce recover() çalıştırır, run_once() en eski sıradaki işi kapıp işler, stop() uçtaki işi bitirir. Demette hata varsa iş failed; okunamayan fiş hatasız geldiği için done kalır.",
+      "tags": [
+        "worker",
+        "queue",
+        "concurrency"
+      ],
+      "complexity": "complex",
+      "filePath": "app/queue_worker.py",
+      "lineRange": [
+        61,
+        174
+      ]
+    },
+    {
+      "id": "function:app/queue_worker.py:_cutoff",
+      "type": "function",
+      "name": "_cutoff",
+      "summary": "stale kesim zamanını job zaman damgarının biçiminde (Z sonekli ISO) üretir.",
+      "tags": [
+        "utility",
+        "tarih",
+        "queue"
+      ],
+      "complexity": "simple",
+      "filePath": "app/queue_worker.py",
+      "lineRange": [
+        56,
+        58
+      ]
+    },
+    {
+      "id": "file:app/structurer.py",
+      "type": "file",
+      "name": "structurer.py",
+      "summary": "Aşama 2: OCR metni ve fiş görüntüsünü Strata'ya (:8080, kalite modunda Unsloth Studio :8888) gönderip contract v1 sonucu üretir. Burada hiçbir tutar hesaplanmaz; model fişin yazdığını aktarır, aritmetiği validator sahibi çıkar.",
+      "tags": [
+        "stage-2",
+        "api-client",
+        "llm",
+        "parser"
+      ],
+      "complexity": "complex",
+      "filePath": "app/structurer.py",
+      "languageNotes": "Reasoning modeli olan Strata'ya enable_thinking=False gönderilir: bayrak olmadan bütçenin tamamı reasoning_content'e gidiyor ve content=null döndüğü için her gerçek fiş okunamayan sayılıyordu (T68). Model geveziliği (think bloğu, ```json çiti, fazladan virgül) savunmacı JSON çıkarmayla temizlenir."
+    },
+    {
+      "id": "class:app/structurer.py:StructurerError",
+      "type": "class",
+      "name": "StructurerError",
+      "summary": "Yapılandırma sunucusu arızası: zaman aşımı, bağlantı hatası, 2xx dışı yanıt veya bozuk gövde.",
+      "tags": [
+        "exception",
+        "hata-yonetimi",
+        "stage-2"
+      ],
+      "complexity": "simple",
+      "filePath": "app/structurer.py",
+      "lineRange": [
+        54,
+        55
+      ]
+    },
+    {
+      "id": "class:app/structurer.py:UnreadableError",
+      "type": "class",
+      "name": "UnreadableError",
+      "summary": "Model çıktısı sözleşmeye uygun bir sonuç olamıyor: bu bir iş kararı (unreadable verdict), altyapı arızası değil.",
+      "tags": [
+        "exception",
+        "hata-yonetimi",
+        "verdict"
+      ],
+      "complexity": "simple",
+      "filePath": "app/structurer.py",
+      "lineRange": [
+        58,
+        59
+      ]
+    },
+    {
+      "id": "class:app/structurer.py:Structurer",
+      "type": "class",
+      "name": "Structurer",
+      "summary": "Aşama 2 istemcisi: kalite moduna göre sunucu/modeli seçer, OCR metniyle görüntüyü tek mesajda gönderir, çıkan JSON'u contract'tan geçirerek sonuç olup olmadığına karar verir.",
+      "tags": [
+        "api-client",
+        "stage-2",
+        "llm",
+        "routing"
+      ],
+      "complexity": "complex",
+      "filePath": "app/structurer.py",
+      "lineRange": [
+        62,
+        127
+      ]
+    },
+    {
+      "id": "function:app/structurer.py:extract_json",
+      "type": "function",
+      "name": "extract_json",
+      "summary": "Model yanıtının içindeki sözleşme nesnesini çıkarır: think/reasoning etiketlerini siler, ```json çitinin sondakini tercih eder, hiçbir nesne yoksa UnreadableError fırlatır.",
+      "tags": [
+        "parser",
+        "json",
+        "dayaniklilik"
+      ],
+      "complexity": "moderate",
+      "filePath": "app/structurer.py",
+      "lineRange": [
+        130,
+        139
+      ]
+    },
+    {
+      "id": "function:app/structurer.py:_first_object",
+      "type": "function",
+      "name": "_first_object",
+      "summary": "Gürültülü bir metindeki ilk çözülebilir JSON nesnesini bulur: her '{' kendi denemesini açar ve sondaki fazladan virgüller onarılarak ikinci bir tur denenir.",
+      "tags": [
+        "parser",
+        "json",
+        "onarma"
+      ],
+      "complexity": "moderate",
+      "filePath": "app/structurer.py",
+      "lineRange": [
+        142,
+        158
+      ]
+    },
+    {
+      "id": "file:scripts/fake_models.py",
+      "type": "file",
+      "name": "fake_models.py",
+      "summary": "İki model rolü için OpenAI uyumlu sahte sunucular: OCR rolü fixture ground truth'tan türetilmiş Paddle tarzı tablo metnini, yapılandırma rolü fixture JSON'unun kendisini gerçek soket üzerinden geri verir.",
+      "tags": [
+        "test-altyapisi",
+        "mock",
+        "http-server",
+        "demo"
+      ],
+      "complexity": "complex",
+      "filePath": "scripts/fake_models.py",
+      "languageNotes": "Uygulama kodu bu modülü asla içe aktarmaz; sadece smoke ve demo gerçek HTTP, gerçek kuyruk ve gerçek pipeline üzerinden koşsun diye vardır. Görüntü sha256 ile, metin de son OCR eşiyle eşleştirilir."
+    },
+    {
+      "id": "function:scripts/fake_models.py:render_ocr_text",
+      "type": "function",
+      "name": "render_ocr_text",
+      "summary": "Ground truth sonucunu PaddleOCR-VL'ın 'Table Recognition' çıktısına benzer metne çevirir (<fcel>/<nl> ayraçları, Türkçe tutar biçimi 1.046,40).",
+      "tags": [
+        "fixture",
+        "metin-uretimi",
+        "ocr"
+      ],
+      "complexity": "moderate",
+      "filePath": "scripts/fake_models.py",
+      "lineRange": [
+        51,
+        81
+      ]
+    },
+    {
+      "id": "class:scripts/fake_models.py:Fixture",
+      "type": "class",
+      "name": "Fixture",
+      "summary": "Tek fixture'ın üç yüzü: adı, ground truth sonucu, ondan türetilmiş OCR metni ve görüntüsünün sha256 özeti.",
+      "tags": [
+        "data-model",
+        "fixture",
+        "veri-yapisi"
+      ],
+      "complexity": "simple",
+      "filePath": "scripts/fake_models.py",
+      "lineRange": [
+        85,
+        89
+      ]
+    },
+    {
+      "id": "class:scripts/fake_models.py:FixtureBook",
+      "type": "class",
+      "name": "FixtureBook",
+      "summary": "Tüm fixture ground truth'larını hem görüntü baytlarına hem OCR metnine göre bulunur kılar; metin eşleşmezse OCR rolünün son servis ettiği fixture'a düşer.",
+      "tags": [
+        "fixture",
+        "arama",
+        "test-altyapisi"
+      ],
+      "complexity": "moderate",
+      "filePath": "scripts/fake_models.py",
+      "lineRange": [
+        92,
+        132
+      ]
+    },
+    {
+      "id": "function:scripts/fake_models.py:_completion",
+      "type": "function",
+      "name": "_completion",
+      "summary": "OpenAI chat.completion gövdesi biçiminde sabit bir yanıt kurar.",
+      "tags": [
+        "fixture",
+        "http",
+        "seri-devresi"
+      ],
+      "complexity": "simple",
+      "filePath": "scripts/fake_models.py",
+      "lineRange": [
+        135,
+        147
+      ]
+    },
+    {
+      "id": "function:scripts/fake_models.py:_last_message",
+      "type": "function",
+      "name": "_last_message",
+      "summary": "İstek gövdesindeki son mesajın (görüntü data URL, birleştirilmiş metin) ikilisini çıkarır; metin içerikli veya çok parçalı içeriklerin ikisini de idare eder.",
+      "tags": [
+        "parser",
+        "http",
+        "test-altyapisi"
+      ],
+      "complexity": "moderate",
+      "filePath": "scripts/fake_models.py",
+      "lineRange": [
+        150,
+        162
+      ]
+    },
+    {
+      "id": "class:scripts/fake_models.py:_Handler",
+      "type": "class",
+      "name": "_Handler",
+      "summary": "Sahte sunucunun HTTP tutucusu: /v1/chat/completions isteğinin rolüne bakıp OCR metni ya da fixture JSON'u döner, /v1/models ile yalnızca beklenen model kimliğini bildirir.",
+      "tags": [
+        "http-handler",
+        "mock",
+        "test-altyapisi"
+      ],
+      "complexity": "moderate",
+      "filePath": "scripts/fake_models.py",
+      "lineRange": [
+        177,
+        218
+      ]
+    },
+    {
+      "id": "class:scripts/fake_models.py:FakeModelServer",
+      "type": "class",
+      "name": "FakeModelServer",
+      "summary": "Tek rolü gerçek bir sokette (port 0 geçici port) ThreadingHTTPServer ile dinleyen sahte model sunucusu.",
+      "tags": [
+        "http-server",
+        "mock",
+        "test-altyapisi"
+      ],
+      "complexity": "moderate",
+      "filePath": "scripts/fake_models.py",
+      "lineRange": [
+        221,
+        243
+      ]
+    },
+    {
+      "id": "class:scripts/fake_models.py:FakeModels",
+      "type": "class",
+      "name": "FakeModels",
+      "summary": "OCR ve yapılandırma sahti çiftini birlikte açıp kapatmak için ince sarmalayıcı.",
+      "tags": [
+        "test-altyapisi",
+        "factory",
+        "mock"
+      ],
+      "complexity": "simple",
+      "filePath": "scripts/fake_models.py",
+      "lineRange": [
+        246,
+        253
+      ]
+    },
+    {
+      "id": "function:scripts/fake_models.py:start_fake_models",
+      "type": "function",
+      "name": "start_fake_models",
+      "summary": "Fixture kitabını yükleyip iki rolün sahte sunucusunu açar ve çift olarak döner.",
+      "tags": [
+        "factory",
+        "test-altyapisi",
+        "giris-noktasi"
+      ],
+      "complexity": "simple",
+      "filePath": "scripts/fake_models.py",
+      "lineRange": [
+        256,
+        261
+      ]
+    },
+    {
+      "id": "file:scripts/serve_demo.py",
+      "type": "file",
+      "name": "serve_demo.py",
+      "summary": "Demo sunucusu: gerçek uygulamayı (auth, SQLite kuyruğu, worker, pipeline, validator) sahte model çıkartılarıyla :8090'da kaldırır ve her fixture'ı farklı kuyruk durumu/verdict ile tohumlar; böylece kameraya ve model sunucusuna gerek kalmadan her ekran veri görür.",
+      "tags": [
+        "demo",
+        "entry-point",
+        "gelistirme",
+        "tohumlama"
+      ],
+      "complexity": "complex",
+      "filePath": "scripts/serve_demo.py",
+      "languageNotes": "--check modu geçici portta kaldırıp /app, /admin, /api/me/jobs yoklayıp 0 döner; bu sayede kapı, 8090'da bir demo zaten koşarken çalışabilir."
+    },
+    {
+      "id": "class:scripts/serve_demo.py:DemoError",
+      "type": "class",
+      "name": "DemoError",
+      "summary": "Ters giden ilk şey; mesajı raporun tamamıdır.",
+      "tags": [
+        "exception",
+        "hata-yonetimi",
+        "demo"
+      ],
+      "complexity": "simple",
+      "filePath": "scripts/serve_demo.py",
+      "lineRange": [
+        52,
+        53
+      ]
+    },
+    {
+      "id": "function:scripts/serve_demo.py:_result_for",
+      "type": "function",
+      "name": "_result_for",
+      "summary": "Fixture ground truth'unu contract.Result'a çevirir; fixtures_hard şekilleri sözleşmeye uymazsa boş Result döner (okunamayan yolunu göstermek için), bozuk tutarlı fixture'da toplam 5 TL kaydırılır.",
+      "tags": [
+        "fixture",
+        "tohumlama",
+        "demo"
+      ],
+      "complexity": "moderate",
+      "filePath": "scripts/serve_demo.py",
+      "lineRange": [
+        79,
+        89
+      ]
+    },
+    {
+      "id": "function:scripts/serve_demo.py:seed_jobs",
+      "type": "function",
+      "name": "seed_jobs",
+      "summary": "Her işlenmiş fixture için bir iş satırı açar: temizler done/ok, karıştırılmış olan uyuşmazlık panelini, zorlar unreadable, biri failed, ikisi kuyrukta/çalışan olarak canlı görünümleri besler.",
+      "tags": [
+        "tohumlama",
+        "demo",
+        "queue"
+      ],
+      "complexity": "moderate",
+      "filePath": "scripts/serve_demo.py",
+      "lineRange": [
+        99,
+        140
+      ]
+    },
+    {
+      "id": "class:scripts/serve_demo.py:DemoWorker",
+      "type": "class",
+      "name": "DemoWorker",
+      "summary": "Gerçek worker'ın demo hâli: tohumlanan canlı işleri sahiplenmez ve recover() onların durumunu bozduktan sonra geri geri yazar; 'Örnek fiş' yüklemeleri ise aynı kuyruktan geçmeye devam eder.",
+      "tags": [
+        "worker",
+        "demo",
+        "subclass"
+      ],
+      "complexity": "moderate",
+      "filePath": "scripts/serve_demo.py",
+      "lineRange": [
+        143,
+        174
+      ]
+    },
+    {
+      "id": "function:scripts/serve_demo.py:_model_runner",
+      "type": "function",
+      "name": "_model_runner",
+      "summary": "Gerçek pipeline'ı sahte sunuculara bakacak şekilde tek bir çalıştırıcıda birleştirir; kuyruk worker'ı ile yönetici kalite-yeniden-koşturma yolu bu tek çalıştırıcıyı paylaşır.",
+      "tags": [
+        "factory",
+        "pipeline",
+        "demo"
+      ],
+      "complexity": "moderate",
+      "filePath": "scripts/serve_demo.py",
+      "lineRange": [
+        177,
+        192
+      ]
+    },
+    {
+      "id": "function:scripts/serve_demo.py:_add_demo_routes",
+      "type": "function",
+      "name": "_add_demo_routes",
+      "summary": "PWA'nın demo el sıkışması için /demo/config.json ve /demo/samples/{name} rotalarını ekler; /v1 ve /api dışındadır çünkü PWA anahtarı almadan yapılandırmayı okumak zorundadır.",
+      "tags": [
+        "api-handler",
+        "demo",
+        "rota"
+      ],
+      "complexity": "moderate",
+      "filePath": "scripts/serve_demo.py",
+      "lineRange": [
+        202,
+        218
+      ]
+    },
+    {
+      "id": "function:scripts/serve_demo.py:_serve",
+      "type": "function",
+      "name": "_serve",
+      "summary": "Uygulamayı ayrı iş parçacığında uvicorn ile kaldırır ve 30 saniyelik bir bütçeyle hazır olmasını bekler.",
+      "tags": [
+        "server",
+        "uvicorn",
+        "demo"
+      ],
+      "complexity": "moderate",
+      "filePath": "scripts/serve_demo.py",
+      "lineRange": [
+        221,
+        231
+      ]
+    },
+    {
+      "id": "function:scripts/serve_demo.py:_boot",
+      "type": "function",
+      "name": "_boot",
+      "summary": "Her şeyi yukarı kaldırır: geçici veri dizini, tohumlanmış veritabanı ve anahtar, sahte sunucular, uygulama ve worker; sunucu/worker/modeller/api_key döndürür.",
+      "tags": [
+        "bootstrap",
+        "demo",
+        "giris-noktasi"
+      ],
+      "complexity": "moderate",
+      "filePath": "scripts/serve_demo.py",
+      "lineRange": [
+        239,
+        255
+      ]
+    },
+    {
+      "id": "function:scripts/serve_demo.py:_check",
+      "type": "function",
+      "name": "_check",
+      "summary": "Demo'nun ayağa kalktığını /app, /admin ve /api/me/jobs yoklayarak doğrular; tohumlanmış anahtar iş görmüyorsa hatalı sayar.",
+      "tags": [
+        "saglik-kontrolu",
+        "demo",
+        "dogrulama"
+      ],
+      "complexity": "moderate",
+      "filePath": "scripts/serve_demo.py",
+      "lineRange": [
+        258,
+        274
+      ]
+    },
+    {
+      "id": "function:scripts/serve_demo.py:main",
+      "type": "function",
+      "name": "main",
+      "summary": "Komut satırı girişi: --check yoklama modunu, yoksa inceleme modunu çalıştırır; geçici dizinde kaldırır, worker ve modelleri finally'da kapatır, sonuç kodunu döner.",
+      "tags": [
+        "cli",
+        "entry-point",
+        "demo"
+      ],
+      "complexity": "moderate",
+      "filePath": "scripts/serve_demo.py",
+      "lineRange": [
+        286,
+        332
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/config.py",
+      "target": "file:tests/test_config.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "class:app/contract.py:_Model",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "class:app/contract.py:Header",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "class:app/contract.py:Header",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "class:app/contract.py:ReceiptMeta",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "class:app/contract.py:ReceiptMeta",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "class:app/contract.py:Item",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "class:app/contract.py:Item",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "class:app/contract.py:Totals",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "class:app/contract.py:Totals",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "class:app/contract.py:Result",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "class:app/contract.py:Result",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "class:app/contract.py:TotalsBlock",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "class:app/contract.py:TotalsBlock",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "class:app/contract.py:Validation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "class:app/contract.py:Validation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "class:app/contract.py:JobMeta",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "class:app/contract.py:JobMeta",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "class:app/contract.py:JobEnvelope",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "class:app/contract.py:JobEnvelope",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:app/contract.py:Header",
+      "target": "class:app/contract.py:_Model",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:app/contract.py:ReceiptMeta",
+      "target": "class:app/contract.py:_Model",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:app/contract.py:Item",
+      "target": "class:app/contract.py:_Model",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:app/contract.py:Totals",
+      "target": "class:app/contract.py:_Model",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:app/contract.py:Result",
+      "target": "class:app/contract.py:_Model",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:app/contract.py:TotalsBlock",
+      "target": "class:app/contract.py:_Model",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:app/contract.py:Validation",
+      "target": "class:app/contract.py:_Model",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:app/contract.py:JobMeta",
+      "target": "class:app/contract.py:_Model",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:app/contract.py:JobEnvelope",
+      "target": "class:app/contract.py:_Model",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "function:app/contract.py:schema_text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "function:app/contract.py:schema_text",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "function:app/contract.py:_lowered",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "function:app/contract.py:_to_text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "function:app/contract.py:_to_amount",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "function:app/contract.py:_to_rate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "file:app/numbers.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/contract.py",
+      "target": "file:tests/test_contract.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:app/ocr_client.py",
+      "target": "class:app/ocr_client.py:OcrError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/ocr_client.py",
+      "target": "class:app/ocr_client.py:OcrError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/ocr_client.py",
+      "target": "class:app/ocr_client.py:OcrClient",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/ocr_client.py",
+      "target": "class:app/ocr_client.py:OcrClient",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/ocr_client.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/ocr_client.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/ocr_client.py",
+      "target": "file:tests/test_ocr_client.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:app/pipeline.py",
+      "target": "function:app/pipeline.py:run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/pipeline.py",
+      "target": "function:app/pipeline.py:run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/pipeline.py",
+      "target": "function:app/pipeline.py:_bundle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/pipeline.py",
+      "target": "function:app/pipeline.py:_default_structurer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/pipeline.py",
+      "target": "function:app/pipeline.py:_reason",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/pipeline.py",
+      "target": "function:app/pipeline.py:_ms",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:app/pipeline.py:_bundle",
+      "target": "function:app/validator.py:validate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/pipeline.py:run",
+      "target": "class:app/structurer.py:Structurer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/pipeline.py:run",
+      "target": "class:app/ocr_client.py:OcrClient",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/pipeline.py:_default_structurer",
+      "target": "class:app/structurer.py:Structurer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/pipeline.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/pipeline.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/pipeline.py",
+      "target": "file:app/contract.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/pipeline.py",
+      "target": "file:app/ocr_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/pipeline.py",
+      "target": "file:app/structurer.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/pipeline.py",
+      "target": "file:app/validator.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/pipeline.py",
+      "target": "file:tests/test_pipeline.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:app/pipeline.py",
+      "target": "file:tests/test_unreadable_survives.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:app/pipeline.py",
+      "target": "file:tests/test_integration_m1.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:app/queue_worker.py",
+      "target": "function:app/queue_worker.py:recover",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/queue_worker.py",
+      "target": "function:app/queue_worker.py:recover",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/queue_worker.py",
+      "target": "class:app/queue_worker.py:QueueWorker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/queue_worker.py",
+      "target": "class:app/queue_worker.py:QueueWorker",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/queue_worker.py:recover",
+      "target": "function:app/db.py:list_jobs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/queue_worker.py:recover",
+      "target": "function:app/db.py:set_status",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:app/queue_worker.py:QueueWorker",
+      "target": "function:app/pipeline.py:run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/queue_worker.py",
+      "target": "function:app/queue_worker.py:_cutoff",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/queue_worker.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/queue_worker.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/queue_worker.py",
+      "target": "file:app/db.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/queue_worker.py",
+      "target": "file:app/pipeline.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/queue_worker.py",
+      "target": "file:tests/test_unreadable_survives.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:app/structurer.py",
+      "target": "class:app/structurer.py:StructurerError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/structurer.py",
+      "target": "class:app/structurer.py:StructurerError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/structurer.py",
+      "target": "class:app/structurer.py:UnreadableError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/structurer.py",
+      "target": "class:app/structurer.py:UnreadableError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/structurer.py",
+      "target": "class:app/structurer.py:Structurer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/structurer.py",
+      "target": "class:app/structurer.py:Structurer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:app/structurer.py:UnreadableError",
+      "target": "class:app/structurer.py:StructurerError",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "file:app/structurer.py",
+      "target": "function:app/structurer.py:extract_json",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/structurer.py",
+      "target": "function:app/structurer.py:extract_json",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/structurer.py",
+      "target": "function:app/structurer.py:_first_object",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:app/structurer.py:Structurer",
+      "target": "function:app/structurer.py:extract_json",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/structurer.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/structurer.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/structurer.py",
+      "target": "file:app/contract.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/structurer.py",
+      "target": "file:tests/test_structurer.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:app/structurer.py",
+      "target": "file:tests/test_smoke_real_structurer.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "function:scripts/fake_models.py:render_ocr_text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "function:scripts/fake_models.py:render_ocr_text",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "class:scripts/fake_models.py:Fixture",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "class:scripts/fake_models.py:Fixture",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "class:scripts/fake_models.py:FixtureBook",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "class:scripts/fake_models.py:FixtureBook",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "function:scripts/fake_models.py:_completion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "function:scripts/fake_models.py:_last_message",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "class:scripts/fake_models.py:_Handler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "class:scripts/fake_models.py:FakeModelServer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "class:scripts/fake_models.py:FakeModelServer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "class:scripts/fake_models.py:FakeModels",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "class:scripts/fake_models.py:FakeModels",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "function:scripts/fake_models.py:start_fake_models",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "function:scripts/fake_models.py:start_fake_models",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:scripts/fake_models.py:FakeModelServer",
+      "target": "class:scripts/fake_models.py:_Handler",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "function:scripts/fake_models.py:start_fake_models",
+      "target": "class:scripts/fake_models.py:FixtureBook",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:scripts/fake_models.py:FixtureBook",
+      "target": "function:scripts/fake_models.py:render_ocr_text",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "file:tests/test_fake_models.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "class:scripts/serve_demo.py:DemoError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "class:scripts/serve_demo.py:DemoError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "function:scripts/serve_demo.py:_result_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "function:scripts/serve_demo.py:seed_jobs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "function:scripts/serve_demo.py:seed_jobs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "class:scripts/serve_demo.py:DemoWorker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "class:scripts/serve_demo.py:DemoWorker",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "function:scripts/serve_demo.py:_model_runner",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "function:scripts/serve_demo.py:_add_demo_routes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "function:scripts/serve_demo.py:_serve",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "function:scripts/serve_demo.py:_boot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "function:scripts/serve_demo.py:_check",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "function:scripts/serve_demo.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "function:scripts/serve_demo.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:scripts/serve_demo.py:DemoWorker",
+      "target": "class:app/queue_worker.py:QueueWorker",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "function:scripts/serve_demo.py:_model_runner",
+      "target": "function:app/pipeline.py:run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/serve_demo.py:_boot",
+      "target": "function:app/main.py:create_app",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/serve_demo.py:_boot",
+      "target": "function:app/auth.py:create_key",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/serve_demo.py:_boot",
+      "target": "function:scripts/serve_demo.py:seed_jobs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/serve_demo.py:_boot",
+      "target": "function:scripts/fake_models.py:start_fake_models",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/serve_demo.py:main",
+      "target": "function:scripts/serve_demo.py:_boot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/serve_demo.py:main",
+      "target": "function:scripts/serve_demo.py:_check",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/serve_demo.py:main",
+      "target": "function:scripts/smoke_e2e.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "file:app/auth.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "file:app/contract.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "file:app/db.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "file:app/main.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "file:app/ocr_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "file:app/pipeline.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "file:app/queue_worker.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "file:app/structurer.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "file:app/validator.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "file:scripts/fake_models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "file:tests/test_serve_demo.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

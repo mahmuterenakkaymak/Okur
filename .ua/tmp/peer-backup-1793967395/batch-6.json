@@ -1,0 +1,235 @@
+{
+  "nodes": [
+    {
+      "id": "document:spike/CANLI_TEST_RAPORU.md",
+      "type": "document",
+      "name": "CANLI_TEST_RAPORU.md",
+      "filePath": "spike/CANLI_TEST_RAPORU.md",
+      "summary": "Canlı hat testinin (gerçek PaddleOCR-VL :8081 + Strata :8080) raporudur; 679 birim testinin kaçırdığı, akıl yürüten modelin tüm token'ı düşünceye harcayıp content=null döndürmesiyle oluşan 'unreadable' hatasının kök nedenini, kanıtını ve onaylı düzeltmesini (chat_template_kwargs.enable_thinking=false, max_tokens 2500) belgeler; T68 görevini kuyruğa alır.",
+      "tags": ["documentation", "test-raporu", "canlı-test", "debugging", "entegrasyon"],
+      "complexity": "moderate",
+      "languageNotes": "Türkçe teknik rapor; reasoning-model null-content hatasını bayrak-karşılaştırma tablosuyla prospektif kanıtlı biçimde belgeliyor ve tekrar komutlarını veriyor."
+    },
+    {
+      "id": "document:spike/REPORT.md",
+      "type": "document",
+      "name": "REPORT.md",
+      "filePath": "spike/REPORT.md",
+      "summary": "M0 model spike raporu: PaddleOCR-VL-1.6 ile Qwen3-VL-8B'yi Türkçe fiş/el yazısı OCR doğruluğu ve CPU hızı açısından karşılaştırır; sentetik ve gerçek örnek sonuçlarını sunarak PaddleOCR-VL'yi birincil, Qwen'i kalite modu yedek olarak seçer (ikisi de Apache-2.0, ticari kullanım uygun).",
+      "tags": ["documentation", "model-karşılaştırma", "benchmark", "ocr", "mimari-karar"],
+      "complexity": "moderate",
+      "languageNotes": "Karar odaklı spike raporu; metodoloji, sonuç tabloları ve dürüst sınırlamaları (sentetik≠gerçek, GPU birlikteliği test edilmedi) içerir."
+    },
+    {
+      "id": "file:spike/_restart_app.ps1",
+      "type": "file",
+      "name": "_restart_app.ps1",
+      "filePath": "spike/_restart_app.ps1",
+      "summary": "ocr-app yığınını arka planda (detached) yeniden başlatan PowerShell betiği: run.py'yi STARTUP_WAIT_S=240 ile gizli başlatır ve /health 200 dönene kadar 300 sn boyunca 5 sn aralıklarla yoklar, aksi halde exit 1 verir.",
+      "tags": ["script", "powershell", "restart", "sağlık-kontrolü", "çalıştırma"],
+      "complexity": "simple",
+      "languageNotes": "Start-Process ile detached başlatma + Invoke-WebRequest sağlık yoklaması; OCR modelinin CPU'ya yüklenmesi için geniş başlangıç beklemesi (240 sn)."
+    },
+    {
+      "id": "config:spike/bench_paddle.json",
+      "type": "config",
+      "name": "bench_paddle.json",
+      "filePath": "spike/bench_paddle.json",
+      "summary": "bench.py'nin PaddleOCR-VL ile ürettiği kolay fiş benchmark sonucu dizisi: her fixture için süre (sn), isabet/toplam alan sayısı, kaçırılanlar ve ham <fcel> tablo transkripsiyonunu taşır; 6 örnek, tüm alanlar doğru.",
+      "tags": ["benchmark", "sonuç-verisi", "ocr", "paddleocr", "test-verisi"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:spike/bench_qwen_natural.json",
+      "type": "config",
+      "name": "bench_qwen_natural.json",
+      "filePath": "spike/bench_qwen_natural.json",
+      "summary": "bench.py'nin Qwen3-VL'yi doğal (natural) istemle çalıştırıp ürettiği kolay fiş benchmark sonucu dizisi; süre/isabet/kaçırılan/ham metin alanlarını Paddle ile aynı şemada, düz metin transkripsiyonu olarak kaydeder.",
+      "tags": ["benchmark", "sonuç-verisi", "ocr", "qwen", "test-verisi"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:spike/hard_paddle.json",
+      "type": "config",
+      "name": "hard_paddle.json",
+      "filePath": "spike/hard_paddle.json",
+      "summary": "bench_hard.py'nin PaddleOCR-VL ile zor örneklerde (el yazısı listesi/notu, kötü çekilmiş fiş) ürettiği benchmark sonucu dizisi; kelime/sayı hatırlama isabeti ve ham transkripsiyonu içerir (3 örnek).",
+      "tags": ["benchmark", "sonuç-verisi", "ocr", "paddleocr", "zor-test"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:spike/hard_qwen.json",
+      "type": "config",
+      "name": "hard_qwen.json",
+      "filePath": "spike/hard_qwen.json",
+      "summary": "bench_hard.py'nin Qwen3-VL ile aynı zor örneklerde ürettiği benchmark sonucu dizisi; Paddle ile aynı şemada süre/isabet/ham transkripsiyon (3 örnek).",
+      "tags": ["benchmark", "sonuç-verisi", "ocr", "qwen", "zor-test"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:spike/last_out.txt",
+      "type": "document",
+      "name": "last_out.txt",
+      "filePath": "spike/last_out.txt",
+      "summary": "ask.py'nin son ham model yanıtını kaydettiği kısa çıktı: bir token-kullanım özeti ve temiz bir market fişinin <fcel> tablo düzenindeki OCR transkripsiyonu.",
+      "tags": ["çıktı", "ocr-transkripsiyon", "debug-aracı", "ham-veri", "test-verisi"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:spike/live_real.json",
+      "type": "config",
+      "name": "live_real.json",
+      "filePath": "spike/live_real.json",
+      "summary": "live_test.py'nin gerçek uçtan uca hattan (OCR → Strata yapılandırma → doğrulama) topladığı sonuç raporu: fixture başına job_id, durum ve sözleşme-v1 JSON (header/meta/items/totals) çıktısını 3 gerçek örnek için saklar.",
+      "tags": ["canlı-test", "sonuç-verisi", "pipeline", "sözleşme-v1", "doğrulama"],
+      "complexity": "complex",
+      "languageNotes": "Üç aşamalı hattın gerçek-model çıktısı; gercek_market_1 örneğinin KDV-dahil (%8, TOPLAM=ARATOP) yapısı sonraki validator bulgularına zemin oluşturur."
+    },
+    {
+      "id": "config:spike/real_paddle.json",
+      "type": "config",
+      "name": "real_paddle.json",
+      "filePath": "spike/real_paddle.json",
+      "summary": "bench_real.py'nin PaddleOCR-VL ile 3 gerçek fişte (market, BİM, el yazısı) ürettiği ham OCR çıktısı: örnek başına süre ve <fcel>/düz metin transkripsiyonu.",
+      "tags": ["benchmark", "gerçek-veri", "ocr", "paddleocr", "sonuç-verisi"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:spike/real_qwen.json",
+      "type": "config",
+      "name": "real_qwen.json",
+      "filePath": "spike/real_qwen.json",
+      "summary": "bench_real.py'nin Qwen3-VL ile aynı 3 gerçek fişte ürettiği ham OCR çıktısı: örnek başına süre ve Markdown tablo düzeminde transkripsiyon.",
+      "tags": ["benchmark", "gerçek-veri", "ocr", "qwen", "sonuç-verisi"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:spike/bench_paddle.json",
+      "target": "file:spike/bench.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:spike/bench_qwen_natural.json",
+      "target": "file:spike/bench.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:spike/hard_paddle.json",
+      "target": "file:spike/bench_hard.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:spike/hard_qwen.json",
+      "target": "file:spike/bench_hard.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:spike/real_paddle.json",
+      "target": "file:spike/bench_real.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:spike/real_qwen.json",
+      "target": "file:spike/bench_real.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:spike/live_real.json",
+      "target": "file:spike/live_test.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:spike/last_out.txt",
+      "target": "file:spike/ask.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:spike/_restart_app.ps1",
+      "target": "file:run.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:spike/REPORT.md",
+      "target": "config:spike/bench_paddle.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:spike/REPORT.md",
+      "target": "config:spike/bench_qwen_natural.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:spike/REPORT.md",
+      "target": "config:spike/hard_paddle.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:spike/REPORT.md",
+      "target": "config:spike/hard_qwen.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:spike/REPORT.md",
+      "target": "config:spike/real_paddle.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:spike/REPORT.md",
+      "target": "config:spike/real_qwen.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:spike/CANLI_TEST_RAPORU.md",
+      "target": "config:spike/live_real.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:spike/CANLI_TEST_RAPORU.md",
+      "target": "file:app/structurer.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:spike/CANLI_TEST_RAPORU.md",
+      "target": "file:run.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

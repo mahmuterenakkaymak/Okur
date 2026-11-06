@@ -1,0 +1,531 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/test_pwa_empty_states.py",
+      "type": "file",
+      "name": "test_pwa_empty_states.py",
+      "filePath": "tests/test_pwa_empty_states.py",
+      "summary": "Saha PWA'sının boş durumlarını denetler: kayıtlı fiş yokken elle çizilmiş fiş çizimi ve geçmiş yüklenirken shimmer iskeleti gösterilir.",
+      "tags": [
+        "test",
+        "pwa",
+        "arayuz",
+        "bos-durum"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_pwa_empty_states.py:client",
+      "type": "function",
+      "name": "client",
+      "filePath": "tests/test_pwa_empty_states.py",
+      "lineRange": [
+        11,
+        13
+      ],
+      "summary": "Statik PWA varlıklarını okumak için uygulama fabrikasını TestClient ile saran minimal fikstür.",
+      "tags": [
+        "test-fixture",
+        "pwa",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_pwa_history.py",
+      "type": "file",
+      "name": "test_pwa_history.py",
+      "filePath": "tests/test_pwa_history.py",
+      "summary": "Geçmiş görünümünün sayfa bağlantısını ve yetki sınırını sınar: yalnızca çağıran anahtarın işleri erişilebilirdir, başkasının işi kendi listesinde görünmez.",
+      "tags": [
+        "test",
+        "pwa",
+        "yetki",
+        "arayuz"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_pwa_history.py:env",
+      "type": "function",
+      "name": "env",
+      "filePath": "tests/test_pwa_history.py",
+      "lineRange": [
+        25,
+        36
+      ],
+      "summary": "Iki ayrı çalışana ait anahtar ve TestClient hazırlar; geçmişin yalnızca çağıran anahtarın işlerini gösterdiğini sınamanın temeli.",
+      "tags": [
+        "test-fixture",
+        "test",
+        "yetki"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_pwa_history.py:submit",
+      "type": "function",
+      "name": "submit",
+      "filePath": "tests/test_pwa_history.py",
+      "lineRange": [
+        45,
+        51
+      ],
+      "summary": "Gerçek bir JPEG'i verilen anahtarla yükleyip job_id döndürür.",
+      "tags": [
+        "test-helper",
+        "yukleme",
+        "pwa"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_pwa_shell.py",
+      "type": "file",
+      "name": "test_pwa_shell.py",
+      "filePath": "tests/test_pwa_shell.py",
+      "summary": "PWA kabuğunun (index.html, manifest, service worker) sunulan varlıklarını ve birbirine bağlarını denetler.",
+      "tags": [
+        "test",
+        "pwa",
+        "arayuz",
+        "static-asset"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_pwa_shell.py:client",
+      "type": "function",
+      "name": "client",
+      "filePath": "tests/test_pwa_shell.py",
+      "lineRange": [
+        10,
+        12
+      ],
+      "summary": "PWA kabuğu varlıklarını çekmek için uygulamayı TestClient olarak hazırlar.",
+      "tags": [
+        "test-fixture",
+        "pwa",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_pwa_submit_flow.py",
+      "type": "file",
+      "name": "test_pwa_submit_flow.py",
+      "filePath": "tests/test_pwa_submit_flow.py",
+      "summary": "Sunulan gönderim sayfasının tüm modülleri ve DOM kancalarını gerçekten bağladığını doğrular: yüklenen app.js'in beklenen import'ları ve öğe kimlikleri içerir.",
+      "tags": [
+        "test",
+        "pwa",
+        "arayuz",
+        "wiring"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_pwa_submit_flow.py:client",
+      "type": "function",
+      "name": "client",
+      "filePath": "tests/test_pwa_submit_flow.py",
+      "lineRange": [
+        45,
+        47
+      ],
+      "summary": "Sunulan gönderim sayfası ve app.js içeriğini okumak için TestClient fikstürü.",
+      "tags": [
+        "test-fixture",
+        "pwa",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_queue_worker.py",
+      "type": "file",
+      "name": "test_queue_worker.py",
+      "filePath": "tests/test_queue_worker.py",
+      "summary": "Kuyruk worker'ının durum makinesi testleri: satır kapma, done/failed geçişleri, çalışırken çöken runner'ın işi düşürüp worker'ı ayakta tutması, patlama hacminin emilmesi, stop'un devam eden işi beklemesi ve bayat işlerin kurtarılması.",
+      "tags": [
+        "test",
+        "kuyruk-worker",
+        "durum-makinesi",
+        "dayaniklilik"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_queue_worker.py:bundle",
+      "type": "function",
+      "name": "bundle",
+      "filePath": "tests/test_queue_worker.py",
+      "lineRange": [
+        15,
+        21
+      ],
+      "summary": "Worker'ın bir koşucudan alacağı sözleşme demetini (result/validation/meta/error) üreten sahte çıktı.",
+      "tags": [
+        "test-helper",
+        "test-double",
+        "kuyruk-worker"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_queue_worker.py:wait_until",
+      "type": "function",
+      "name": "wait_until",
+      "filePath": "tests/test_queue_worker.py",
+      "lineRange": [
+        33,
+        39
+      ],
+      "summary": "Koşul sağlanana kadar kısa aralıklarla yoklayan, 5 saniyelik zaman aşımı olan bekleme yardımcısı.",
+      "tags": [
+        "test-helper",
+        "eşzamanlilik",
+        "test"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_queue_worker.py:env",
+      "type": "function",
+      "name": "env",
+      "filePath": "tests/test_queue_worker.py",
+      "lineRange": [
+        43,
+        49
+      ],
+      "summary": "Görsel dosyası ve geçici veritabanıyla (path, conn, image_path) üçlüsünü hazırlar.",
+      "tags": [
+        "test-fixture",
+        "test",
+        "kuyruk-worker"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_queue_worker.py:running",
+      "type": "function",
+      "name": "running",
+      "filePath": "tests/test_queue_worker.py",
+      "lineRange": [
+        57,
+        62
+      ],
+      "summary": "Worker'ı başlatıp test gövdesini çalıştıran, çıkışta her hâlde stop eden context manager.",
+      "tags": [
+        "test-helper",
+        "yasam-dongusu",
+        "kuyruk-worker"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_queue_worker.py:test_runner_exception_fails_job_but_the_worker_survives",
+      "type": "function",
+      "name": "test_runner_exception_fails_job_but_the_worker_survives",
+      "filePath": "tests/test_queue_worker.py",
+      "lineRange": [
+        154,
+        171
+      ],
+      "summary": "Koşucunun fırlattığı hatanın işi failed yaptığına ama döngünün bir sonraki işe devam ettiğine bakar.",
+      "tags": [
+        "test",
+        "dayaniklilik",
+        "kuyruk-worker"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_queue_worker.py:test_burst_of_jobs_is_absorbed",
+      "type": "function",
+      "name": "test_burst_of_jobs_is_absorbed",
+      "filePath": "tests/test_queue_worker.py",
+      "lineRange": [
+        186,
+        205
+      ],
+      "summary": "Aynı anda kuyruğa giren çok sayıda işin düşmeden, tek tek işlenerek absorbe edildiğini doğrular.",
+      "tags": [
+        "test",
+        "kuyruk",
+        "eşzamanlilik"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_queue_worker.py:test_stop_waits_for_the_job_in_flight",
+      "type": "function",
+      "name": "test_stop_waits_for_the_job_in_flight",
+      "filePath": "tests/test_queue_worker.py",
+      "lineRange": [
+        222,
+        241
+      ],
+      "summary": "stop()'un devam eden işi yarıda kesmediğini ve iş bittikten sonra döndüğünü doğrular.",
+      "tags": [
+        "test",
+        "yasam-dongusu",
+        "kuyruk-worker"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/test_rate_limit.py",
+      "type": "file",
+      "name": "test_rate_limit.py",
+      "filePath": "tests/test_rate_limit.py",
+      "summary": "auth.authorize'ın token bucket davranışını sınar: kapasite bitince 429 ve Retry-After, sürenin yapılandırmaya göre dolması, 401'in token harcamaması.",
+      "tags": [
+        "test",
+        "rate-limit",
+        "security",
+        "unit-test"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_rate_limit.py:conn",
+      "type": "function",
+      "name": "conn",
+      "filePath": "tests/test_rate_limit.py",
+      "lineRange": [
+        7,
+        11
+      ],
+      "summary": "Bucket testlerinin ihtiyaç duyduğu anahtarları kaydetmek için geçici SQLite bağlantısı.",
+      "tags": [
+        "test-fixture",
+        "database",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_rate_limit.py:bucket",
+      "type": "function",
+      "name": "bucket",
+      "filePath": "tests/test_rate_limit.py",
+      "lineRange": [
+        15,
+        18
+      ],
+      "summary": "config'den okunan kapasite/yenileme yerine testin kendi sınırını veren token bucket sarmalayıcısı.",
+      "tags": [
+        "test-helper",
+        "rate-limit",
+        "yapilandirma"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/test_pwa_empty_states.py",
+      "target": "function:tests/test_pwa_empty_states.py:client",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_pwa_empty_states.py",
+      "target": "file:app/main.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_pwa_history.py",
+      "target": "function:tests/test_pwa_history.py:env",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_pwa_history.py",
+      "target": "function:tests/test_pwa_history.py:submit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_pwa_history.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_pwa_history.py",
+      "target": "file:app/auth.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_pwa_history.py",
+      "target": "file:app/db.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_pwa_history.py",
+      "target": "file:app/main.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_pwa_shell.py",
+      "target": "function:tests/test_pwa_shell.py:client",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_pwa_shell.py",
+      "target": "file:app/main.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_pwa_submit_flow.py",
+      "target": "function:tests/test_pwa_submit_flow.py:client",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_pwa_submit_flow.py",
+      "target": "file:app/main.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_queue_worker.py",
+      "target": "function:tests/test_queue_worker.py:bundle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_queue_worker.py",
+      "target": "function:tests/test_queue_worker.py:wait_until",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_queue_worker.py",
+      "target": "function:tests/test_queue_worker.py:env",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_queue_worker.py",
+      "target": "function:tests/test_queue_worker.py:running",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_queue_worker.py",
+      "target": "function:tests/test_queue_worker.py:test_runner_exception_fails_job_but_the_worker_survives",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_queue_worker.py",
+      "target": "function:tests/test_queue_worker.py:test_burst_of_jobs_is_absorbed",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_queue_worker.py",
+      "target": "function:tests/test_queue_worker.py:test_stop_waits_for_the_job_in_flight",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_queue_worker.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_queue_worker.py",
+      "target": "file:app/db.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_queue_worker.py",
+      "target": "file:app/queue_worker.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_rate_limit.py",
+      "target": "function:tests/test_rate_limit.py:conn",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_rate_limit.py",
+      "target": "function:tests/test_rate_limit.py:bucket",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_rate_limit.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_rate_limit.py",
+      "target": "file:app/auth.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_rate_limit.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_rate_limit.py",
+      "target": "file:app/db.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/queue_worker.py",
+      "target": "file:tests/test_queue_worker.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

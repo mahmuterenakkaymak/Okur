@@ -1,0 +1,908 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/test_corrections.py",
+      "type": "file",
+      "name": "test_corrections.py",
+      "filePath": "tests/test_corrections.py",
+      "summary": "Alan düzeyindeki düzeltmenin işi gerçekten yeniden yazdığını sınar: tek PATCH sonrası entegratörün GET /v1/jobs/{id}'i, yönetici detayı, çalışanın sonuç görünümü, iki liste ve üç dışa aktarım biçimi aynı hikâyeyi anlatır; doğrulama düzeltilen sayılar üzerinde tekrar koşar.",
+      "tags": [
+        "test",
+        "düzeltme",
+        "tutarlilik",
+        "entegrasyon"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_corrections.py:env",
+      "type": "function",
+      "name": "env",
+      "filePath": "tests/test_corrections.py",
+      "lineRange": [
+        49,
+        64
+      ],
+      "summary": "Demo tohumlu veritabanı, yönetici oturumu, çalışan anahtarı ve TestClient'ı birlikte hazırlar; beş yüzeyin de aynı işi görmesi bu fikstüre dayanır.",
+      "tags": [
+        "test-fixture",
+        "test",
+        "düzeltme"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_corrections.py:duzeltme_kayitlari",
+      "type": "function",
+      "name": "duzeltme_kayitlari",
+      "filePath": "tests/test_corrections.py",
+      "lineRange": [
+        80,
+        86
+      ],
+      "summary": "corrections tablosundan bir işin düzeltme geçmişini sırayla okur.",
+      "tags": [
+        "test-helper",
+        "denetim",
+        "database"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_corrections.py:calisan_detay",
+      "type": "function",
+      "name": "calisan_detay",
+      "filePath": "tests/test_corrections.py",
+      "lineRange": [
+        104,
+        109
+      ],
+      "summary": "Çalışanın kendi API anahtarıyla /api/me iş detayını çeker; düzeltmenin çalışan yüzüne yansıdığını kanıtlar.",
+      "tags": [
+        "test-helper",
+        "pwa",
+        "api-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_corrections.py:calisan_satiri",
+      "type": "function",
+      "name": "calisan_satiri",
+      "filePath": "tests/test_corrections.py",
+      "lineRange": [
+        118,
+        123
+      ],
+      "summary": "Çalışanın liste görünümündeki tek iş satırını döndürür.",
+      "tags": [
+        "test-helper",
+        "pwa",
+        "liste"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_corrections.py:bes_yuzey",
+      "type": "function",
+      "name": "bes_yuzey",
+      "filePath": "tests/test_corrections.py",
+      "lineRange": [
+        126,
+        148
+      ],
+      "summary": "Aynı işin beş yüzeyini (entegratör GET, yönetici detay, çalışan detay, iki liste) tek çağrıda toplar; düzeltmenin her yere aynı hikâye olarak düştüğünün ölçüm noktası.",
+      "tags": [
+        "test-helper",
+        "tutarlilik",
+        "düzeltme"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_corrections.py:disa_aktarim_satiri",
+      "type": "function",
+      "name": "disa_aktarim_satiri",
+      "filePath": "tests/test_corrections.py",
+      "lineRange": [
+        151,
+        175
+      ],
+      "summary": "exports.row'un ürettiği, üç dışa aktarım biçiminin kaynağı olan sözleşme satırını doğrudan okur.",
+      "tags": [
+        "test-helper",
+        "disa-aktarim",
+        "contract"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_corrections.py:test_a_correction_touches_only_the_field_it_names",
+      "type": "function",
+      "name": "test_a_correction_touches_only_the_field_it_names",
+      "filePath": "tests/test_corrections.py",
+      "lineRange": [
+        225,
+        242
+      ],
+      "summary": "Bir alanın düzeltilmesinin diğer alanlara ve doğrulama dışındaki bloklara dokunmadığını satır satır doğrular.",
+      "tags": [
+        "test",
+        "düzeltme",
+        "tutarlilik"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_corrections.py:test_the_export_row_every_format_is_built_from_carries_the_correction",
+      "type": "function",
+      "name": "test_the_export_row_every_format_is_built_from_carries_the_correction",
+      "filePath": "tests/test_corrections.py",
+      "lineRange": [
+        258,
+        277
+      ],
+      "summary": "Düzeltilmiş işin JSON, CSV ve XLSX çıktılarında düzeltilmiş değerlerle yer aldığını her biçimin kendi okuyucusuyla kontrol eder.",
+      "tags": [
+        "test",
+        "disa-aktarim",
+        "düzeltme"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:tests/test_db.py",
+      "type": "file",
+      "name": "test_db.py",
+      "filePath": "tests/test_db.py",
+      "summary": "db katmanının birim testleri: WAL ve foreign_keys pragmaları, idempotent göçler, iş satırının kuyruk sözleşmesi, client_ref idempotency'si, durum geçişi damgaları ve yazılamaz kolonların reddi.",
+      "tags": [
+        "test",
+        "database",
+        "migration",
+        "unit-test"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_db.py:conn",
+      "type": "function",
+      "name": "conn",
+      "filePath": "tests/test_db.py",
+      "lineRange": [
+        29,
+        32
+      ],
+      "summary": "Göçleri çalıştırılmış, geçici dosyada bir SQLite bağlantısı açar; modülün tüm birim testleri bu bağlantı üzerinde koşar.",
+      "tags": [
+        "test-fixture",
+        "database",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_db.py:make_key",
+      "type": "function",
+      "name": "make_key",
+      "filePath": "tests/test_db.py",
+      "lineRange": [
+        35,
+        43
+      ],
+      "summary": "İş satırlarının FOREIGN KEY'i karşılaması için api_keys'e kayıtlı bir çalışan anahtarı üretir.",
+      "tags": [
+        "test-helper",
+        "api-key",
+        "database"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_db.py:test_set_status_carries_updates_in_one_call",
+      "type": "function",
+      "name": "test_set_status_carries_updates_in_one_call",
+      "filePath": "tests/test_db.py",
+      "lineRange": [
+        194,
+        211
+      ],
+      "summary": "set_status'un durumu ve ek kolonları tek çağrıda (tek işlemde) yazdığını, damgalarla birlikte doğrular.",
+      "tags": [
+        "test",
+        "durum-makinesi",
+        "database"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/test_exports.py",
+      "type": "file",
+      "name": "test_exports.py",
+      "filePath": "tests/test_exports.py",
+      "summary": "Dışa aktarımın üç biçimini (JSON/CSV/XLSX) kendi okuyucularıyla geri okuyarak sınar: sözleşmenin 8 sütunu, Türkçe karakterlerin korunması, düzeltilmiş ve okunamayan fişlerin ve quality modunun biçimlere yansıması.",
+      "tags": [
+        "test",
+        "disa-aktarim",
+        "csv",
+        "xlsx",
+        "entegrasyon"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_exports.py:env",
+      "type": "function",
+      "name": "env",
+      "filePath": "tests/test_exports.py",
+      "lineRange": [
+        37,
+        52
+      ],
+      "summary": "Demo tohumuyla (ok, mismatch, okunamayan, kuyruktaki işler) yönetici oturumlu TestClient hazırlar; dışa aktarım testlerinin corpus'u.",
+      "tags": [
+        "test-fixture",
+        "test",
+        "disa-aktarim"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_exports.py:csv_satirlari",
+      "type": "function",
+      "name": "csv_satirlari",
+      "filePath": "tests/test_exports.py",
+      "lineRange": [
+        70,
+        74
+      ],
+      "summary": "CSV çıktısını BOM iddiasıyla birlikte okuyup sözlük satırlarına çevirir ve başlığın exports.FIELDS ile aynı olduğunu doğrular.",
+      "tags": [
+        "test-helper",
+        "csv",
+        "dogrulama"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_exports.py:kimler",
+      "type": "function",
+      "name": "kimler",
+      "filePath": "tests/test_exports.py",
+      "lineRange": [
+        83,
+        89
+      ],
+      "summary": "Biçimden bağımsız olarak bir dışa aktarımın hangi işleri kapsadığını (job_id kümesi) döndürür; üç biçimin aynı seçimi verdiğini karşılaştırmayı kolaylaştırır.",
+      "tags": [
+        "test-helper",
+        "disa-aktarim",
+        "karsilastirma"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_exports.py:test_xlsx_writes_amounts_as_real_numbers_under_a_bold_header",
+      "type": "function",
+      "name": "test_xlsx_writes_amounts_as_real_numbers_under_a_bold_header",
+      "filePath": "tests/test_exports.py",
+      "lineRange": [
+        152,
+        171
+      ],
+      "summary": "XLSX'te tutarların metin değil gerçek sayı, başlığın ise kalın yazıldığını openpyxl ile okuyarak doğrular.",
+      "tags": [
+        "test",
+        "xlsx",
+        "disa-aktarim"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_exports.py:test_the_quality_mode_flag_reaches_all_three_formats",
+      "type": "function",
+      "name": "test_the_quality_mode_flag_reaches_all_three_formats",
+      "filePath": "tests/test_exports.py",
+      "lineRange": [
+        196,
+        214
+      ],
+      "summary": "quality modu işaretinin JSON, CSV ve XLSX satırlarının üçünde de göründüğünü kontrol eder.",
+      "tags": [
+        "test",
+        "disa-aktarim",
+        "quality-mode"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_exports.py:test_a_corrected_receipt_exports_corrected_in_every_format",
+      "type": "function",
+      "name": "test_a_corrected_receipt_exports_corrected_in_every_format",
+      "filePath": "tests/test_exports.py",
+      "lineRange": [
+        220,
+        251
+      ],
+      "summary": "Düzeltilmiş bir fişin üç biçimin hepsinde düzeltilmiş değerlerle dışa aktarıldığını uçtan uca doğrular.",
+      "tags": [
+        "test",
+        "disa-aktarim",
+        "düzeltme"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:tests/test_hardening.py",
+      "type": "file",
+      "name": "test_hardening.py",
+      "filePath": "tests/test_hardening.py",
+      "summary": "Gerçek uygulama üzerinden sertleştirme testleri: taşan ve chunked yüklemeler 413, çöp dosyalar 422, EXIF'siz/dik kaydedilen telefon fotoğrafı, her cevapta güvenlik başlıkları ve istek günlüğünün job_id taşıması — test edilen middleware sırası üretimle aynıdır.",
+      "tags": [
+        "test",
+        "security",
+        "middleware",
+        "günlükleme"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_hardening.py:env",
+      "type": "function",
+      "name": "env",
+      "filePath": "tests/test_hardening.py",
+      "lineRange": [
+        25,
+        35
+      ],
+      "summary": "Gerçek uygulama fabrikası, geçici DATA_DIR ve çalışan anahtarıyla TestClient hazırlar; middleware sırası üretimin kendi sırasıdır.",
+      "tags": [
+        "test-fixture",
+        "test",
+        "security"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_hardening.py:phone_photo",
+      "type": "function",
+      "name": "phone_photo",
+      "filePath": "tests/test_hardening.py",
+      "lineRange": [
+        53,
+        61
+      ],
+      "summary": "Gerçek dekodlanan, EXIF döndürme etiketi taşıyan telefon boyutunda JPEG üretir.",
+      "tags": [
+        "test-helper",
+        "gorsel",
+        "exif"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_hardening.py:submit",
+      "type": "function",
+      "name": "submit",
+      "filePath": "tests/test_hardening.py",
+      "lineRange": [
+        64,
+        69
+      ],
+      "summary": "Verilen görselle /v1/jobs yüklemesi yapar; yükleme sınırı ve içerik doğrulama testlerinin ortak girişi.",
+      "tags": [
+        "test-helper",
+        "yukleme",
+        "api-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_hardening.py:multipart",
+      "type": "function",
+      "name": "multipart",
+      "filePath": "tests/test_hardening.py",
+      "lineRange": [
+        72,
+        79
+      ],
+      "summary": "Content-Length'suz chunked multipart gövdesi üretir; 413 sınırının parçalı yüklemelerde de çalıştığını sınamak için.",
+      "tags": [
+        "test-helper",
+        "http",
+        "yukleme"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_hardening.py:test_a_crash_leaves_the_envelope_on_the_wire_and_the_trace_in_the_log",
+      "type": "function",
+      "name": "test_a_crash_leaves_the_envelope_on_the_wire_and_the_trace_in_the_log",
+      "filePath": "tests/test_hardening.py",
+      "lineRange": [
+        194,
+        211
+      ],
+      "summary": "Yakalanmayan bir hatanın cevaba sızmadığını, hata zarfının korunduğunu ve traceback'in yalnızca loga düştüğünü doğrular.",
+      "tags": [
+        "test",
+        "hata-yonetimi",
+        "günlükleme"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/test_keys_cli.py",
+      "type": "file",
+      "name": "test_keys_cli.py",
+      "filePath": "tests/test_keys_cli.py",
+      "summary": "keys_cli'nin add/list/revoke komutlarını capsys ile sınar: düz metnin yalnızca bir kez basılması, yalnızca hash'in saklanması, boş çalışan adının reddi, iptal edilmiş anahtarın derhal geçersiz olması ve argparse hatalarının çıkış kodu.",
+      "tags": [
+        "test",
+        "cli",
+        "api-key",
+        "unit-test"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_keys_cli.py:db_path",
+      "type": "function",
+      "name": "db_path",
+      "filePath": "tests/test_keys_cli.py",
+      "lineRange": [
+        15,
+        17
+      ],
+      "summary": "Ortam değişkenleriyle CLI'nin kullanacağı izole bir veritabanı yolu kurar.",
+      "tags": [
+        "test-fixture",
+        "cli",
+        "database"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_keys_cli.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "tests/test_keys_cli.py",
+      "lineRange": [
+        27,
+        28
+      ],
+      "summary": "keys_cli.main'i argv ile çağırıp çıkış kodunu döndürür; çıktının capsys ile okunması dışındaki tek giriş noktası.",
+      "tags": [
+        "test-helper",
+        "cli",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_main_app.py",
+      "type": "file",
+      "name": "test_main_app.py",
+      "filePath": "tests/test_main_app.py",
+      "summary": "Uygulama fabrikasının yüzey testleri: /health ve /docs'un herkese açık olması, OpenAPI'nin contract v1'i ve X-API-Key şemasını tanıması, /v1'in anahtarsız/tek başına/iptal edilmiş anahtarla 401 zarfı dönmesi ve hata zarfının biçimi.",
+      "tags": [
+        "test",
+        "fastapi",
+        "openapi",
+        "authentication"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_main_app.py:env",
+      "type": "function",
+      "name": "env",
+      "filePath": "tests/test_main_app.py",
+      "lineRange": [
+        10,
+        19
+      ],
+      "summary": "Geçici veritabanıyla create_app'i TestClient arkasına alır ve geçerli bir çalışan anahtarı üretir.",
+      "tags": [
+        "test-fixture",
+        "test",
+        "fastapi"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/test_corrections.py",
+      "target": "function:tests/test_corrections.py:env",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_corrections.py",
+      "target": "function:tests/test_corrections.py:duzeltme_kayitlari",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_corrections.py",
+      "target": "function:tests/test_corrections.py:calisan_detay",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_corrections.py",
+      "target": "function:tests/test_corrections.py:calisan_satiri",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_corrections.py",
+      "target": "function:tests/test_corrections.py:bes_yuzey",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_corrections.py",
+      "target": "function:tests/test_corrections.py:disa_aktarim_satiri",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_corrections.py",
+      "target": "function:tests/test_corrections.py:test_a_correction_touches_only_the_field_it_names",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_corrections.py",
+      "target": "function:tests/test_corrections.py:test_the_export_row_every_format_is_built_from_carries_the_correction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_corrections.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_corrections.py",
+      "target": "file:app/auth.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_corrections.py",
+      "target": "file:app/contract.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_corrections.py",
+      "target": "file:app/db.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_corrections.py",
+      "target": "file:app/main.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_corrections.py",
+      "target": "file:scripts/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_corrections.py",
+      "target": "file:scripts/serve_demo.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_db.py",
+      "target": "function:tests/test_db.py:conn",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_db.py",
+      "target": "function:tests/test_db.py:make_key",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_db.py",
+      "target": "function:tests/test_db.py:test_set_status_carries_updates_in_one_call",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_db.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_db.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_db.py",
+      "target": "file:app/db.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_exports.py",
+      "target": "function:tests/test_exports.py:env",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_exports.py",
+      "target": "function:tests/test_exports.py:csv_satirlari",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_exports.py",
+      "target": "function:tests/test_exports.py:kimler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_exports.py",
+      "target": "function:tests/test_exports.py:test_xlsx_writes_amounts_as_real_numbers_under_a_bold_header",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_exports.py",
+      "target": "function:tests/test_exports.py:test_the_quality_mode_flag_reaches_all_three_formats",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_exports.py",
+      "target": "function:tests/test_exports.py:test_a_corrected_receipt_exports_corrected_in_every_format",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_exports.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_exports.py",
+      "target": "file:app/auth.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_exports.py",
+      "target": "file:app/contract.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_exports.py",
+      "target": "file:app/db.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_exports.py",
+      "target": "file:app/exports.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_exports.py",
+      "target": "file:app/main.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_exports.py",
+      "target": "file:scripts/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_exports.py",
+      "target": "file:scripts/serve_demo.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_hardening.py",
+      "target": "function:tests/test_hardening.py:env",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_hardening.py",
+      "target": "function:tests/test_hardening.py:phone_photo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_hardening.py",
+      "target": "function:tests/test_hardening.py:submit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_hardening.py",
+      "target": "function:tests/test_hardening.py:multipart",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_hardening.py",
+      "target": "function:tests/test_hardening.py:test_a_crash_leaves_the_envelope_on_the_wire_and_the_trace_in_the_log",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_hardening.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_hardening.py",
+      "target": "file:app/auth.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_hardening.py",
+      "target": "file:app/db.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_hardening.py",
+      "target": "file:app/main.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_keys_cli.py",
+      "target": "function:tests/test_keys_cli.py:db_path",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_keys_cli.py",
+      "target": "function:tests/test_keys_cli.py:run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_keys_cli.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_keys_cli.py",
+      "target": "file:app/auth.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_keys_cli.py",
+      "target": "file:app/db.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_keys_cli.py",
+      "target": "file:app/keys_cli.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_main_app.py",
+      "target": "function:tests/test_main_app.py:env",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_main_app.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_main_app.py",
+      "target": "file:app/auth.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_main_app.py",
+      "target": "file:app/db.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_main_app.py",
+      "target": "file:app/main.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/exports.py",
+      "target": "file:tests/test_exports.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

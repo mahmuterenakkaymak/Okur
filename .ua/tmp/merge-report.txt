@@ -1,0 +1,31 @@
+Found 9 batch files (7 logical batches, 2 multi-part):
+  batch-1.json: 31 nodes, 70 edges
+  batch-2-part-1.json: 24 nodes, 58 edges
+  batch-2-part-2.json: 27 nodes, 75 edges
+  batch-3-part-1.json: 47 nodes, 120 edges
+  batch-3-part-2.json: 23 nodes, 52 edges
+  batch-4.json: 42 nodes, 106 edges
+  batch-5.json: 10 nodes, 112 edges
+  batch-6.json: 11 nodes, 18 edges
+  batch-7.json: 28 nodes, 55 edges
+
+Input: 243 nodes, 666 edges
+
+Fixed (10 corrections):
+    10 × tested_by edges dropped (orphan endpoint or test↔test / prod↔prod pair)
+
+Could not fix (7 issues — needs agent review):
+  - Edge function:app/auth.py:create_key → function:app/db.py:_now (calls): dropped, missing target 'function:app/db.py:_now'
+  - Edge function:app/auth.py:_take_token → function:app/config.py:rate_capacity (calls): dropped, missing target 'function:app/config.py:rate_capacity'
+  - Edge function:app/auth.py:_take_token → function:app/config.py:rate_refill_per_s (calls): dropped, missing target 'function:app/config.py:rate_refill_per_s'
+  - Edge function:app/auth.py:admin_configured → function:app/config.py:admin_token (calls): dropped, missing target 'function:app/config.py:admin_token'
+  - Edge function:app/auth.py:admin_token_ok → function:app/config.py:admin_token (calls): dropped, missing target 'function:app/config.py:admin_token'
+  - Edge function:app/auth.py:start_session → function:app/config.py:admin_session_hours (calls): dropped, missing target 'function:app/config.py:admin_session_hours'
+  - Edge function:scripts/smoke_e2e.py:_check → function:app/config.py:strata_model (calls): dropped, missing target 'function:app/config.py:strata_model'
+
+Output: 243 nodes, 649 edges
+
+Imports edge recovery:
+  Recovered 0 `imports` edges from importMap (62 entries scanned)
+
+Written to C:\Users\PC\Documents\GitHub\ocr-app\.ua\intermediate\assembled-graph.json (265 KB)

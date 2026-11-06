@@ -1,0 +1,17 @@
+{
+  "projectRoot": "C:/Users/PC/Documents/GitHub/ocr-app",
+  "batchFiles": [
+    {"path": "app/status.py", "language": "python", "sizeLines": 69, "fileCategory": "code"},
+    {"path": "run.py", "language": "python", "sizeLines": 330, "fileCategory": "code"},
+    {"path": "tests/test_docs.py", "language": "python", "sizeLines": 244, "fileCategory": "code"},
+    {"path": "tests/test_launcher_rollcall.py", "language": "python", "sizeLines": 170, "fileCategory": "code"},
+    {"path": "tests/test_run_py.py", "language": "python", "sizeLines": 318, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "app/status.py": ["app/__init__.py", "app/config.py", "app/db.py"],
+    "run.py": ["app/__init__.py", "app/config.py", "app/queue_worker.py", "app/status.py"],
+    "tests/test_docs.py": ["app/__init__.py", "app/config.py", "run.py"],
+    "tests/test_launcher_rollcall.py": ["app/__init__.py", "app/config.py", "app/status.py", "run.py"],
+    "tests/test_run_py.py": ["app/__init__.py", "app/config.py", "run.py"]
+  }
+}

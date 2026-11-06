@@ -1,0 +1,224 @@
+{
+  "nodes": [
+    {
+      "id": "file:scripts/smoke_e2e.py",
+      "type": "file",
+      "name": "smoke_e2e.py",
+      "filePath": "scripts/smoke_e2e.py",
+      "summary": "Gerçek HTTP üzerinden uçtan uca smoke: uygulamayı (auth middleware, SQLite kuyruk, worker, pipeline, validator) ephemeral portta, sahte model stublarını kendi portlarında kaldırır, bir fixture PNG'sini gerçek soketle yükler, işi done'a kadar yoklar ve gördüğü her zarfı committed contract_v1.schema.json'a karşı doğrular. HTTP altında hiçbir şey mock'lanmadığı için kırık rota/kuyruk/aşama sıfır olmayan çıkışa yansır — run.py ve CI bunu kapı olarak kullanır.",
+      "tags": ["smoke-test", "e2e", "entry-point", "ci-cd"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:scripts/smoke_e2e.py:_App",
+      "type": "class",
+      "name": "_App",
+      "filePath": "scripts/smoke_e2e.py",
+      "lineRange": [52, 80],
+      "summary": "Gerçek FastAPI uygulamasını uvicorn ile ephemeral portta başlatıp temiz durduran sunucu sarmalayıcısı.",
+      "tags": ["smoke-test", "http-server", "bootstrap"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/smoke_e2e.py:_strata_env",
+      "type": "function",
+      "name": "_strata_env",
+      "filePath": "scripts/smoke_e2e.py",
+      "lineRange": [83, 93],
+      "summary": "Ortam değişkenlerini stub sunucu URL'lerine çevirir; böylece app ve worker gerçek istemcilerle sahte modellere bağlanır.",
+      "tags": ["smoke-test", "configuration", "environment"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/smoke_e2e.py:_start_worker",
+      "type": "function",
+      "name": "_start_worker",
+      "filePath": "scripts/smoke_e2e.py",
+      "lineRange": [96, 112],
+      "summary": "Gerçek QueueWorker'ı sahte modellere bakan OcrClient/Structurer runner'ıyla başlatır.",
+      "tags": ["smoke-test", "worker", "bootstrap"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/smoke_e2e.py:_submit",
+      "type": "function",
+      "name": "_submit",
+      "filePath": "scripts/smoke_e2e.py",
+      "lineRange": [127, 141],
+      "summary": "Fixture PNG'sini API anahtarıyla gerçek soket üzerinden /jobs'a yükler ve iş kimliğini döner.",
+      "tags": ["smoke-test", "http", "upload"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/smoke_e2e.py:_poll_to_done",
+      "type": "function",
+      "name": "_poll_to_done",
+      "filePath": "scripts/smoke_e2e.py",
+      "lineRange": [144, 164],
+      "summary": "İş done/failed olana kadar hem API'yi hem DB satırını yoklar; süre aşımında işçinin hata sebebiyle birlikte SmokeError fırlatır.",
+      "tags": ["smoke-test", "polling", "validation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/smoke_e2e.py:_check",
+      "type": "function",
+      "name": "_check",
+      "filePath": "scripts/smoke_e2e.py",
+      "lineRange": [176, 199],
+      "summary": "Dönen zarfı committed contract_v1 şemasına ve ground-truth tutarlara karşı doğrular; uyuşmazlık SmokeError üretir.",
+      "tags": ["smoke-test", "validation", "contract"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/smoke_e2e.py:_run",
+      "type": "function",
+      "name": "_run",
+      "filePath": "scripts/smoke_e2e.py",
+      "lineRange": [202, 232],
+      "summary": "Stublar + app + worker + yükleme + poll + şema kontrolünün tamamını geçici dizinde tek sıraya koyar; sonunda temiz kapatır.",
+      "tags": ["smoke-test", "orchestration", "bootstrap"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/smoke_e2e.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "scripts/smoke_e2e.py",
+      "lineRange": [235, 248],
+      "summary": "Geçici çalışma diziniyle koşuyu yürütür; SmokeError'ı sıfır olmayan çıkış koduna, başarıyı 0'a çevirir.",
+      "tags": ["entry-point", "cli", "smoke-test"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:spike/probe_stage2.py",
+      "type": "file",
+      "name": "probe_stage2.py",
+      "filePath": "spike/probe_stage2.py",
+      "summary": "Canlı OCR ve Strata sunucularına gerçek bir fişle (gercek_market_1.png) elle koşulan aşama 1+2 probu: model çıktısının ilk/son bölümünü ve extract_json sonucunu ham olarak yazdırır. Kalıcı test değil, teşhis aracıdır.",
+      "tags": ["spike", "probe", "manual-test", "debugging"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:spike/probe_thinking.py",
+      "type": "file",
+      "name": "probe_thinking.py",
+      "filePath": "spike/probe_thinking.py",
+      "summary": "Strata'da reasoning/thinking çıktısını kapatan istek gövdesi biçimini deneme-yanılmayla arayan ilk el probu; baz ve üç farklı thinking-flag varyantını deneyip content/reasoning yanıtını yazdırır.",
+      "tags": ["spike", "probe", "llm", "debugging"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:spike/probe_thinking.py:try_body",
+      "type": "function",
+      "name": "try_body",
+      "filePath": "spike/probe_thinking.py",
+      "lineRange": [7, 18],
+      "summary": "Verilen ek alanlarla Strata'ya deneme isteği atar ve dönen content ile reasoning_content bayrağını yazdırır.",
+      "tags": ["spike", "probe", "llm"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:spike/probe_thinking2.py",
+      "type": "file",
+      "name": "probe_thinking2.py",
+      "filePath": "spike/probe_thinking2.py",
+      "summary": "T68'deki reasoning-modeli null-content hatasını gerçek bir fiş görseli ve OCR metniyle yeniden üretir: thinking bayrağı varyantlarını ve max_tokens 1500/4000'i karşılaştırıp finish_reason, content uzunluğu ve reasoning uzunluğunu raporlar.",
+      "tags": ["spike", "probe", "llm", "debugging"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:spike/probe_thinking2.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "spike/probe_thinking2.py",
+      "lineRange": [12, 28],
+      "summary": "Aşama 2 promptunu gerçek fişle Strata'ya gönderir; finish_reason/content/reasoning'i özetler ve varsa extract_json sonucunu basar.",
+      "tags": ["spike", "probe", "llm"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:spike/probe_thinking3.py",
+      "type": "file",
+      "name": "probe_thinking3.py",
+      "filePath": "spike/probe_thinking3.py",
+      "summary": "Beş thinking-bayrağı varyantını kısa bir matematik sorusuyla kıyaslayan son prob; enable_thinking=False'un chat_template_kwargs içinde doğru anahtar olduğunu doğrular.",
+      "tags": ["spike", "probe", "llm", "debugging"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_config.py",
+      "type": "file",
+      "name": "test_config.py",
+      "filePath": "tests/test_config.py",
+      "summary": "app/config.py'nin ortam okuma sözleşmesini test eder: brief'teki varsayılanlar, boş/çöp değerlerin varsayılana düşmesi, veri dizisi ve model yolu çözümlemesi, sırların kodda sabitlenmemesi ve os.environ'a yalnız yardımcılar üzerinden erişilmesi.",
+      "tags": ["test", "configuration", "environment"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/test_contract.py",
+      "type": "file",
+      "name": "test_contract.py",
+      "filePath": "tests/test_contract.py",
+      "summary": "Contract v1 modellerinin davranışını test eder: boş/None girdide ev varsayılanları, Türkçe tutar biçimlerinin float'a dönüşümü, verdict doğrulama, zarfın dump/reparse kararlılığı ve quality_mode bayrağı.",
+      "tags": ["test", "data-model", "validation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/test_fake_models.py",
+      "type": "file",
+      "name": "test_fake_models.py",
+      "filePath": "tests/test_fake_models.py",
+      "summary": "Sahte model sunucularının HTTP sözleşmesini doğrular: OCR rolünün tablo metni, yapılandırma rolünün fixture JSON'u, OpenAI biçimi yanıtlar, hata durumları ve FixtureBook eşlemesi; ayrıca uygulama kodunun fake_models'ı asla import etmediğini bekçiler.",
+      "tags": ["test", "mock", "fixtures", "http"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {"source": "file:scripts/smoke_e2e.py", "target": "file:app/__init__.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:scripts/smoke_e2e.py", "target": "file:app/auth.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:scripts/smoke_e2e.py", "target": "file:app/config.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:scripts/smoke_e2e.py", "target": "file:app/contract.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:scripts/smoke_e2e.py", "target": "file:app/db.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:scripts/smoke_e2e.py", "target": "file:app/main.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:scripts/smoke_e2e.py", "target": "file:app/ocr_client.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:scripts/smoke_e2e.py", "target": "file:app/pipeline.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:scripts/smoke_e2e.py", "target": "file:app/queue_worker.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:scripts/smoke_e2e.py", "target": "file:app/structurer.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:scripts/smoke_e2e.py", "target": "file:scripts/fake_models.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:spike/probe_stage2.py", "target": "file:app/__init__.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:spike/probe_stage2.py", "target": "file:app/config.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:spike/probe_stage2.py", "target": "file:app/ocr_client.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:spike/probe_stage2.py", "target": "file:app/structurer.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:spike/probe_thinking.py", "target": "file:app/__init__.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:spike/probe_thinking.py", "target": "file:app/config.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:spike/probe_thinking2.py", "target": "file:app/__init__.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:spike/probe_thinking2.py", "target": "file:app/config.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:spike/probe_thinking2.py", "target": "file:app/structurer.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:spike/probe_thinking3.py", "target": "file:app/__init__.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:spike/probe_thinking3.py", "target": "file:app/config.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:tests/test_config.py", "target": "file:app/__init__.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:tests/test_config.py", "target": "file:app/config.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:tests/test_contract.py", "target": "file:app/__init__.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:tests/test_contract.py", "target": "file:app/contract.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:tests/test_fake_models.py", "target": "file:app/__init__.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:tests/test_fake_models.py", "target": "file:app/config.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:tests/test_fake_models.py", "target": "file:app/ocr_client.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:tests/test_fake_models.py", "target": "file:scripts/fake_models.py", "type": "imports", "direction": "forward", "weight": 0.7},
+
+    {"source": "file:scripts/smoke_e2e.py", "target": "class:scripts/smoke_e2e.py:_App", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/smoke_e2e.py", "target": "function:scripts/smoke_e2e.py:_strata_env", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/smoke_e2e.py", "target": "function:scripts/smoke_e2e.py:_start_worker", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/smoke_e2e.py", "target": "function:scripts/smoke_e2e.py:_submit", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/smoke_e2e.py", "target": "function:scripts/smoke_e2e.py:_poll_to_done", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/smoke_e2e.py", "target": "function:scripts/smoke_e2e.py:_check", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/smoke_e2e.py", "target": "function:scripts/smoke_e2e.py:_run", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/smoke_e2e.py", "target": "function:scripts/smoke_e2e.py:main", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:spike/probe_thinking.py", "target": "function:spike/probe_thinking.py:try_body", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:spike/probe_thinking2.py", "target": "function:spike/probe_thinking2.py:run", "type": "contains", "direction": "forward", "weight": 1.0},
+
+    {"source": "file:scripts/smoke_e2e.py", "target": "function:scripts/smoke_e2e.py:main", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:scripts/smoke_e2e.py", "target": "file:tests/test_smoke_e2e.py", "type": "tested_by", "direction": "forward", "weight": 0.5},
+    {"source": "file:scripts/smoke_e2e.py", "target": "file:tests/test_smoke_real_structurer.py", "type": "tested_by", "direction": "forward", "weight": 0.5}
+  ]
+}

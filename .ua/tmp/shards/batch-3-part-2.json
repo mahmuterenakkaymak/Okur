@@ -1,0 +1,780 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/js/api.test.js",
+      "type": "file",
+      "name": "api.test.js",
+      "filePath": "tests/js/api.test.js",
+      "summary": "api.js birim testleri (node:test): hata sınıflandırma, backoff dizisi, anahtar deposu ve submitJob'ın multipart alanları; sahte fetch/storage/saat ile pollJob'ın ilerleme temposu, 429 Retry-After ve tavan (ceilingMs) zaman aşımı senaryoları.",
+      "tags": [
+        "test",
+        "api",
+        "sahte-fetch",
+        "saat-benzetimi"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:tests/js/capture.test.js",
+      "type": "file",
+      "name": "capture.test.js",
+      "filePath": "tests/js/capture.test.js",
+      "summary": "capture.js testleri: getUserMedia başlatma/durdurma, izin reddi ve kamera bulunması hatalarında dosya girişine düşme, scaleToFit matematiği ve canvas JPEG kodlama çağrıları — createElement/listener düzeyinde minimal sahte DOM ile.",
+      "tags": [
+        "test",
+        "kamera",
+        "sahte-dom",
+        "medya-izni"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:tests/js/crop.test.js",
+      "type": "file",
+      "name": "crop.test.js",
+      "filePath": "tests/js/crop.test.js",
+      "summary": "crop.js testleri: geometri yardımcıları (clampScale/clampOffset/coverScale/cropRect), elle üretilmiş JPEG baytlarıyla EXIF orientation ayrıştırma, dönüşüm matrislerinin köşe noktası matematiği ve createCropper'ın yükle/döndür/uygula akışı.",
+      "tags": [
+        "test",
+        "kirpma",
+        "exif",
+        "geometri"
+      ],
+      "complexity": "complex",
+      "languageNotes": "jpegWithOrientation testi gerçek JPEG yapısını (APP1 + TIFF IFD) bayt bayt kurarak parser'ı endiian ve orientation değerleri boyunca doğruluyor."
+    },
+    {
+      "id": "file:tests/js/feedback.test.js",
+      "type": "file",
+      "name": "feedback.test.js",
+      "filePath": "tests/js/feedback.test.js",
+      "summary": "feedback.js testleri: WebAudio grafiğinin (gürültü tamponu → filtre → gain zarfı) kuruluşu, click'in ses + titreşim çağrıları, susturma durumunun localStorage'a yazılması; ikinci bölümde createCapture'ın deklanşör/susturma butonu bütünleşimi.",
+      "tags": [
+        "test",
+        "webaudio",
+        "sahte-dom",
+        "butunlesme"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:tests/js/flow.test.js",
+      "type": "file",
+      "name": "flow.test.js",
+      "filePath": "tests/js/flow.test.js",
+      "summary": "flow.js testleri: token emekliliği (eski akışın canli'si kapanır, üstüne çizemez), devral/kapat ile interval kurma-silme ve sızan tick olmaması — her interval'ı kaydeden sahte saat sayesinde.",
+      "tags": [
+        "test",
+        "akis-kontrolu",
+        "saat-benzetimi",
+        "yarism-durumu"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/js/recovery.test.js",
+      "type": "file",
+      "name": "recovery.test.js",
+      "filePath": "tests/js/recovery.test.js",
+      "summary": "recovery.js testleri: hata türü → kurtarma mesajı eşlemesi, withTimeout'un sahte zamanlayıcılarla 30 sn davranışı, offline/camera notları; ayrıca index.html ve app.js kaynak dosyalarını okuyarak her kurtarma kanca kimliğinin (getElementById) sayfada gerçekten var olduğunu doğrulayan statik bağlama kontrolü.",
+      "tags": [
+        "test",
+        "hata-kurtarma",
+        "zaman-asimi",
+        "statik-kontrol"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/js/stages.test.js",
+      "type": "file",
+      "name": "stages.test.js",
+      "filePath": "tests/js/stages.test.js",
+      "summary": "stages.js testleri: statusOf ile üretilmiş queued/running/done zarflarında adım etiketleri ve bitti/baktif sınıfları, ilerleme yolundaki dolgu genişliği ve tamamlanan işte zincirin kapalı kalması.",
+      "tags": [
+        "test",
+        "pipeline",
+        "sahte-dom",
+        "ilerleme-gostergesi"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/js/status.test.js",
+      "type": "file",
+      "name": "status.test.js",
+      "filePath": "tests/js/status.test.js",
+      "summary": "status.js saf model testleri: sunucu durumundan aşama eşlemesi, running'in OCR_BUDGET_MS sınırına göre OCR/structuring ayrımı, done/failed'de verdict görünümü ve durmuş canlı işlerde stale bayrağı.",
+      "tags": [
+        "test",
+        "durum-modeli",
+        "saf-fonksiyon",
+        "pipeline"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/js/upload_error.test.js",
+      "type": "file",
+      "name": "upload_error.test.js",
+      "filePath": "tests/js/upload_error.test.js",
+      "summary": "Yükleme hatası sözleşmesi testleri: 413/422'de sunucunun Türkçe mesajının (çok büyük görsel / geçerli görsel değil) işçinin telefonuna aynen ulaştığı, bu mesajların sınıflandırılıp retake gibi kurtarma eylemlerine eşlendiği ve app.js'te tekrar butonunun görsel reddinde gizlendiğine dair statik kaynak kontrolü.",
+      "tags": [
+        "test",
+        "hata-mesaji",
+        "api",
+        "statik-kontrol"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/js/verdict.test.js",
+      "type": "file",
+      "name": "verdict.test.js",
+      "filePath": "tests/js/verdict.test.js",
+      "summary": "verdict.js testleri: karar başına ikon/sınıf çizimi, ok'ta onay çizgisi sınıfı, unreadable'da yeniden çekim butonunun açılması ve çipin aria-describedby ile uyarı satırına bağlanması — tek çiplik sahte DOM üzerinde.",
+      "tags": [
+        "test",
+        "sonuc-cipi",
+        "erisilebilirlik",
+        "sahte-dom"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/js/api.test.js:makeStorage",
+      "type": "function",
+      "name": "makeStorage",
+      "filePath": "tests/js/api.test.js",
+      "lineRange": [
+        27,
+        47
+      ],
+      "summary": "getItem/setItem/removeItem ve isteğe bağlı hata fırlatma davranışlı Map tabanlı localStorage benzetimi.",
+      "tags": [
+        "test-fikstürü",
+        "localstorage",
+        "benzetim"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/js/api.test.js:harness",
+      "type": "function",
+      "name": "harness",
+      "filePath": "tests/js/api.test.js",
+      "lineRange": [
+        64,
+        93
+      ],
+      "summary": "Test tezgâhı: sahte fetch, storage, navigator.onLine ve elle ilerletilen saat/fonksiyonları api.js'e enjekte ederek ağ çağrılarını deterministik izole eder.",
+      "tags": [
+        "test-fikstürü",
+        "enjeksiyon",
+        "sahte-fetch"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/js/capture.test.js:makeEl",
+      "type": "function",
+      "name": "makeEl",
+      "filePath": "tests/js/capture.test.js",
+      "lineRange": [
+        8,
+        49
+      ],
+      "summary": "createElement/appendChild/öznitelik/listener ve kaydedici canvas getContext-toBlob ile sahte DOM elemanı üretir.",
+      "tags": [
+        "test-fikstürü",
+        "sahte-dom",
+        "canvas"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/js/capture.test.js:makeDoc",
+      "type": "function",
+      "name": "makeDoc",
+      "filePath": "tests/js/capture.test.js",
+      "lineRange": [
+        51,
+        79
+      ],
+      "summary": "createElement ve getElementById'yi basit bir kimlik haritasıyla karşılayan sahte document.",
+      "tags": [
+        "test-fikstürü",
+        "sahte-dom",
+        "dokuman"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/js/capture.test.js:makeDevices",
+      "type": "function",
+      "name": "makeDevices",
+      "filePath": "tests/js/capture.test.js",
+      "lineRange": [
+        86,
+        99
+      ],
+      "summary": "getUserMedia'yı ya sabit bir stream ile ya da verilen hatayı fırlatarak tamamlayan sahte mediaDevices.",
+      "tags": [
+        "test-fikstürü",
+        "kamera",
+        "benzetim"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/js/capture.test.js:harness",
+      "type": "function",
+      "name": "harness",
+      "filePath": "tests/js/capture.test.js",
+      "lineRange": [
+        113,
+        126
+      ],
+      "summary": "Sahte document, mediaDevices ve feedback'i createCapture'a bağlayıp bileşeni izole çalıştıran test tezgâhı.",
+      "tags": [
+        "test-fikstürü",
+        "enjeksiyon",
+        "kamera"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/js/crop.test.js:makeEl",
+      "type": "function",
+      "name": "makeEl",
+      "filePath": "tests/js/crop.test.js",
+      "lineRange": [
+        21,
+        75
+      ],
+      "summary": "Pointer olayları, setPointerCapture ve transform kaydeden 2D context ile crop canvas'ının ihtiyaç duyduğu zengin sahte DOM elemanı.",
+      "tags": [
+        "test-fikstürü",
+        "sahte-dom",
+        "canvas"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/js/crop.test.js:makeDoc",
+      "type": "function",
+      "name": "makeDoc",
+      "filePath": "tests/js/crop.test.js",
+      "lineRange": [
+        77,
+        91
+      ],
+      "summary": "Style enjeksiyonunu ve eleman oluşturmayı karşılayan sahte document.",
+      "tags": [
+        "test-fikstürü",
+        "sahte-dom",
+        "dokuman"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/js/crop.test.js:harness",
+      "type": "function",
+      "name": "harness",
+      "filePath": "tests/js/crop.test.js",
+      "lineRange": [
+        93,
+        107
+      ],
+      "summary": "Sahte document/IMG/BitmapEnvironment ayarlayıp createCropper'ı örnekleyen test tezgâhı.",
+      "tags": [
+        "test-fikstürü",
+        "enjeksiyon",
+        "kirpma"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/js/crop.test.js:jpegWithOrientation",
+      "type": "function",
+      "name": "jpegWithOrientation",
+      "filePath": "tests/js/crop.test.js",
+      "lineRange": [
+        111,
+        145
+      ],
+      "summary": "Verilen orientation değeri ve endian için geçerli bir JPEG APP1/Exif/TIFF bloğu baytları üretir; exifOrientation ayrıştırıcısını uçtan uca besler.",
+      "tags": [
+        "test-fikstürü",
+        "exif",
+        "binary"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/js/crop.test.js:loadedCropper",
+      "type": "function",
+      "name": "loadedCropper",
+      "filePath": "tests/js/crop.test.js",
+      "lineRange": [
+        284,
+        294
+      ],
+      "summary": "Sahte bitmap'leri stubBitmaps ile bağlayıp kırpıcıya görüntü yükleyerek 'ready' durumuna getiren yardımcı.",
+      "tags": [
+        "test-fikstürü",
+        "kirpma",
+        "benzetim"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/js/feedback.test.js:makeCtxClass",
+      "type": "function",
+      "name": "makeCtxClass",
+      "filePath": "tests/js/feedback.test.js",
+      "lineRange": [
+        9,
+        75
+      ],
+      "summary": "createBuffer/createBufferSource/createBiquadFilter/createGain ve start çağrılarını kaydeden, state'i ayarlanabilir sahte AudioContext sınıfı üretir.",
+      "tags": [
+        "test-fikstürü",
+        "webaudio",
+        "benzetim"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/js/feedback.test.js:makeEl",
+      "type": "function",
+      "name": "makeEl",
+      "filePath": "tests/js/feedback.test.js",
+      "lineRange": [
+        91,
+        132
+      ],
+      "summary": "Kamera çekimi bütünleşmesi testleri için listener tetikleme ve öznitelik kaydı yapabilen sahte DOM elemanı.",
+      "tags": [
+        "test-fikstürü",
+        "sahte-dom",
+        "kamera"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/js/feedback.test.js:makeDoc",
+      "type": "function",
+      "name": "makeDoc",
+      "filePath": "tests/js/feedback.test.js",
+      "lineRange": [
+        134,
+        148
+      ],
+      "summary": "createCapture'ın stil/enjeksiyon ihtiyaçlarını karşılayan sahte document.",
+      "tags": [
+        "test-fikstürü",
+        "sahte-dom",
+        "dokuman"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/js/feedback.test.js:captureHarness",
+      "type": "function",
+      "name": "captureHarness",
+      "filePath": "tests/js/feedback.test.js",
+      "lineRange": [
+        276,
+        298
+      ],
+      "summary": "createCapture'ı sahte DOM, mediaDevices ve AudioContext ile kurup deklanşör–susturma bütünleşimini test eden tezgâh.",
+      "tags": [
+        "test-fikstürü",
+        "enjeksiyon",
+        "butunlesme"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/js/flow.test.js:saat",
+      "type": "function",
+      "name": "saat",
+      "filePath": "tests/js/flow.test.js",
+      "lineRange": [
+        7,
+        31
+      ],
+      "summary": "Kurulan ve silinen her interval'ı kaydeden, elle tetiklenebilir sahte setInterval/clearInterval saatı; sızan tick'i testte görünür kılar.",
+      "tags": [
+        "test-fikstürü",
+        "saat-benzetimi",
+        "timer"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/js/flow.test.js:akisla",
+      "type": "function",
+      "name": "akisla",
+      "filePath": "tests/js/flow.test.js",
+      "lineRange": [
+        41,
+        51
+      ],
+      "summary": "Bir akışın token'ını kurulan saaat üzerinden okunur biçimde döndüren küçük yardımcı.",
+      "tags": [
+        "test-fikstürü",
+        "token",
+        "yardimci"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/js/recovery.test.js:fakeTimers",
+      "type": "function",
+      "name": "fakeTimers",
+      "filePath": "tests/js/recovery.test.js",
+      "lineRange": [
+        14,
+        29
+      ],
+      "summary": "setTimeout/clearTimeout'u kaydedip elle ilerletilebilir kılan sahte zamanlayıcı kutusu; withTimeout'un 30 sn sınırını deterministik test eder.",
+      "tags": [
+        "test-fikstürü",
+        "saat-benzetimi",
+        "zaman-asimi"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/js/stages.test.js:makeEl",
+      "type": "function",
+      "name": "makeEl",
+      "filePath": "tests/js/stages.test.js",
+      "lineRange": [
+        8,
+        30
+      ],
+      "summary": "class/sınıflar, metin ve öznitelik erişimine izin veren, dört listelik DOM için yeterli sahte eleman.",
+      "tags": [
+        "test-fikstürü",
+        "sahte-dom",
+        "listeleme"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/js/stages.test.js:makeDoc",
+      "type": "function",
+      "name": "makeDoc",
+      "filePath": "tests/js/stages.test.js",
+      "lineRange": [
+        32,
+        45
+      ],
+      "summary": "Stil enjeksiyonu ve createElement'i karşılayan sahte document.",
+      "tags": [
+        "test-fikstürü",
+        "sahte-dom",
+        "dokuman"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/js/verdict.test.js:makeEl",
+      "type": "function",
+      "name": "makeEl",
+      "filePath": "tests/js/verdict.test.js",
+      "lineRange": [
+        8,
+        61
+      ],
+      "summary": "innerHTML, sınıf listesi, öznitelik (aria dahil) ve listener tetikleme taklidi yapan sahte DOM elemanı; çip ve altındaki yuvayı test etmeye yeter.",
+      "tags": [
+        "test-fikstürü",
+        "sahte-dom",
+        "erisilebilirlik"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/js/verdict.test.js:harness",
+      "type": "function",
+      "name": "harness",
+      "filePath": "tests/js/verdict.test.js",
+      "lineRange": [
+        72,
+        85
+      ],
+      "summary": "Sahte document üzerinde createVerdict'i uyarı paragrafı yuvasıyla kuran test tezgâhı.",
+      "tags": [
+        "test-fikstürü",
+        "enjeksiyon",
+        "sonuc-cipi"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/js/api.test.js",
+      "target": "function:tests/js/api.test.js:makeStorage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/api.test.js",
+      "target": "function:tests/js/api.test.js:harness",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/capture.test.js",
+      "target": "function:tests/js/capture.test.js:makeEl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/capture.test.js",
+      "target": "function:tests/js/capture.test.js:makeDoc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/capture.test.js",
+      "target": "function:tests/js/capture.test.js:makeDevices",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/capture.test.js",
+      "target": "function:tests/js/capture.test.js:harness",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/crop.test.js",
+      "target": "function:tests/js/crop.test.js:makeEl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/crop.test.js",
+      "target": "function:tests/js/crop.test.js:makeDoc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/crop.test.js",
+      "target": "function:tests/js/crop.test.js:harness",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/crop.test.js",
+      "target": "function:tests/js/crop.test.js:jpegWithOrientation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/crop.test.js",
+      "target": "function:tests/js/crop.test.js:loadedCropper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/feedback.test.js",
+      "target": "function:tests/js/feedback.test.js:makeCtxClass",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/feedback.test.js",
+      "target": "function:tests/js/feedback.test.js:makeEl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/feedback.test.js",
+      "target": "function:tests/js/feedback.test.js:makeDoc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/feedback.test.js",
+      "target": "function:tests/js/feedback.test.js:captureHarness",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/flow.test.js",
+      "target": "function:tests/js/flow.test.js:saat",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/flow.test.js",
+      "target": "function:tests/js/flow.test.js:akisla",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/recovery.test.js",
+      "target": "function:tests/js/recovery.test.js:fakeTimers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/stages.test.js",
+      "target": "function:tests/js/stages.test.js:makeEl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/stages.test.js",
+      "target": "function:tests/js/stages.test.js:makeDoc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/verdict.test.js",
+      "target": "function:tests/js/verdict.test.js:makeEl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/verdict.test.js",
+      "target": "function:tests/js/verdict.test.js:harness",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/js/api.test.js",
+      "target": "file:static/app/api.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/js/capture.test.js",
+      "target": "file:static/app/capture.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/js/crop.test.js",
+      "target": "file:static/app/crop.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/js/feedback.test.js",
+      "target": "file:static/app/capture.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/js/feedback.test.js",
+      "target": "file:static/app/feedback.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/js/flow.test.js",
+      "target": "file:static/app/flow.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/js/recovery.test.js",
+      "target": "file:static/app/api.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/js/recovery.test.js",
+      "target": "file:static/app/recovery.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/js/stages.test.js",
+      "target": "file:static/app/stages.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/js/stages.test.js",
+      "target": "file:static/app/status.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/js/status.test.js",
+      "target": "file:static/app/status.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/js/upload_error.test.js",
+      "target": "file:static/app/api.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/js/upload_error.test.js",
+      "target": "file:static/app/recovery.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/js/verdict.test.js",
+      "target": "file:static/app/status.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/js/verdict.test.js",
+      "target": "file:static/app/verdict.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

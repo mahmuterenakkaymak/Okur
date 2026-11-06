@@ -132,6 +132,32 @@ numbers `0.0`, arrays `[]`, `para_birimi: "TRY"`, `quality_mode: false`,
     client_ref, received_at, thumbnail_url, verdict, toplam}], total int}`;
     detail returns the full envelope + `image_url`.
 
+**Run 2 additions (small brain — see the run-2 section at the end of this file):**
+
+11. **Stage-2 backend choice (`config` ⇄ `structurer` ⇄ `pipeline` ⇄ `status` ⇄
+    `run.py`):** `structurer_backend()` → `"small" | "strata"` (empty or unknown
+    → the default, which is `"strata"` until M8 and `"small"` after); the default
+    lives in `config.py` and is never hardcoded elsewhere. `stage2_model(quality_mode)`
+    → the model name that will actually run (`unsloth_model()` in quality mode,
+    `small_brain_model()` on small, `strata_model()` otherwise) — the one source of
+    `meta.model`. `small_brain_base_url()` default `http://127.0.0.1:8100`,
+    `small_brain_port()` default 8100, `structurer_include_image()` default `True`
+    (`0|false|no` → False), obeyed **only** by the small backend — Strata and quality
+    mode always send the image.
+12. **Small-brain install (installer ⇄ `config` ⇄ launcher ⇄ job errors):**
+    `%LOCALAPPDATA%\ocr-small-brain\` (env `OCR_SMALL_BRAIN_DIR`) holds
+    `llama/llama-server.exe`, `models/<gguf>` and `models/<mmproj>`;
+    `small_brain_ready()` is True only when all three files exist, and False is what
+    paints the launcher line red and turns a stage-2 connection error into
+    "small brain not installed → `scripts\install_small_brain.ps1`".
+    `scripts/small_brain_manifest.json` rows: `{id, url, mirror_url?, dest, sha256,
+    size_bytes}` — `dest` is always relative to the install dir, `sha256` is 64 hex
+    and mandatory, a missing `mirror_url` means "primary CDN only".
+13. **`stage_ms` (pipeline ⇄ `meta_json` ⇄ GET `/v1/jobs/{id}` ⇄ admin detail):**
+    `{ocr, structure, validate}` ints; a missing key or a non-numeric value reads as
+    `0`, and the admin detail shows `"—"` for a job that never ran. Additive only:
+    no contract 1/2/3 field changes shape or meaning.
+
 **Wholes (all parts that must follow when one changes):**
 - A correction (PATCH) must update: stored result, re-run validation, `GET
   /v1/jobs/{id}`, admin detail, PWA result view, all three export formats.
@@ -140,6 +166,22 @@ numbers `0.0`, arrays `[]`, `para_birimi: "TRY"`, `quality_mode: false`,
 - Key revoke must make further PWA calls 401 and the PWA must show the key-error state.
 - Any contract field change must touch: contract.py, exported schema, CONTRACT.md,
   admin detail renderer, exports columns, PWA result view — one task, all parts.
+- **Switching the stage-2 backend** touches, in one breath: `structurer`'s server
+  choice, `pipeline`'s `meta.model` (via `config.stage2_model`), the launcher's
+  roll-call line *and whether a dead Strata fails the start*, `status.py`'s stage-2
+  probe, the fake-model stub's reported model id, the env blocks of `smoke_e2e` /
+  `serve_demo`, every test that pins `config.strata_model()` or a three-service
+  roll-call (`tests/test_pipeline.py`, `test_captured_at_survives.py`,
+  `test_integration_m1.py`, `test_smoke_e2e.py`, `test_run_py.py`,
+  `test_launcher_rollcall.py`), and the README/OPERATIONS default line.
+- **`stage_ms`** touches: pipeline timings, `JobMeta` + regenerated
+  `contract_v1.schema.json` + CONTRACT.md, the `queue_worker` meta merge (T52's rule:
+  never drop a stored key), `serve_demo`'s seeded meta, and the admin detail line.
+- **The roll-call** touches: `run.py` `SERVICES`/`LABELS`/`roll_call()`/`stop()`
+  (spawn *and* stop, or a child is orphaned on 8100), `tests/test_run_py.py`,
+  `tests/test_launcher_rollcall.py`, and the README troubleshooting rows.
+- **The demo admin token** touches: `serve_demo` (which pins it), README and
+  HIZLI-BASLANGIC's "log in with the token in `.env`" line, and `.hybrid/visual.json`.
 
 ## Milestones
 
@@ -171,3 +213,168 @@ numbers `0.0`, arrays `[]`, `para_birimi: "TRY"`, `quality_mode: false`,
 - **D7 (M4):** launcher roll-call: each service gets a green ✓ line as it goes healthy
   (`OCR ✓  Strata ✓  Uygulama ✓`), then the admin UI opens itself; failures print the
   exact log path and the retry command.
+
+---
+
+# Run 2 — Small brain: the CPU structurer (Qwen3-VL-4B), M5–M8
+
+Brief: `PROJECT_BRIEF_SMALL_BRAIN.md`. Stage 2 stops depending on the 80B Strata
+box: extraction runs locally on **Qwen3-VL-4B-Instruct UD-IQ4_XS** behind a
+CPU-only llama.cpp `llama-server` on **127.0.0.1:8100** (`-ngl 0 -c 8192
+--image-min-tokens 1024 --image-max-tokens 1024 --temp 0`), ≈4 GB RAM, zero VRAM,
+30.6 s/receipt mean, 45 s budget. Bake-off (`spike/SMALL_BRAIN_BAKEOFF.md`): 5/6
+fixtures pass = parity with the 80B; the only failure (`fis_benzin_foto`) fails on
+the 80B too, so it stays a quality-mode escalation case.
+
+## Architecture changes (delta only)
+
+```
+run.py ─ starts ──> llama-server :8081  PaddleOCR-VL (stage 1)                unchanged
+   │      starts ─> llama-server :8100  Qwen3-VL-4B (stage 2, "small brain")   NEW: owned, health-checked, stopped on exit
+   └─────────────> uvicorn app  :8090
+                     └ pipeline stage 2 → Structurer(backend=config.structurer_backend())
+                          small  → http://127.0.0.1:8100    default from M8
+                          strata → http://127.0.0.1:8080    kept: STRUCTURER_BACKEND=strata (rollback = one env line)
+                          quality_mode → Unsloth :8888      unchanged, always sends the image
+```
+Nothing else moves. Prompt, defensive JSON extraction, `validator` arithmetic,
+`/v1` routes, the PWA and the exports are untouched; exactly one field is added
+(`meta.stage_ms`, additive). The app never spawns a model server — only `run.py`
+does, so tests and the demo stay process-free.
+
+## File layout additions
+
+```
+app/config.py        + structurer_backend() stage2_model(qm) small_brain_base_url/port/model
+                       structurer_include_image() small_brain_dir/server/model_file/mmproj_file
+                       small_brain_ready()
+app/structurer.py    + backend resolution in __init__ (quality mode wins), + include_image
+app/pipeline.py      meta.model ← config.stage2_model(...)  + stage_ms timings
+app/contract.py      JobMeta + stage_ms (regenerate contract/contract_v1.schema.json, CONTRACT.md)
+app/status.py        the stage-2 probe follows the resolved backend (contract-9 keys unchanged)
+run.py               4th tracked service + two red lines (not installed / port busy)
+scripts/install_small_brain.ps1     NEW installer: CDN retry → hf-mirror, SHA-256, -Check, -Force
+scripts/small_brain_manifest.json   NEW {id,url,mirror_url,dest,sha256,size_bytes}
+scripts/small_brain_gate.py         NEW brief §9 gates 1+3 (6 fixtures ±image), SKIP when not installed
+scripts/live_ocr_gate.py            NEW brief §9 gate 2 (3 real receipts vs recorded baseline)
+scripts/live_ocr_baseline.json      NEW recorded Strata baseline {file: {verdict, total_ms}}
+scripts/serve_demo.py               seeds stage_ms; pins ADMIN_TOKEN=demo for the visual review
+tests/test_small_brain_backend.py   integration: real app+queue+pipeline against a real-socket stub
+tests/test_small_brain_missing.py   the job's "not installed" reason, no traceback
+tests/test_launcher_small_brain.py  red lines: missing files, busy port
+tests/test_install_small_brain.py   manifest + script parse (no network)
+tests/test_stage_ms.py  test_small_brain_gate.py  test_live_ocr_gate.py
+```
+**No new dependency.** The installer is PowerShell plus the two model files it
+downloads; the gates use the httpx already installed. `pyproject.toml` stays a
+pytest-config-only file and the venv is unchanged this run.
+
+## Decisions (run 2)
+
+- **R1 — one resolver.** Only `config.structurer_backend()` and
+  `config.stage2_model(quality_mode)` know which brain runs. `structurer` picks the
+  server from it, `pipeline` names it in `meta.model` through it, `status` probes it,
+  `run.py` starts it. A backend branch anywhere else is a bug.
+- **R2 — quality mode is untouched.** `quality_mode=True` still means Unsloth :8888
+  with the image, whatever the backend. Escalation stays manual (Eren's call).
+- **R3 — `include_image` defaults ON.** Text-only at 4B matches parity on the
+  synthetic set (bake-off `vl4b_text` 5/6) but is untested against real OCR
+  failures; gate 3 produces that data, the cutover does not depend on it.
+- **R4 — the launcher owns the process, the app never does.** Contract 9 keeps its
+  key names, so the Durum page's stage-2 chip follows the configured brain instead
+  of showing a permanent red "Strata ✗" on a CPU-only box (brief §7 forbids an
+  admin-API schema change, so no new key is invented).
+- **R5 — a missing model is a red line, not a dead stack.** Missing files skip the
+  spawn, print `scripts\install_small_brain.ps1`, and the app still serves jobs,
+  which then fail with `small brain not installed — …` in the error column, the admin
+  detail and the phone's failure line. No traceback, no nonzero start (gate 4).
+- **R6 — port 8100 busy is named, not swallowed.** The launcher bind-probes before
+  spawning and prints the port and the retry command; the app keeps running (gate 5).
+- **R7 — installs go to `%LOCALAPPDATA%\ocr-small-brain`, never into the repo**
+  (models/ and vendor/ are gitignored; a 2.1 GB file in a working tree is a tax on
+  every clone). SHA-256 is verified before a file is moved into place, the primary
+  CDN is retried once and then `hf-mirror.com` is used — HF's Xet CDN stalled >30 s
+  on 2026-11-06, so the mirror ships on day one.
+- **R8 — cutover last, rollback cheap.** The default flips to `small` only in M8,
+  after both gates exist, and `STRUCTURER_BACKEND=strata` restores today's exact
+  path: byte-identical request body, same tests green (gate 6).
+- **R9 — model-file env names avoid the brief's `SMALL_BRAIN_MODEL`**, which is the
+  *served* id (echoed into `meta.model`): files use `OCR_SMALL_BRAIN_DIR`,
+  `SMALL_BRAIN_SERVER`, `SMALL_BRAIN_MODEL_FILE`, `SMALL_BRAIN_MMPROJ`.
+- **R10 — gates SKIP, they don't fail.** A clone without the 2.1 GB model prints SKIP
+  and exits 0, so both gates can sit in `.hybrid/checks.json`'s smoke list next to
+  the smokes that always run.
+- **R11 — real receipts live in `fixtures_real/`** (the brief calls the set
+  `spike/fixtures_real`); it is gitignored, so gate 2 is driven by the committed
+  baseline `scripts/live_ocr_baseline.json` and SKIPs on a clean clone.
+- **R12 — visual review is part of the work.** `.hybrid/visual.json`'s admin
+  selectors never matched the shipped HTML (`#token`, `#btn-login`, `tr.job-row`,
+  `#btn-sample`, `#nav-*`), so the admin flows have never really been screenshotted;
+  this run corrects them and pins a demo admin token so they run at all.
+
+## What users see (in scope, not only logic)
+
+- **Launcher console (ops — the run's headline UI):** four roll-call lines — `OCR`,
+  `Small brain`, `Strata` (only when `STRUCTURER_BACKEND=strata`), `Uygulama`. Red
+  copy is exact: `Small brain ✗ model dosyaları yok` + `kurma:
+  scripts\install_small_brain.ps1` + the directory it looked in, and
+  `Small brain ✗ port 8100 dolu` + what holds the port + `python run.py --stop`.
+- **Admin job detail (admin):** a Turkish "Aşama süreleri" line in the summary —
+  `Okuma 0,9 sn · Yapılandırma 30,6 sn · Doğrulama 1 ms`; values ≥1000 ms humanised
+  to seconds with a Turkish comma, `—` when there is nothing to show, and it must not
+  overflow a 360 px viewport (the summary already wraps on phones). The raw-JSON
+  panel keeps the raw integers.
+- **Admin Durum (ops):** the stage-2 chip names the brain that is configured.
+- **Worker PWA (field):** no layout change, two honesty fixes for the new latency —
+  a job that died because the brain is missing shows the installer sentence instead
+  of the generic "Birazdan tekrar dene", and `status.js` (tuned to the 80B's ~7 s
+  structuring) gets a queue-safe `STALE_AFTER_MS` — 60 s is now shorter than one busy
+  queue — plus a `Yapılandırılıyor` hint that says a long wait is normal on a CPU
+  box, so a healthy 35 s job is not sold as stuck.
+- **Integrators:** nothing; `/v1` is identical apart from the additive
+  `meta.stage_ms`.
+
+## Checks & visual review (updated this run)
+
+- `.hybrid/checks.json` keeps both suites and gains two smokes:
+  `scripts\small_brain_gate.py --if-installed` (from M8) and
+  `scripts\live_ocr_gate.py --if-installed` (from M8). Both SKIP + exit 0 without the
+  model, so brief §9 gates 1–3 become real commands instead of prose.
+- `.hybrid/visual.json`: stale selectors corrected (`#yonetici-anahtari`,
+  `#giris-dugme`, `#fis-tablo tbody tr[data-job]`, `#ornek-fis`,
+  `button[data-bolum="…"]`) and pages kept/added: `worker-sonuc`, `worker-gecmis`,
+  `admin-liste`, `admin-duzeltme` (fill `#detay-toplam`, save), `admin-anahtarlar`
+  (create → plaintext-once dialog), `admin-durum`, and the new
+  `admin-asama-sureleri` (search a firm → open a done job → shot the timing line →
+  open the raw JSON).
+
+## Milestones (run 2) — brief §10 maps onto M5–M8
+
+- **M5 — backend plumbing (brief M1):** config keys, structurer backend selection,
+  `meta.model` from the resolved backend, real-socket integration, default stays
+  `strata`. (T70–T75)
+- **M6 — process & install (brief M2):** launcher owns :8100, health, no orphans,
+  not-installed and port-busy red lines, installer + manifest. (T76–T81)
+- **M7 — toggle + observability + docs (brief M3):** `include_image`, `stage_ms` end
+  to end, the admin timing line, Durum truth, README/OPERATIONS, demo token for the
+  visual review. (T82–T88)
+- **M8 — acceptance + cutover (brief M4):** both live gates, the default flip with
+  every dependent part, phone latency honesty, docs. (T89–T94)
+
+## Old decisions this run changes
+
+- Decision 4 and the header line "stage 2: Strata :8080" become **"stage 2: the
+  resolved backend — `small` (llama.cpp :8100) by default from M8, `strata` via
+  `STRUCTURER_BACKEND=strata`"**. `/v1` stays frozen; the only addition is
+  `meta.stage_ms`.
+- Decision 2's "zero GPU contention" generalises: the whole pipeline is CPU-only now,
+  so the 5090 is optional and the minimum-hardware story is a plain desktop.
+- **D7's three-line roll-call becomes four** (OCR, Small brain, [Strata], Uygulama);
+  a red Strata line stops failing the start when the backend is `small` — it is a
+  note, not an outage.
+- Contract 9's `strata` key now means "the configured stage-2 brain" (same key, same
+  shape); OPERATIONS says so out loud.
+- The new risk, stated so nobody relearns it: **the phone's timing assumptions were
+  tuned to a 6.5 s structurer** (`static/app/status.js` ASSUMPTION,
+  `STALE_AFTER_MS = 60000`). Gate data may show more; T92 recalibrates, and a
+  customer CPU slower than this dev box moves the same numbers again.

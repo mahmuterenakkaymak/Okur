@@ -1,0 +1,15 @@
+# aktif dislama - MERGEN (binary asset + test gurutu, mimari graf icin gerekli degil)
+tests/
+fixtures/
+fixtures_hard/
+data/
+static/
+.venv/
+.pytest_cache/
+__pycache__/
+*.png
+*.jpg
+*.pyc
+uv.lock
+.env
+.hybrid/

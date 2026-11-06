@@ -1,0 +1,1648 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/db.py",
+      "type": "file",
+      "name": "db.py",
+      "filePath": "app/db.py",
+      "summary": "SQLite (WAL) kalıcılık katmanı: api_keys, jobs, corrections ve events tablolarını kurar, PRAGMA user_version ile idempotent migration uygular ve kuyruk satırları için tek yazma kapısını (create_job / set_status / update_job) sunar. Tüm giriş noktaları connect() ile aynı veritabanını açar.",
+      "tags": [
+        "veritabani",
+        "sorgu-katmani",
+        "sqlite",
+        "kuyruk",
+        "migration"
+      ],
+      "complexity": "complex",
+      "languageNotes": "JSON kolonlar (result_json, validation_json, meta_json) dict/list olarak şeffafça serileştirilir; status yalnızca set_status üzerinden değiştiği için started_at/finished_at zaman damgaları hiçbir yerde unutulmaz."
+    },
+    {
+      "id": "function:app/db.py:connect",
+      "type": "function",
+      "name": "connect",
+      "filePath": "app/db.py",
+      "lineRange": [
+        109,
+        121
+      ],
+      "summary": "Veritabanını açar (varsayılan config.db_path()): üst dizinleri oluşturur, WAL ve foreign keys'i açar, migration'ları çalıştırır; :memory: için WAL atlanır.",
+      "tags": [
+        "veritabani",
+        "baglanti-kurulumu",
+        "factory"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/db.py:list_keys",
+      "type": "function",
+      "name": "list_keys",
+      "filePath": "app/db.py",
+      "lineRange": [
+        136,
+        145
+      ],
+      "summary": "Tüm API anahtarı satırlarını eskiden yeniye döndürür; key_hash hiç seçilmediği için bu fonksiyonun yanıtından sır sızması yapısal olarak imkânsızdır.",
+      "tags": [
+        "api-anahtari",
+        "guvenlik",
+        "sorgu"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/db.py:create_job",
+      "type": "function",
+      "name": "create_job",
+      "filePath": "app/db.py",
+      "lineRange": [
+        151,
+        174
+      ],
+      "summary": "Yeni bir 'queued' iş satırı ekler ve created_at damgasını; job_id dışarıdan verilerek baytlar diske yazılıp satırın zaten görüntüye işaret etmesi sağlanır (T67 yarışının kapanışı).",
+      "tags": [
+        "kuyruk",
+        "is-olusturma",
+        "insert"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/db.py:get_job",
+      "type": "function",
+      "name": "get_job",
+      "filePath": "app/db.py",
+      "lineRange": [
+        177,
+        179
+      ],
+      "summary": "Kimliği verilen tek kuyruk satırını sözlük olarak döndürür, yoksa None verir; v1, PWA ve admin okuma yollarının ortak tek satır kapısıdır.",
+      "tags": [
+        "sorgu",
+        "kuyruk",
+        "veri-erisimi"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/db.py:find_job_by_client_ref",
+      "type": "function",
+      "name": "find_job_by_client_ref",
+      "filePath": "app/db.py",
+      "lineRange": [
+        182,
+        192
+      ],
+      "summary": "UNIQUE(key_id, client_ref) üzerine kurulu idempotency arayışı: referans yoksa eşleşme de yoktur, aynı referans ikinci bir OCR koşunu kuyruğa sokmaz.",
+      "tags": [
+        "idempotency",
+        "sorgu",
+        "kuyruk"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/db.py:list_jobs",
+      "type": "function",
+      "name": "list_jobs",
+      "filePath": "app/db.py",
+      "lineRange": [
+        195,
+        223
+      ],
+      "summary": "Durum, çalışan, anahtar ve since filtrelerini parametreli SQL ile kuran liste sorgusu; created_at DESC sıralı ve limit=-1 ile sınırsız da okunabilir.",
+      "tags": [
+        "sorgu",
+        "filtreleme",
+        "sayfalama",
+        "kuyruk"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/db.py:queue_depth",
+      "type": "function",
+      "name": "queue_depth",
+      "filePath": "app/db.py",
+      "lineRange": [
+        226,
+        234
+      ],
+      "summary": "Durum başına açık kuyruk derinliğini döndürür; hiç satırı olmayan durum 0 olarak okunur, böylece durum sayfası boş kuyrukta da eksiksiz yanıt verir.",
+      "tags": [
+        "kuyruk",
+        "metrik",
+        "sorgu"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/db.py:update_job",
+      "type": "function",
+      "name": "update_job",
+      "filePath": "app/db.py",
+      "lineRange": [
+        237,
+        246
+      ],
+      "summary": "Değiştirilebilir iş kolonlarını günceller; status burada yazılamaz, yazılırsa _check_columns ValueError ile reddeder.",
+      "tags": [
+        "guncelleme",
+        "kuyruk",
+        "dogrulama"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/db.py:set_status",
+      "type": "function",
+      "name": "set_status",
+      "filePath": "app/db.py",
+      "lineRange": [
+        249,
+        270
+      ],
+      "summary": "queued→running→done/failed geçişini (yeniden koşu için done/failed→queued) zaman damgalarıyla tek transaction'da uygular: running started_at'ı yalnızca ilk seferde, done/failed finished_at'ı damgalar.",
+      "tags": [
+        "kuyruk",
+        "durum-gecisi",
+        "is-akisi"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/db.py:add_correction",
+      "type": "function",
+      "name": "add_correction",
+      "filePath": "app/db.py",
+      "lineRange": [
+        294,
+        313
+      ],
+      "summary": "Düzeltilen her alan için eski/yeni değer ve kimin yaptığını taşıyan tek denetim (audit) satırı yazar.",
+      "tags": [
+        "denetim",
+        "audit",
+        "insert"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/db.py:log_event",
+      "type": "function",
+      "name": "log_event",
+      "filePath": "app/db.py",
+      "lineRange": [
+        319,
+        326
+      ],
+      "summary": "events tablosuna tür, iş bağlantısı ve detayla tek kayıt düşer; makine tarafındaki olay günlüğünün tek yazma noktasıdır.",
+      "tags": [
+        "log",
+        "events",
+        "insert"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/exports.py",
+      "type": "file",
+      "name": "exports.py",
+      "filePath": "app/exports.py",
+      "summary": "İş kayıtlarını sözleşme 8'in tek düz satırından JSON, CSV ve XLSX olarak üreten dışa aktarım katmanı: bir düzeltme üç formata aynı anda yansır.",
+      "tags": [
+        "disa-aktarim",
+        "csv",
+        "xlsx",
+        "json",
+        "rapor"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "CSV UTF-8 BOM + CRLF ile yazılır (Excel'in Türkçe karakterleri doğru okumasının tek yolu); tutarlar baştan sona float taşınır, hiçbir format yeniden yuvarlamaz veya yeniden basmaz."
+    },
+    {
+      "id": "function:app/exports.py:select",
+      "type": "function",
+      "name": "select",
+      "filePath": "app/exports.py",
+      "lineRange": [
+        37,
+        53
+      ],
+      "summary": "Panelin işaretlediği id listesini ya da çalışan/since filtrelerini kapsayan kuyruk satırlarını yeniden eskiye döndürür; arkasında iş olmayan id dosyada yer almaz.",
+      "tags": [
+        "disa-aktarim",
+        "filtreleme",
+        "sorgu"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/exports.py:row",
+      "type": "function",
+      "name": "row",
+      "filePath": "app/exports.py",
+      "lineRange": [
+        56,
+        83
+      ],
+      "summary": "Kuyruk satırını sözleşme 8'in düz dışa aktarım satırına çevirir; verdict ok/mismatch değilse dört tutar hücresi muhasebenin toplayacağı 0,00 yerine boş kalır.",
+      "tags": [
+        "disa-aktarim",
+        "donusum",
+        "veri-modeli"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/exports.py:to_json",
+      "type": "function",
+      "name": "to_json",
+      "filePath": "app/exports.py",
+      "lineRange": [
+        86,
+        88
+      ],
+      "summary": "İşleri sözleşme v1 JobEnvelope listesi olarak döndürür; entegratör rapor değil fişin kendisini içe aldığı için tek format bu yolu kullanır.",
+      "tags": [
+        "disa-aktarim",
+        "json",
+        "sozlesme"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/exports.py:to_csv",
+      "type": "function",
+      "name": "to_csv",
+      "filePath": "app/exports.py",
+      "lineRange": [
+        91,
+        98
+      ],
+      "summary": "FIELDS başlıklarıyla UTF-8 BOM'lu CSV baytları üretir; başlıklar doğrudan sözleşme 8 kolon adları olduğu için kaydedilen dosya yeniden sözleşme olarak okunabilir.",
+      "tags": [
+        "disa-aktarim",
+        "csv",
+        "excel"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/exports.py:to_xlsx",
+      "type": "function",
+      "name": "to_xlsx",
+      "filePath": "app/exports.py",
+      "lineRange": [
+        101,
+        120
+      ],
+      "summary": "openpyxl ile kalın ve donuk başlıklı, tutar kolonları 0.00 sayı biçimli gerçek sayı olan tek sayfalık workbook üretir.",
+      "tags": [
+        "disa-aktarim",
+        "xlsx",
+        "openpyxl"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/main.py",
+      "type": "file",
+      "name": "main.py",
+      "filePath": "app/main.py",
+      "summary": "HTTP kabuğu ve uygulama fabrikası: router'ları bağlar, API anahtarı ile admin oturumu middleware'lerini, yük sınırını, güvenlik başlıklarını, istek günlüğünü ve tek JSON hata zarfını sabit sırda kurar.",
+      "tags": [
+        "entry-point",
+        "uygulama-fabrikasi",
+        "middleware",
+        "guvenlik",
+        "api"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Middleware sırası fabrikada donmuş haldedir (hata zarfı en dışta, auth routing'den önce), böylece katmanlar hiçbir çağrı tarafında elle yeniden dizilmez; CSP yalnızca /docs ve /redoc'da uygulanmaz."
+    },
+    {
+      "id": "function:app/main.py:create_app",
+      "type": "function",
+      "name": "create_app",
+      "filePath": "app/main.py",
+      "lineRange": [
+        65,
+        103
+      ],
+      "summary": "Tüm HTTP uygulamasını kuran fabrika: üç router'ı ekler, /health canlılık ucunu tanımlar ve hata zarfı/auth/admin/upload/security/log/static/OpenAPI katmanlarını belirli sırda bağlar; run.py, smoke testleri ve testler aynı kapıyı çağırır.",
+      "tags": [
+        "entry-point",
+        "uygulama-fabrikasi",
+        "composition"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/main.py:_add_auth_middleware",
+      "type": "function",
+      "name": "_add_auth_middleware",
+      "filePath": "app/main.py",
+      "lineRange": [
+        112,
+        131
+      ],
+      "summary": "/v1 ve /api yollarında X-API-Key'i auth.authorize ile doğrular; 401 ve Retry-After başlıklı 429'u hata zarfına çevirir, geçerli anahtar satırını request.state.key olarak route'lara bırakır.",
+      "tags": [
+        "middleware",
+        "kimlik-dogrulama",
+        "rate-limit"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/main.py:_add_admin_guard",
+      "type": "function",
+      "name": "_add_admin_guard",
+      "filePath": "app/main.py",
+      "lineRange": [
+        134,
+        144
+      ],
+      "summary": "/admin/api/ öneki altındaki her yolu oturum çerezine göre korur; PUBLIC_PATHS dışındaki her yeni admin route'u kaydolduğu anda korunmuş olur.",
+      "tags": [
+        "middleware",
+        "guvenlik",
+        "oturum"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/main.py:_add_upload_cap",
+      "type": "function",
+      "name": "_add_upload_cap",
+      "filePath": "app/main.py",
+      "lineRange": [
+        147,
+        157
+      ],
+      "summary": "Bildirimlenen Content-Length sınırı aşıyorsa gövde tamponlanmadan 413 döndürür; routes_jobs bu kontrolü gerçek baytlar üzerinde yineleyerek parçalı yüklemeyi de kapatır.",
+      "tags": [
+        "middleware",
+        "validasyon",
+        "yukleme"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/main.py:_add_security_headers",
+      "type": "function",
+      "name": "_add_security_headers",
+      "filePath": "app/main.py",
+      "lineRange": [
+        160,
+        168
+      ],
+      "summary": "Her yanıta nosniff, X-Frame-Options, Referrer-Policy ve CSP ekler; auth redlerini de kapsayacak şekilde en dış katmanda durur, CDN'den gelen swagger-ui için /docs ve /redoc muaftır.",
+      "tags": [
+        "middleware",
+        "guvenlik",
+        "csp"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/main.py:_add_request_logging",
+      "type": "function",
+      "name": "_add_request_logging",
+      "filePath": "app/main.py",
+      "lineRange": [
+        171,
+        184
+      ],
+      "summary": "Her istek için yöntem, yol, durum kodu ve süreyi tek satır loglar; tüm handler'ları aşan bir çökme de 500 olarak satıra düşürülür.",
+      "tags": [
+        "middleware",
+        "loglama",
+        "gozlemlilik"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/main.py:_add_error_envelope",
+      "type": "function",
+      "name": "_add_error_envelope",
+      "filePath": "app/main.py",
+      "lineRange": [
+        231,
+        256
+      ],
+      "summary": "HTTPException, istek doğrulama hataları ve çözümlenmemiş istisnaların hepsini aynı {error: {code, message, details}} zarfına çevirir; traceback yalnızca log'a gider, yanıt asla iç yapıyı görmez.",
+      "tags": [
+        "hata-yonetimi",
+        "api",
+        "validasyon"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/main.py:_describe_contract",
+      "type": "function",
+      "name": "_describe_contract",
+      "filePath": "app/main.py",
+      "lineRange": [
+        280,
+        290
+      ],
+      "summary": "Donmuş JobEnvelope şemasını ve X-API-Key güvenlik şemasını OpenAPI belgesine enjekte eder; /health güvenli olmayan tek uç olarak işaretlenir.",
+      "tags": [
+        "openapi",
+        "sozlesme",
+        "dokumentasyon"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/routes_admin.py",
+      "type": "file",
+      "name": "routes_admin.py",
+      "filePath": "app/routes_admin.py",
+      "summary": "Yönetici panelinin /admin/api kapısı: oturum açma/kapama, iş listesi ve detayı, alan bazlı düzeltme, kalite modunda yeniden koşu, dışa aktarma, API anahtarı yönetimi ve canlı durum uçlarını taşır.",
+      "tags": [
+        "api-handler",
+        "yonetici-paneli",
+        "oturum",
+        "duzeltme",
+        "disa-aktarim"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Düzeltme sonrası validation_json validator.validate ile yeniden hesaplandığı için ekrandaki verdict her zaman ekrandaki sayıların verdict'idir; arama Türkçe harfleri ASCII'ye katlayan _fold üzerinden koşar, SQLite LIKE'ın yapamadığı eşleşmeyi o yapar."
+    },
+    {
+      "id": "function:app/routes_admin.py:login",
+      "type": "function",
+      "name": "login",
+      "filePath": "app/routes_admin.py",
+      "lineRange": [
+        87,
+        95
+      ],
+      "summary": "ADMIN_TOKEN'u sabit zamanlı karşılaştırıp doğruladıktan sonra tarayıcının okuyamayacağı httpOnly bir oturum çerezi verir; token tanımlı değilse 503.",
+      "tags": [
+        "kimlik-dogrulama",
+        "oturum",
+        "api-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/routes_admin.py:logout",
+      "type": "function",
+      "name": "logout",
+      "filePath": "app/routes_admin.py",
+      "lineRange": [
+        99,
+        104
+      ],
+      "summary": "Oturumu sunucu tarafında sonlandırır ve çerezi düşürür; çerez olmasa da her durumda başarılı döner.",
+      "tags": [
+        "oturum",
+        "api-handler",
+        "guvenlik"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/routes_admin.py:session",
+      "type": "function",
+      "name": "session",
+      "filePath": "app/routes_admin.py",
+      "lineRange": [
+        108,
+        110
+      ],
+      "summary": "Guard'dan geçmiş çağıran'a 'ben kimim' yanıtı verir; oturum doğrulamasının kendisi middleware'in işidir.",
+      "tags": [
+        "oturum",
+        "api-handler",
+        "durum"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/routes_admin.py:list_jobs",
+      "type": "function",
+      "name": "list_jobs",
+      "filePath": "app/routes_admin.py",
+      "lineRange": [
+        114,
+        166
+      ],
+      "summary": "Yönetim tablosunun tüm başvurularını sunucu tarafında süzüp sıralar: durum ve çalışan indeksli SQL kolonlarında, tarih penceresi, Türkçe katlamalı serbest metin araması ve sıralama ise satırların üzerinde koşar; sayfa, süzülmüş küme kesildikten sonra alınır.",
+      "tags": [
+        "api-handler",
+        "liste",
+        "filtreleme",
+        "arama",
+        "siralama"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/routes_admin.py:get_job",
+      "type": "function",
+      "name": "get_job",
+      "filePath": "app/routes_admin.py",
+      "lineRange": [
+        170,
+        180
+      ],
+      "summary": "Tek işi sözleşme v1 zarfı ve image_url ile döndürür; inceleme ekranı ile entegratör aynı bedeni okur.",
+      "tags": [
+        "api-handler",
+        "sozlesme",
+        "detay"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/routes_admin.py:correct_job",
+      "type": "function",
+      "name": "correct_job",
+      "filePath": "app/routes_admin.py",
+      "lineRange": [
+        184,
+        226
+      ],
+      "summary": "Alan bazlı düzeltmeleri tek yazmada uygular: result_json güncellenir, validation bloğu düzeltilmiş verinin üzerinden yeniden hesaplanır ve her hareket eden alan için denetim satırı düşer; böylece tek PATCH her yüzeyde ve dışa aktarımda geçerli olur.",
+      "tags": [
+        "api-handler",
+        "duzeltme",
+        "denetim",
+        "sozlesme"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/routes_admin.py:rerun_job",
+      "type": "function",
+      "name": "rerun_job",
+      "filePath": "app/routes_admin.py",
+      "lineRange": [
+        230,
+        277
+      ],
+      "summary": "Aynı görseli kalite modunda yeniden çalıştırıp sonucu atomik olarak değiştirir; ilk koşusu bitmemiş iş 409, model sunucusu hata veren koşu 502 döner ve kayıtlı kolonlara dokunulmaz.",
+      "tags": [
+        "api-handler",
+        "pipeline",
+        "kalite-modu",
+        "kuyruk"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/routes_admin.py:get_image",
+      "type": "function",
+      "name": "get_image",
+      "filePath": "app/routes_admin.py",
+      "lineRange": [
+        281,
+        288
+      ],
+      "summary": "Kayıtlı fişin JPEG baytlarını admin oturumunun arkasından sunar.",
+      "tags": [
+        "api-handler",
+        "gorsel",
+        "kvkk"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/routes_admin.py:export_jobs",
+      "type": "function",
+      "name": "export_jobs",
+      "filePath": "app/routes_admin.py",
+      "lineRange": [
+        292,
+        334
+      ],
+      "summary": "İşaretlenen ya da çalışan/since ile daraltılan tüm işleri JSON, CSV veya XLSX olarak Content-Disposition başlığıyla indirmeye hazır döndürür.",
+      "tags": [
+        "api-handler",
+        "disa-aktarim",
+        "indirme"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/routes_admin.py:list_keys",
+      "type": "function",
+      "name": "list_keys",
+      "filePath": "app/routes_admin.py",
+      "lineRange": [
+        338,
+        349
+      ],
+      "summary": "Anahtarları yalnızca kimlik alanlarıyla (id, çalışan, tarih, iptal) listeler; gövdede sızabilecek bir sır yapısal olarak bulunmaz.",
+      "tags": [
+        "api-handler",
+        "api-anahtari",
+        "guvenlik"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/routes_admin.py:create_key",
+      "type": "function",
+      "name": "create_key",
+      "filePath": "app/routes_admin.py",
+      "lineRange": [
+        353,
+        368
+      ],
+      "summary": "Bir çalışan için yeni API anahtarı üretir; düz metin yalnızca bu yanıttadır, veritabanında SHA-256 özeti tutulur.",
+      "tags": [
+        "api-handler",
+        "api-anahtari",
+        "guvenlik"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/routes_admin.py:revoke_key",
+      "type": "function",
+      "name": "revoke_key",
+      "filePath": "app/routes_admin.py",
+      "lineRange": [
+        372,
+        385
+      ],
+      "summary": "Anahtarı iptal eder ama satırı silmez, böylece çalışanın işleri sahibini kaybetmez; bir sonraki istek 401 olur.",
+      "tags": [
+        "api-handler",
+        "api-anahtari",
+        "iptal"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/routes_admin.py:service_status",
+      "type": "function",
+      "name": "service_status",
+      "filePath": "app/routes_admin.py",
+      "lineRange": [
+        389,
+        400
+      ],
+      "summary": "OCR/Strata/Unsloth sağlığı, VRAM ve kuyruk derinliğinden oluşan canlı anlık görüntüyü döndürür.",
+      "tags": [
+        "api-handler",
+        "monitoring",
+        "durum"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/routes_admin.py:_duzelt",
+      "type": "function",
+      "name": "_duzelt",
+      "filePath": "app/routes_admin.py",
+      "lineRange": [
+        483,
+        512
+      ],
+      "summary": "Gönderilen her alan yolunu doğrulayıp düzeltmeyi derin kopya üzerinde uygular; tek bir alan bile temiz okunmazsa hiçbir şey yazılmaz. Dönüşü doğrulanmış sözleşme sonucu ile (alan, eski, yeni) kayıtlarıdır.",
+      "tags": [
+        "duzeltme",
+        "validasyon",
+        "donusum",
+        "sozlesme"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/routes_admin.py:_satir",
+      "type": "function",
+      "name": "_satir",
+      "filePath": "app/routes_admin.py",
+      "lineRange": [
+        515,
+        555
+      ],
+      "summary": "Kuyruk satırını yönetim tablosu satırına çevirir; sıralamanın dayandığı ISO _gun ve Türkçe aramanın dayandığı katlanmış _arama anahtarlarını da üretir, okunamış fişin tutarlarını 0,00 yerine boş bırakır.",
+      "tags": [
+        "donusum",
+        "liste",
+        "arama",
+        "veri-modeli"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/routes_admin.py:_yol",
+      "type": "function",
+      "name": "_yol",
+      "filePath": "app/routes_admin.py",
+      "lineRange": [
+        469,
+        475
+      ],
+      "summary": "items[2].toplam ve totals.kdv alan yollarını (bolum, sıra, ad) üçlüsüne çözümler; validator'ın noktalı yol söz dizimini kullandığı için düzeltme, uyuşmazlık panelinin adlandırdığı alanı birebir hedefler.",
+      "tags": [
+        "parser",
+        "validasyon",
+        "sozlesme"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/routes_admin.py:_fold",
+      "type": "function",
+      "name": "_fold",
+      "filePath": "app/routes_admin.py",
+      "lineRange": [
+        590,
+        597
+      ],
+      "summary": "Metni büyük/küçük harf ve aksan bağımsız ASCII'ye katlar; telefon klavyesinin yazdığı düz 'cay', 'Çay 1kg' kaydını bulur.",
+      "tags": [
+        "arama",
+        "turkce",
+        "normalizasyon"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/routes_admin.py:_sirala",
+      "type": "function",
+      "name": "_sirala",
+      "filePath": "app/routes_admin.py",
+      "lineRange": [
+        609,
+        620
+      ],
+      "summary": "Tek kolona göre sıralar; boş değerli satırlar yön ne olursa olsun sonda kalır, eşitlikler ISO gün ve iş kimliğiyle bozülür.",
+      "tags": [
+        "siralama",
+        "liste",
+        "yardimci"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/routes_admin.py:_issue_cookie",
+      "type": "function",
+      "name": "_issue_cookie",
+      "filePath": "app/routes_admin.py",
+      "lineRange": [
+        627,
+        638
+      ],
+      "summary": "Oturum çerezini /admin yolunda, httpOnly ve SameSite=Lax olarak admin_session_hours süresince ayarlar; SameSite CSRF korumasını üstlenir, Secure düz http geliştirme akışını kırmamak için kapalıdır.",
+      "tags": [
+        "guvenlik",
+        "oturum",
+        "cookie"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/db.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/exports.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/exports.py",
+      "target": "file:app/db.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/exports.py",
+      "target": "file:app/routes_jobs.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/auth.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/contract.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/db.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/routes_admin.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/routes_jobs.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/routes_worker.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "file:app/auth.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "file:app/contract.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "file:app/db.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "file:app/exports.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "file:app/numbers.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "file:app/pipeline.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "file:app/routes_jobs.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "file:app/routes_worker.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "file:app/status.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "file:app/validator.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:connect",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:list_keys",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:create_job",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:get_job",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:find_job_by_client_ref",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:list_jobs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:queue_depth",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:update_job",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:set_status",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:add_correction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:log_event",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/exports.py",
+      "target": "function:app/exports.py:select",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/exports.py",
+      "target": "function:app/exports.py:row",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/exports.py",
+      "target": "function:app/exports.py:to_json",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/exports.py",
+      "target": "function:app/exports.py:to_csv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/exports.py",
+      "target": "function:app/exports.py:to_xlsx",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:create_app",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:_add_auth_middleware",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:_add_admin_guard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:_add_upload_cap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:_add_security_headers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:_add_request_logging",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:_add_error_envelope",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:_describe_contract",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:login",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:logout",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:session",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:list_jobs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:get_job",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:correct_job",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:rerun_job",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:get_image",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:export_jobs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:list_keys",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:create_key",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:revoke_key",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:service_status",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:_duzelt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:_satir",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:_yol",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:_fold",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:_sirala",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:_issue_cookie",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:connect",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:list_keys",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:create_job",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:get_job",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:find_job_by_client_ref",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:list_jobs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:queue_depth",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:update_job",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:set_status",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:add_correction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/db.py",
+      "target": "function:app/db.py:log_event",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/exports.py",
+      "target": "function:app/exports.py:select",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/exports.py",
+      "target": "function:app/exports.py:row",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/exports.py",
+      "target": "function:app/exports.py:to_json",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/exports.py",
+      "target": "function:app/exports.py:to_csv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/exports.py",
+      "target": "function:app/exports.py:to_xlsx",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:create_app",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:login",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:logout",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:session",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:list_jobs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:get_job",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:correct_job",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:rerun_job",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:get_image",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:export_jobs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:list_keys",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:create_key",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:revoke_key",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/routes_admin.py",
+      "target": "function:app/routes_admin.py:service_status",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/exports.py:select",
+      "target": "function:app/db.py:list_jobs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/exports.py:to_json",
+      "target": "function:app/routes_jobs.py:_envelope",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/main.py:_add_auth_middleware",
+      "target": "function:app/auth.py:authorize",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/main.py:_add_admin_guard",
+      "target": "function:app/auth.py:session_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/routes_admin.py:login",
+      "target": "function:app/auth.py:admin_token_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/routes_admin.py:login",
+      "target": "function:app/auth.py:start_session",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/routes_admin.py:logout",
+      "target": "function:app/auth.py:end_session",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/routes_admin.py:list_jobs",
+      "target": "function:app/db.py:list_jobs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/routes_admin.py:correct_job",
+      "target": "function:app/validator.py:validate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/routes_admin.py:correct_job",
+      "target": "function:app/db.py:update_job",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/routes_admin.py:correct_job",
+      "target": "function:app/db.py:add_correction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/routes_admin.py:rerun_job",
+      "target": "function:app/pipeline.py:run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/routes_admin.py:rerun_job",
+      "target": "function:app/db.py:set_status",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/routes_admin.py:rerun_job",
+      "target": "function:app/routes_worker.py:_image_path",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/routes_admin.py:export_jobs",
+      "target": "function:app/exports.py:select",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/routes_admin.py:export_jobs",
+      "target": "function:app/exports.py:to_json",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/routes_admin.py:export_jobs",
+      "target": "function:app/exports.py:to_csv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/routes_admin.py:export_jobs",
+      "target": "function:app/exports.py:to_xlsx",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/routes_admin.py:create_key",
+      "target": "function:app/auth.py:create_key",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/routes_admin.py:revoke_key",
+      "target": "function:app/auth.py:revoke_key",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/routes_admin.py:service_status",
+      "target": "function:app/status.py:probe_all",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/routes_admin.py:_duzelt",
+      "target": "class:app/contract.py:Result",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

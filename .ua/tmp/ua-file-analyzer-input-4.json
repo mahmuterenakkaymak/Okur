@@ -1,0 +1,162 @@
+{
+ "projectRoot": "C:/Users/PC/Documents/GitHub/ocr-app",
+ "batchFiles": [
+  {
+   "path": "app/validator.py",
+   "language": "python",
+   "sizeLines": 108,
+   "fileCategory": "code"
+  },
+  {
+   "path": "scripts/__init__.py",
+   "language": "python",
+   "sizeLines": 0,
+   "fileCategory": "code"
+  },
+  {
+   "path": "scripts/acceptance.py",
+   "language": "python",
+   "sizeLines": 508,
+   "fileCategory": "code"
+  },
+  {
+   "path": "scripts/gen_contract_doc.py",
+   "language": "python",
+   "sizeLines": 166,
+   "fileCategory": "code"
+  },
+  {
+   "path": "tests/test_acceptance.py",
+   "language": "python",
+   "sizeLines": 166,
+   "fileCategory": "code"
+  },
+  {
+   "path": "tests/test_acceptance_live_key.py",
+   "language": "python",
+   "sizeLines": 115,
+   "fileCategory": "code"
+  },
+  {
+   "path": "tests/test_contract_doc_endpoints.py",
+   "language": "python",
+   "sizeLines": 64,
+   "fileCategory": "code"
+  },
+  {
+   "path": "tests/test_contract_export.py",
+   "language": "python",
+   "sizeLines": 93,
+   "fileCategory": "code"
+  },
+  {
+   "path": "tests/test_quality_rerun.py",
+   "language": "python",
+   "sizeLines": 324,
+   "fileCategory": "code"
+  },
+  {
+   "path": "tests/test_serve_demo_live_states.py",
+   "language": "python",
+   "sizeLines": 80,
+   "fileCategory": "code"
+  },
+  {
+   "path": "tests/test_smoke_e2e.py",
+   "language": "python",
+   "sizeLines": 107,
+   "fileCategory": "code"
+  },
+  {
+   "path": "tests/test_validator.py",
+   "language": "python",
+   "sizeLines": 99,
+   "fileCategory": "code"
+  },
+  {
+   "path": "tests/test_validator_edges.py",
+   "language": "python",
+   "sizeLines": 230,
+   "fileCategory": "code"
+  }
+ ],
+ "batchImportData": {
+  "app/validator.py": [
+   "app/__init__.py",
+   "app/contract.py"
+  ],
+  "scripts/__init__.py": [],
+  "scripts/acceptance.py": [
+   "app/__init__.py",
+   "app/config.py",
+   "app/contract.py",
+   "app/validator.py",
+   "scripts/__init__.py",
+   "scripts/serve_demo.py"
+  ],
+  "scripts/gen_contract_doc.py": [
+   "app/__init__.py",
+   "app/config.py",
+   "app/contract.py"
+  ],
+  "tests/test_acceptance.py": [
+   "app/__init__.py",
+   "app/config.py",
+   "app/exports.py",
+   "app/validator.py",
+   "scripts/__init__.py",
+   "scripts/acceptance.py"
+  ],
+  "tests/test_acceptance_live_key.py": [
+   "scripts/__init__.py",
+   "scripts/acceptance.py"
+  ],
+  "tests/test_contract_doc_endpoints.py": [
+   "app/main.py",
+   "scripts/__init__.py",
+   "scripts/gen_contract_doc.py"
+  ],
+  "tests/test_contract_export.py": [
+   "app/__init__.py",
+   "app/config.py",
+   "app/contract.py",
+   "scripts/__init__.py",
+   "scripts/gen_contract_doc.py"
+  ],
+  "tests/test_quality_rerun.py": [
+   "app/__init__.py",
+   "app/auth.py",
+   "app/config.py",
+   "app/contract.py",
+   "app/db.py",
+   "app/exports.py",
+   "app/main.py",
+   "app/validator.py",
+   "scripts/__init__.py",
+   "scripts/serve_demo.py"
+  ],
+  "tests/test_serve_demo_live_states.py": [
+   "app/__init__.py",
+   "app/config.py",
+   "app/db.py",
+   "scripts/__init__.py",
+   "scripts/serve_demo.py"
+  ],
+  "tests/test_smoke_e2e.py": [
+   "app/__init__.py",
+   "app/auth.py",
+   "app/config.py",
+   "scripts/__init__.py"
+  ],
+  "tests/test_validator.py": [
+   "app/__init__.py",
+   "app/config.py",
+   "app/contract.py",
+   "app/validator.py"
+  ],
+  "tests/test_validator_edges.py": [
+   "app/__init__.py",
+   "app/validator.py"
+  ]
+ }
+}

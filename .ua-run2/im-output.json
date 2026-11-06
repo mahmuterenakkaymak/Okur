@@ -1,0 +1,635 @@
+{
+  "scriptCompleted": true,
+  "stats": {
+    "filesScanned": 161,
+    "filesWithImports": 99,
+    "totalEdges": 364
+  },
+  "failures": [],
+  "importMap": {
+    "CONTRACT.md": [],
+    "HIZLI-BASLANGIC.md": [],
+    "OPERATIONS.md": [],
+    "PLAN.md": [],
+    "PROJECT_BRIEF.md": [],
+    "README.md": [],
+    "REVIEW.md": [],
+    "TASKS.md": [],
+    "app/__init__.py": [],
+    "app/auth.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/db.py"
+    ],
+    "app/config.py": [],
+    "app/contract.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/numbers.py"
+    ],
+    "app/db.py": [
+      "app/__init__.py",
+      "app/config.py"
+    ],
+    "app/exports.py": [
+      "app/__init__.py",
+      "app/db.py",
+      "app/routes_jobs.py"
+    ],
+    "app/keys_cli.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py"
+    ],
+    "app/main.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/config.py",
+      "app/contract.py",
+      "app/db.py",
+      "app/routes_admin.py",
+      "app/routes_jobs.py",
+      "app/routes_worker.py"
+    ],
+    "app/numbers.py": [],
+    "app/ocr_client.py": [
+      "app/__init__.py",
+      "app/config.py"
+    ],
+    "app/pipeline.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/contract.py",
+      "app/ocr_client.py",
+      "app/structurer.py",
+      "app/validator.py"
+    ],
+    "app/queue_worker.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/db.py",
+      "app/pipeline.py"
+    ],
+    "app/routes_admin.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/config.py",
+      "app/contract.py",
+      "app/db.py",
+      "app/exports.py",
+      "app/numbers.py",
+      "app/pipeline.py",
+      "app/routes_jobs.py",
+      "app/routes_worker.py",
+      "app/status.py",
+      "app/validator.py"
+    ],
+    "app/routes_jobs.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/contract.py",
+      "app/db.py"
+    ],
+    "app/routes_worker.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/db.py",
+      "app/routes_jobs.py"
+    ],
+    "app/status.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/db.py"
+    ],
+    "app/structurer.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/contract.py"
+    ],
+    "app/validator.py": [
+      "app/__init__.py",
+      "app/contract.py"
+    ],
+    "contract/contract_v1.schema.json": [],
+    "fixtures/fis_benzin_clean.json": [],
+    "fixtures/fis_benzin_foto.json": [],
+    "fixtures/fis_market_clean.json": [],
+    "fixtures/fis_market_foto.json": [],
+    "fixtures/fis_restoran_clean.json": [],
+    "fixtures/fis_restoran_foto.json": [],
+    "fixtures_hard/el_yazisi_liste.json": [],
+    "fixtures_hard/el_yazisi_not.json": [],
+    "fixtures_hard/fis_kotu_cekim.json": [],
+    "package.json": [],
+    "pyproject.toml": [],
+    "run.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/queue_worker.py",
+      "app/status.py"
+    ],
+    "scripts/__init__.py": [],
+    "scripts/acceptance.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/contract.py",
+      "app/validator.py",
+      "scripts/__init__.py",
+      "scripts/serve_demo.py"
+    ],
+    "scripts/fake_models.py": [
+      "app/__init__.py",
+      "app/config.py"
+    ],
+    "scripts/gen_contract_doc.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/contract.py"
+    ],
+    "scripts/serve_demo.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/config.py",
+      "app/contract.py",
+      "app/db.py",
+      "app/main.py",
+      "app/ocr_client.py",
+      "app/pipeline.py",
+      "app/queue_worker.py",
+      "app/structurer.py",
+      "app/validator.py",
+      "scripts/fake_models.py"
+    ],
+    "scripts/smoke_e2e.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/config.py",
+      "app/contract.py",
+      "app/db.py",
+      "app/main.py",
+      "app/ocr_client.py",
+      "app/pipeline.py",
+      "app/queue_worker.py",
+      "app/structurer.py",
+      "scripts/fake_models.py"
+    ],
+    "scripts/tailscale_serve.ps1": [],
+    "spike/CANLI_TEST_RAPORU.md": [],
+    "spike/REPORT.md": [],
+    "spike/_restart_app.ps1": [],
+    "spike/ask.py": [],
+    "spike/bench.py": [],
+    "spike/bench_hard.py": [],
+    "spike/bench_paddle.json": [],
+    "spike/bench_qwen_natural.json": [],
+    "spike/bench_real.py": [],
+    "spike/crop_hand.py": [],
+    "spike/get_llama.py": [],
+    "spike/hard_paddle.json": [],
+    "spike/hard_qwen.json": [],
+    "spike/last_out.txt": [],
+    "spike/live_real.json": [],
+    "spike/live_test.py": [],
+    "spike/make_fixtures.py": [],
+    "spike/make_hard.py": [],
+    "spike/probe_stage2.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/ocr_client.py",
+      "app/structurer.py"
+    ],
+    "spike/probe_thinking.py": [
+      "app/__init__.py",
+      "app/config.py"
+    ],
+    "spike/probe_thinking2.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/structurer.py"
+    ],
+    "spike/probe_thinking3.py": [
+      "app/__init__.py",
+      "app/config.py"
+    ],
+    "spike/real_paddle.json": [],
+    "spike/real_qwen.json": [],
+    "spike/serve.py": [],
+    "static/admin/admin.js": [
+      "static/admin/detail.js",
+      "static/admin/keys.js",
+      "static/admin/list.js",
+      "static/admin/status.js",
+      "static/admin/toasts.js"
+    ],
+    "static/admin/detail.js": [
+      "static/admin/list.js",
+      "static/admin/toasts.js",
+      "static/app/result_totals.js"
+    ],
+    "static/admin/index.html": [],
+    "static/admin/keys.js": [
+      "static/admin/toasts.js"
+    ],
+    "static/admin/list.js": [
+      "static/app/result_totals.js"
+    ],
+    "static/admin/status.js": [],
+    "static/admin/style.css": [],
+    "static/admin/toasts.js": [],
+    "static/app/api.js": [],
+    "static/app/app.js": [
+      "static/app/api.js",
+      "static/app/capture.js",
+      "static/app/crop.js",
+      "static/app/flow.js",
+      "static/app/history.js",
+      "static/app/recovery.js",
+      "static/app/result_totals.js",
+      "static/app/stages.js",
+      "static/app/status.js",
+      "static/app/verdict.js"
+    ],
+    "static/app/capture.js": [
+      "static/app/feedback.js"
+    ],
+    "static/app/crop.js": [
+      "static/app/capture.js"
+    ],
+    "static/app/feedback.js": [],
+    "static/app/flow.js": [],
+    "static/app/history.js": [
+      "static/app/api.js",
+      "static/app/status.js"
+    ],
+    "static/app/index.html": [],
+    "static/app/manifest.webmanifest": [],
+    "static/app/recovery.js": [
+      "static/app/api.js"
+    ],
+    "static/app/result_totals.js": [],
+    "static/app/stages.js": [
+      "static/app/status.js"
+    ],
+    "static/app/status.js": [],
+    "static/app/sw.js": [],
+    "static/app/verdict.js": [],
+    "tests/__init__.py": [],
+    "tests/js/admin.test.js": [
+      "static/admin/admin.js"
+    ],
+    "tests/js/api.test.js": [
+      "static/app/api.js"
+    ],
+    "tests/js/capture.test.js": [
+      "static/app/capture.js"
+    ],
+    "tests/js/correction_payload.test.js": [
+      "static/admin/detail.js"
+    ],
+    "tests/js/crop.test.js": [
+      "static/app/crop.js"
+    ],
+    "tests/js/detail.test.js": [
+      "static/admin/detail.js"
+    ],
+    "tests/js/feedback.test.js": [
+      "static/app/capture.js",
+      "static/app/feedback.js"
+    ],
+    "tests/js/flow.test.js": [
+      "static/app/flow.js"
+    ],
+    "tests/js/recovery.test.js": [
+      "static/app/api.js",
+      "static/app/recovery.js"
+    ],
+    "tests/js/result_totals.test.js": [
+      "static/app/result_totals.js"
+    ],
+    "tests/js/skeleton.test.js": [],
+    "tests/js/stages.test.js": [
+      "static/app/stages.js",
+      "static/app/status.js"
+    ],
+    "tests/js/status.test.js": [
+      "static/app/status.js"
+    ],
+    "tests/js/status_page.test.js": [
+      "static/admin/status.js"
+    ],
+    "tests/js/toasts.test.js": [
+      "static/admin/toasts.js"
+    ],
+    "tests/js/upload_error.test.js": [
+      "static/app/api.js",
+      "static/app/recovery.js"
+    ],
+    "tests/js/verdict.test.js": [
+      "static/app/status.js",
+      "static/app/verdict.js"
+    ],
+    "tests/test_acceptance.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/exports.py",
+      "app/validator.py",
+      "scripts/__init__.py",
+      "scripts/acceptance.py"
+    ],
+    "tests/test_acceptance_live_key.py": [
+      "scripts/__init__.py",
+      "scripts/acceptance.py"
+    ],
+    "tests/test_admin_auth.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/main.py"
+    ],
+    "tests/test_admin_detail.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/contract.py",
+      "app/db.py",
+      "app/main.py",
+      "scripts/__init__.py",
+      "scripts/serve_demo.py"
+    ],
+    "tests/test_admin_keys.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/main.py"
+    ],
+    "tests/test_admin_list.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/main.py",
+      "scripts/__init__.py",
+      "scripts/serve_demo.py"
+    ],
+    "tests/test_admin_sort_date.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/main.py"
+    ],
+    "tests/test_auth.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/config.py",
+      "app/db.py"
+    ],
+    "tests/test_captured_at_survives.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/config.py",
+      "app/db.py",
+      "app/main.py",
+      "app/pipeline.py",
+      "app/queue_worker.py"
+    ],
+    "tests/test_config.py": [
+      "app/__init__.py",
+      "app/config.py"
+    ],
+    "tests/test_contract.py": [
+      "app/__init__.py",
+      "app/contract.py"
+    ],
+    "tests/test_contract_doc_endpoints.py": [
+      "app/main.py",
+      "scripts/__init__.py",
+      "scripts/gen_contract_doc.py"
+    ],
+    "tests/test_contract_export.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/contract.py",
+      "scripts/__init__.py",
+      "scripts/gen_contract_doc.py"
+    ],
+    "tests/test_corrections.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/contract.py",
+      "app/db.py",
+      "app/main.py",
+      "scripts/__init__.py",
+      "scripts/serve_demo.py"
+    ],
+    "tests/test_db.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/db.py"
+    ],
+    "tests/test_docs.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "run.py"
+    ],
+    "tests/test_exports.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/contract.py",
+      "app/db.py",
+      "app/exports.py",
+      "app/main.py",
+      "scripts/__init__.py",
+      "scripts/serve_demo.py"
+    ],
+    "tests/test_fake_models.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/ocr_client.py",
+      "scripts/fake_models.py"
+    ],
+    "tests/test_hardening.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/main.py"
+    ],
+    "tests/test_integration_m1.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/config.py",
+      "app/contract.py",
+      "app/db.py",
+      "app/main.py",
+      "app/ocr_client.py",
+      "app/pipeline.py",
+      "app/queue_worker.py",
+      "app/structurer.py",
+      "scripts/fake_models.py"
+    ],
+    "tests/test_keys_cli.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/keys_cli.py"
+    ],
+    "tests/test_launcher_rollcall.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/status.py",
+      "run.py"
+    ],
+    "tests/test_main_app.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/main.py"
+    ],
+    "tests/test_numbers.py": [
+      "app/__init__.py",
+      "app/numbers.py"
+    ],
+    "tests/test_ocr_client.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/ocr_client.py"
+    ],
+    "tests/test_pipeline.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/contract.py",
+      "app/ocr_client.py",
+      "app/pipeline.py"
+    ],
+    "tests/test_pwa_empty_states.py": [
+      "app/main.py"
+    ],
+    "tests/test_pwa_history.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/main.py"
+    ],
+    "tests/test_pwa_shell.py": [
+      "app/main.py"
+    ],
+    "tests/test_pwa_submit_flow.py": [
+      "app/main.py"
+    ],
+    "tests/test_quality_rerun.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/config.py",
+      "app/contract.py",
+      "app/db.py",
+      "app/exports.py",
+      "app/main.py",
+      "app/validator.py",
+      "scripts/__init__.py",
+      "scripts/serve_demo.py"
+    ],
+    "tests/test_queue_worker.py": [
+      "app/__init__.py",
+      "app/db.py",
+      "app/queue_worker.py"
+    ],
+    "tests/test_rate_limit.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/config.py",
+      "app/db.py"
+    ],
+    "tests/test_routes_jobs.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/main.py"
+    ],
+    "tests/test_routes_worker.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/config.py",
+      "app/db.py",
+      "app/main.py"
+    ],
+    "tests/test_run_py.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "run.py"
+    ],
+    "tests/test_serve_demo.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/config.py",
+      "app/db.py",
+      "app/main.py",
+      "app/validator.py",
+      "scripts/__init__.py",
+      "scripts/serve_demo.py"
+    ],
+    "tests/test_serve_demo_live_states.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/db.py",
+      "scripts/__init__.py",
+      "scripts/serve_demo.py"
+    ],
+    "tests/test_skeleton.py": [],
+    "tests/test_smoke_e2e.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/config.py",
+      "scripts/__init__.py"
+    ],
+    "tests/test_smoke_real_structurer.py": [
+      "app/__init__.py",
+      "app/config.py"
+    ],
+    "tests/test_status.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/main.py",
+      "app/status.py"
+    ],
+    "tests/test_structurer.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/structurer.py"
+    ],
+    "tests/test_tailscale.py": [
+      "app/__init__.py",
+      "app/config.py"
+    ],
+    "tests/test_unreadable_survives.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/contract.py",
+      "app/db.py",
+      "app/pipeline.py",
+      "app/queue_worker.py",
+      "app/structurer.py"
+    ],
+    "tests/test_upload_atomic_orphan.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/config.py",
+      "app/db.py",
+      "app/main.py",
+      "app/routes_jobs.py"
+    ],
+    "tests/test_upload_exif_stripped.py": [
+      "app/__init__.py",
+      "app/auth.py",
+      "app/db.py",
+      "app/main.py"
+    ],
+    "tests/test_validator.py": [
+      "app/__init__.py",
+      "app/config.py",
+      "app/contract.py",
+      "app/validator.py"
+    ],
+    "tests/test_validator_edges.py": [
+      "app/__init__.py",
+      "app/validator.py"
+    ]
+  }
+}

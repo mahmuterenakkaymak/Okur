@@ -1,0 +1,1746 @@
+{
+ "nodes": [
+  {
+   "id": "file:tests/test_admin_list.py",
+   "type": "file",
+   "name": "test_admin_list.py",
+   "filePath": "tests/test_admin_list.py",
+   "summary": "T35 yönetici başvurular tablosu testleri: demo seed'in gerçek verisi üzerinde sütun karsılığı, filtre, tarih penceresi, sıralama ve sayfalama davranışları.",
+   "tags": [
+    "test",
+    "admin",
+    "liste",
+    "sayfalama"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:tests/test_admin_list.py:env",
+   "type": "function",
+   "name": "env",
+   "filePath": "tests/test_admin_list.py",
+   "lineRange": [
+    34,
+    47
+   ],
+   "summary": "Demo seed + yönetici oturumu ile gerçek veri kümeli test ortamı.",
+   "tags": [
+    "fixture",
+    "test-hazirlik",
+    "admin"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_admin_list.py:test_a_row_carries_exactly_the_table_columns",
+   "type": "function",
+   "name": "test_a_row_carries_exactly_the_table_columns",
+   "filePath": "tests/test_admin_list.py",
+   "lineRange": [
+    77,
+    88
+   ],
+   "summary": "API satırının tabloda gösterilen sütunların tam karşılığı olduğu doğrulanır.",
+   "tags": [
+    "test",
+    "liste",
+    "sozlesme"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_admin_list.py:test_the_date_window_closes_around_the_day_the_row_shows",
+   "type": "function",
+   "name": "test_the_date_window_closes_around_the_day_the_row_shows",
+   "filePath": "tests/test_admin_list.py",
+   "lineRange": [
+    140,
+    153
+   ],
+   "summary": "Tarih filtresi penceresinin satırın gösterdiği günü kapsadığı doğrulanır.",
+   "tags": [
+    "test",
+    "filtreleme",
+    "tarih"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_admin_list.py:test_sorting_orders_the_column_and_sinks_the_rows_that_have_no_value",
+   "type": "function",
+   "name": "test_sorting_orders_the_column_and_sinks_the_rows_that_have_no_value",
+   "filePath": "tests/test_admin_list.py",
+   "lineRange": [
+    204,
+    215
+   ],
+   "summary": "Sıralamanın sütun değerine göre dizip boş değerli satırları aşağı çökerttiği doğrulanır.",
+   "tags": [
+    "test",
+    "siralama",
+    "liste"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_admin_list.py:test_pages_repeat_and_skip_nothing",
+   "type": "function",
+   "name": "test_pages_repeat_and_skip_nothing",
+   "filePath": "tests/test_admin_list.py",
+   "lineRange": [
+    218,
+    229
+   ],
+   "summary": "Sayfaların kümelenip hiçbir satırı atlamadığı doğrulanır.",
+   "tags": [
+    "test",
+    "sayfalama",
+    "liste"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_admin_list.py:test_the_page_holds_the_list_controls",
+   "type": "function",
+   "name": "test_the_page_holds_the_list_controls",
+   "filePath": "tests/test_admin_list.py",
+   "lineRange": [
+    241,
+    260
+   ],
+   "summary": "Liste sayfasının filtre/sıralama/sayfa kontrollerini barındırdığı doğrulanır.",
+   "tags": [
+    "test",
+    "ui",
+    "admin"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_admin_list.py:test_the_list_module_calls_the_admin_api",
+   "type": "function",
+   "name": "test_the_list_module_calls_the_admin_api",
+   "filePath": "tests/test_admin_list.py",
+   "lineRange": [
+    263,
+    280
+   ],
+   "summary": "Liste JavaScript modülünün beklenen yönetici API uçlarını çağırdığı doğrulanır.",
+   "tags": [
+    "test",
+    "js",
+    "api"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:tests/test_admin_sort_date.py",
+   "type": "file",
+   "name": "test_admin_sort_date.py",
+   "filePath": "tests/test_admin_sort_date.py",
+   "summary": "T57: tarih sütunu sıralamasının gösterilen dd.MM.yyyy metnine değil satırın ISO gününe dayanması gerektiğini doğrulayan test.",
+   "tags": [
+    "test",
+    "admin",
+    "siralama",
+    "tarih"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_admin_sort_date.py:env",
+   "type": "function",
+   "name": "env",
+   "filePath": "tests/test_admin_sort_date.py",
+   "lineRange": [
+    19,
+    51
+   ],
+   "summary": "Üç işi farklı ISO günlere damgalayan ortam fixture'ı.",
+   "tags": [
+    "fixture",
+    "test-hazirlik",
+    "tarih"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:tests/test_auth.py",
+   "type": "file",
+   "name": "test_auth.py",
+   "filePath": "tests/test_auth.py",
+   "summary": "auth modülünün birim testleri: anahtar biçimi ve öneki, hash yalnız kaydı, doğrulama/iptal, yönetici token ve oturumları, token bucket davranışları.",
+   "tags": [
+    "test",
+    "auth",
+    "birim-test",
+    "guvenlik"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_auth.py:test_verify_compares_only_hashes",
+   "type": "function",
+   "name": "test_verify_compares_only_hashes",
+   "filePath": "tests/test_auth.py",
+   "lineRange": [
+    100,
+    114
+   ],
+   "summary": "verify'in karşılaştırmaya yalnız hash soktuğu, düz metnin sızmaya kapalı olduğu doğrulanır.",
+   "tags": [
+    "test",
+    "guvenlik",
+    "hash"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:tests/test_captured_at_survives.py",
+   "type": "file",
+   "name": "test_captured_at_survives.py",
+   "filePath": "tests/test_captured_at_survives.py",
+   "summary": "captured_at değerinin rota → kuyruk → GET hattında meta_json içinde kaybolmadan ilerlediğini doğrulayan test; yalnız OCR ve strata sunucuları taklit edilir, pipeline gerçektir.",
+   "tags": [
+    "test",
+    "kuyruk",
+    "meta",
+    "worker"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_captured_at_survives.py:env",
+   "type": "function",
+   "name": "env",
+   "filePath": "tests/test_captured_at_survives.py",
+   "lineRange": [
+    58,
+    67
+   ],
+   "summary": "Taklit OCR/strata ile gerçek pipeline'ı bağlayan test ortamı.",
+   "tags": [
+    "fixture",
+    "test-hazirlik",
+    "taklit"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_captured_at_survives.py:test_captured_at_survives_the_worker_into_the_get",
+   "type": "function",
+   "name": "test_captured_at_survives_the_worker_into_the_get",
+   "filePath": "tests/test_captured_at_survives.py",
+   "lineRange": [
+    89,
+    101
+   ],
+   "summary": "captured_at'ın worker'dan geçip GET'te null olmadan döndüğü doğrulanır.",
+   "tags": [
+    "test",
+    "meta",
+    "kuyruk"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_captured_at_survives.py:test_a_rerun_keeps_captured_at_and_refreshes_the_pipeline_meta",
+   "type": "function",
+   "name": "test_a_rerun_keeps_captured_at_and_refreshes_the_pipeline_meta",
+   "filePath": "tests/test_captured_at_survives.py",
+   "lineRange": [
+    113,
+    124
+   ],
+   "summary": "Yeniden çalıştırmanın captured_at'ı koruyup pipeline meta'sını tazelediği doğrulanır.",
+   "tags": [
+    "test",
+    "rerun",
+    "meta"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:tests/test_corrections.py",
+   "type": "file",
+   "name": "test_corrections.py",
+   "filePath": "tests/test_corrections.py",
+   "summary": "T37 alan düzeltmeleri testleri: tek PATCH'in beş yüzeyde (entegratör GET'i, yönetici detayı, worker görünümü, listeler, dışa aktarım) aynı anda yansıması, doğrulamanın yeni sayılarla koşması ve düzeltme geçmişinin kaydı.",
+   "tags": [
+    "test",
+    "duzeltme",
+    "admin",
+    "tutarlilik"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:tests/test_corrections.py:env",
+   "type": "function",
+   "name": "env",
+   "filePath": "tests/test_corrections.py",
+   "lineRange": [
+    49,
+    64
+   ],
+   "summary": "Demo seed, yönetici oturumu ve düzeltme PATCH yardımcılarını kuran ortam fixture'ı.",
+   "tags": [
+    "fixture",
+    "test-hazirlik",
+    "duzeltme"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_corrections.py:bes_yuzey",
+   "type": "function",
+   "name": "bes_yuzey",
+   "filePath": "tests/test_corrections.py",
+   "lineRange": [
+    126,
+    148
+   ],
+   "summary": "Bir düzeltmenin beş yüzeyin hepsinde aynı hikâyeyi anlattığını denetleyen ortak yardımcı.",
+   "tags": [
+    "test-yardimci",
+    "duzeltme",
+    "tutarlilik"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_corrections.py:disa_aktarim_satiri",
+   "type": "function",
+   "name": "disa_aktarim_satiri",
+   "filePath": "tests/test_corrections.py",
+   "lineRange": [
+    151,
+    175
+   ],
+   "summary": "Üç biçimin kaynağı olan dışa aktarım satırını okuyan yardımcı.",
+   "tags": [
+    "test-yardimci",
+    "disa-aktarim",
+    "duzeltme"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_corrections.py:test_one_correction_lands_on_all_five_surfaces_at_once",
+   "type": "function",
+   "name": "test_one_correction_lands_on_all_five_surfaces_at_once",
+   "filePath": "tests/test_corrections.py",
+   "lineRange": [
+    181,
+    194
+   ],
+   "summary": "Tek PATCH'in beş yüzeyin hepsinde aynı anda göründüğü doğrulanır.",
+   "tags": [
+    "test",
+    "duzeltme",
+    "tutarlilik"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_corrections.py:test_the_corrected_envelope_is_still_contract_v1_on_every_door",
+   "type": "function",
+   "name": "test_the_corrected_envelope_is_still_contract_v1_on_every_door",
+   "filePath": "tests/test_corrections.py",
+   "lineRange": [
+    197,
+    206
+   ],
+   "summary": "Düzeltilmiş zarfın her kapıda contract v1 olarak kaldığı doğrulanır.",
+   "tags": [
+    "test",
+    "sozlesme",
+    "duzeltme"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_corrections.py:test_the_verdict_after_a_correction_is_the_verdict_of_the_new_numbers",
+   "type": "function",
+   "name": "test_the_verdict_after_a_correction_is_the_verdict_of_the_new_numbers",
+   "filePath": "tests/test_corrections.py",
+   "lineRange": [
+    209,
+    222
+   ],
+   "summary": "Doğrulamanın düzeltilmiş sayılarla yeniden koştuğu ve verdict'un buna göre değiştiği doğrulanır.",
+   "tags": [
+    "test",
+    "dogrulama",
+    "duzeltme"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_corrections.py:test_a_correction_touches_only_the_field_it_names",
+   "type": "function",
+   "name": "test_a_correction_touches_only_the_field_it_names",
+   "filePath": "tests/test_corrections.py",
+   "lineRange": [
+    225,
+    242
+   ],
+   "summary": "Düzeltmenin yalnızca adını verdiği alanı değiştirdiği doğrulanır.",
+   "tags": [
+    "test",
+    "duzeltme",
+    "izolasyon"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_corrections.py:test_the_corrected_product_name_is_what_the_list_searches_on",
+   "type": "function",
+   "name": "test_the_corrected_product_name_is_what_the_list_searches_on",
+   "filePath": "tests/test_corrections.py",
+   "lineRange": [
+    245,
+    255
+   ],
+   "summary": "Liste aramasının düzeltilmiş ürün adını bulduğu doğrulanır.",
+   "tags": [
+    "test",
+    "arama",
+    "duzeltme"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_corrections.py:test_the_export_row_every_format_is_built_from_carries_the_correction",
+   "type": "function",
+   "name": "test_the_export_row_every_format_is_built_from_carries_the_correction",
+   "filePath": "tests/test_corrections.py",
+   "lineRange": [
+    258,
+    277
+   ],
+   "summary": "Dışa aktarım satırının düzeltmeyi taşıdığı doğrulanır.",
+   "tags": [
+    "test",
+    "disa-aktarim",
+    "duzeltme"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_corrections.py:test_every_field_that_moved_is_recorded_with_who_and_when",
+   "type": "function",
+   "name": "test_every_field_that_moved_is_recorded_with_who_and_when",
+   "filePath": "tests/test_corrections.py",
+   "lineRange": [
+    283,
+    296
+   ],
+   "summary": "Kimin ve ne zaman bilgisiyle her alan hareketinin kaydedildiği doğrulanır.",
+   "tags": [
+    "test",
+    "duzeltme-gecmisi",
+    "kayit"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_corrections.py:test_corrections_accumulate_so_the_history_reads_oldest_first",
+   "type": "function",
+   "name": "test_corrections_accumulate_so_the_history_reads_oldest_first",
+   "filePath": "tests/test_corrections.py",
+   "lineRange": [
+    299,
+    310
+   ],
+   "summary": "Düzeltme geçmişinin eskiden yeniye doğru biriktiği doğrulanır.",
+   "tags": [
+    "test",
+    "duzeltme-gecmisi",
+    "siralama"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_corrections.py:test_a_field_that_cannot_be_read_leaves_the_job_exactly_as_it_was",
+   "type": "function",
+   "name": "test_a_field_that_cannot_be_read_leaves_the_job_exactly_as_it_was",
+   "filePath": "tests/test_corrections.py",
+   "lineRange": [
+    316,
+    330
+   ],
+   "summary": "Okunamayan alanla gelen düzeltme isteğinin işi değiştirmeden reddedildiği doğrulanır.",
+   "tags": [
+    "test",
+    "hata-yonetimi",
+    "duzeltme"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_corrections.py:test_the_correction_door_is_the_admin_session_not_a_worker_key",
+   "type": "function",
+   "name": "test_the_correction_door_is_the_admin_session_not_a_worker_key",
+   "filePath": "tests/test_corrections.py",
+   "lineRange": [
+    369,
+    382
+   ],
+   "summary": "Düzeltme kapısının worker anahtarıyla değil yönetici oturumuyla açıldığı doğrulanır.",
+   "tags": [
+    "test",
+    "guvenlik",
+    "erisim-kontrol"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_corrections.py:test_the_detail_page_hands_the_reviewer_a_save",
+   "type": "function",
+   "name": "test_the_detail_page_hands_the_reviewer_a_save",
+   "filePath": "tests/test_corrections.py",
+   "lineRange": [
+    388,
+    402
+   ],
+   "summary": "Detay sayfasının incelemeciye kaydetme düğmesi verdiği doğrulanır.",
+   "tags": [
+    "test",
+    "ui",
+    "duzeltme"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:tests/test_db.py",
+   "type": "file",
+   "name": "test_db.py",
+   "filePath": "tests/test_db.py",
+   "summary": "db katmanının birim testleri: idempotent migrasyonlar, create_job varsayılanları, client_ref tekilliği, durum geçişi damgaları, list_jobs filtreleri ve corrections gidiş-dönüşü.",
+   "tags": [
+    "test",
+    "veritabani",
+    "birim-test",
+    "migrasyon"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:tests/test_db.py:test_migrations_are_idempotent_across_reopens",
+   "type": "function",
+   "name": "test_migrations_are_idempotent_across_reopens",
+   "filePath": "tests/test_db.py",
+   "lineRange": [
+    83,
+    96
+   ],
+   "summary": "Aynı dosyanın tekrar açılışında migrasyonların yeniden koşmadığı doğrulanır.",
+   "tags": [
+    "test",
+    "migrasyon",
+    "idempotens"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_db.py:test_create_job_defaults",
+   "type": "function",
+   "name": "test_create_job_defaults",
+   "filePath": "tests/test_db.py",
+   "lineRange": [
+    102,
+    112
+   ],
+   "summary": "create_job'un beklenen varsayılanları doldurduğu doğrulanır.",
+   "tags": [
+    "test",
+    "job",
+    "varsayilan"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_db.py:test_client_ref_unique_per_key_nulls_free",
+   "type": "function",
+   "name": "test_client_ref_unique_per_key_nulls_free",
+   "filePath": "tests/test_db.py",
+   "lineRange": [
+    134,
+    143
+   ],
+   "summary": "client_ref tekilliğinin anahtar başına olduğu, NULL değerlerin serbest kaldığı doğrulanır.",
+   "tags": [
+    "test",
+    "veritabani",
+    "tekillik"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_db.py:test_transitions_stamp_timestamps",
+   "type": "function",
+   "name": "test_transitions_stamp_timestamps",
+   "filePath": "tests/test_db.py",
+   "lineRange": [
+    173,
+    182
+   ],
+   "summary": "Durum geçişlerinin started/finished damgalarını bastığı doğrulanır.",
+   "tags": [
+    "test",
+    "durum-gecis",
+    "zaman-damgasi"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_db.py:test_set_status_carries_updates_in_one_call",
+   "type": "function",
+   "name": "test_set_status_carries_updates_in_one_call",
+   "filePath": "tests/test_db.py",
+   "lineRange": [
+    194,
+    211
+   ],
+   "summary": "set_status'un durumla birlikte ek güncellemeleri tek çağrıda taşıdığı doğrulanır.",
+   "tags": [
+    "test",
+    "durum-gecis",
+    "guncelleme"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_db.py:test_list_jobs_filters_and_orders_newest_first",
+   "type": "function",
+   "name": "test_list_jobs_filters_and_orders_newest_first",
+   "filePath": "tests/test_db.py",
+   "lineRange": [
+    233,
+    247
+   ],
+   "summary": "list_jobs'un filtreleri uygulayıp en yeniden eskiye dizdiği doğrulanır.",
+   "tags": [
+    "test",
+    "liste",
+    "filtreleme"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_db.py:test_corrections_row_roundtrip",
+   "type": "function",
+   "name": "test_corrections_row_roundtrip",
+   "filePath": "tests/test_db.py",
+   "lineRange": [
+    263,
+    275
+   ],
+   "summary": "Düzeltme satırının yaz-oku gidiş-dönüşünü koruduğu doğrulanır.",
+   "tags": [
+    "test",
+    "duzeltme",
+    "roundtrip"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:tests/test_exports.py",
+   "type": "file",
+   "name": "test_exports.py",
+   "filePath": "tests/test_exports.py",
+   "summary": "T38 dışa aktarım testleri: JSON/CSV/XLSX'in contract satırını birebir taşıdığını her biçimin kendi okuyucusuyla (csv, openpyxl, json) geri okuyarak doğrular; korpus demo seed.",
+   "tags": [
+    "test",
+    "disa-aktarim",
+    "csv",
+    "xlsx"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:tests/test_exports.py:env",
+   "type": "function",
+   "name": "env",
+   "filePath": "tests/test_exports.py",
+   "lineRange": [
+    37,
+    52
+   ],
+   "summary": "Demo seed + yönetici oturumuyla üç biçimli dışa aktarım ortamı.",
+   "tags": [
+    "fixture",
+    "test-hazirlik",
+    "disa-aktarim"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_exports.py:test_json_answers_with_contract_v1_envelopes",
+   "type": "function",
+   "name": "test_json_answers_with_contract_v1_envelopes",
+   "filePath": "tests/test_exports.py",
+   "lineRange": [
+    108,
+    120
+   ],
+   "summary": "JSON dışa aktarımının contract v1 zarflarını döndürdüğü doğrulanır.",
+   "tags": [
+    "test",
+    "json",
+    "sozlesme"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_exports.py:test_a_receipt_lands_in_csv_exactly_as_the_contract_row_reads_it",
+   "type": "function",
+   "name": "test_a_receipt_lands_in_csv_exactly_as_the_contract_row_reads_it",
+   "filePath": "tests/test_exports.py",
+   "lineRange": [
+    133,
+    149
+   ],
+   "summary": "CSV satırının contract satırını birebir taşıdığı kendi okuyucusuyla doğrulanır.",
+   "tags": [
+    "test",
+    "csv",
+    "disa-aktarim"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_exports.py:test_xlsx_writes_amounts_as_real_numbers_under_a_bold_header",
+   "type": "function",
+   "name": "test_xlsx_writes_amounts_as_real_numbers_under_a_bold_header",
+   "filePath": "tests/test_exports.py",
+   "lineRange": [
+    152,
+    171
+   ],
+   "summary": "XLSX'in tutarları gerçek sayı olarak kalın başlık altına yazdığı doğrulanır.",
+   "tags": [
+    "test",
+    "xlsx",
+    "disa-aktarim"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_exports.py:test_the_quality_mode_flag_reaches_all_three_formats",
+   "type": "function",
+   "name": "test_the_quality_mode_flag_reaches_all_three_formats",
+   "filePath": "tests/test_exports.py",
+   "lineRange": [
+    196,
+    214
+   ],
+   "summary": "Kalite modu işaretinin üç biçime de yansıdığı doğrulanır.",
+   "tags": [
+    "test",
+    "kalite-modu",
+    "disa-aktarim"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_exports.py:test_a_corrected_receipt_exports_corrected_in_every_format",
+   "type": "function",
+   "name": "test_a_corrected_receipt_exports_corrected_in_every_format",
+   "filePath": "tests/test_exports.py",
+   "lineRange": [
+    220,
+    251
+   ],
+   "summary": "Düzeltilmiş fişin üç biçimde de düzeltilmiş hâliyle dışa aktarıldığı doğrulanır.",
+   "tags": [
+    "test",
+    "duzeltme",
+    "disa-aktarim"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_exports.py:test_worker_and_since_narrow_the_whole_set",
+   "type": "function",
+   "name": "test_worker_and_since_narrow_the_whole_set",
+   "filePath": "tests/test_exports.py",
+   "lineRange": [
+    265,
+    277
+   ],
+   "summary": "Worker ve tarih süzgeçlerinin tüm kümeyi daralttığı doğrulanır.",
+   "tags": [
+    "test",
+    "filtreleme",
+    "disa-aktarim"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_exports.py:test_each_format_arrives_as_a_named_download",
+   "type": "function",
+   "name": "test_each_format_arrives_as_a_named_download",
+   "filePath": "tests/test_exports.py",
+   "lineRange": [
+    290,
+    302
+   ],
+   "summary": "Her biçimin adlandırılmış indirme olarak geldiği doğrulanır.",
+   "tags": [
+    "test",
+    "indirme",
+    "disa-aktarim"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_exports.py:test_the_export_door_is_the_admin_session",
+   "type": "function",
+   "name": "test_the_export_door_is_the_admin_session",
+   "filePath": "tests/test_exports.py",
+   "lineRange": [
+    305,
+    315
+   ],
+   "summary": "Dışa aktarım kapısının yönetici oturumuyla korunduğu doğrulanır.",
+   "tags": [
+    "test",
+    "guvenlik",
+    "disa-aktarim"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:tests/test_hardening.py",
+   "type": "file",
+   "name": "test_hardening.py",
+   "filePath": "tests/test_hardening.py",
+   "summary": "T46 sertleştirme testleri: yükleme sınırı (413), güvenlik başlıkları, çökmede JSON zarfı ve job id'li istek logu; hepsi gerçek middleware sırası üzerinden.",
+   "tags": [
+    "test",
+    "guvenlik",
+    "middleware",
+    "hata-yonetimi"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_hardening.py:env",
+   "type": "function",
+   "name": "env",
+   "filePath": "tests/test_hardening.py",
+   "lineRange": [
+    25,
+    35
+   ],
+   "summary": "Gerçek uygulamayı üç dış middleware halkasıyla kuran ortam fixture'ı.",
+   "tags": [
+    "fixture",
+    "test-hazirlik",
+    "middleware"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_hardening.py:test_an_oversize_upload_is_413_with_turkish_copy",
+   "type": "function",
+   "name": "test_an_oversize_upload_is_413_with_turkish_copy",
+   "filePath": "tests/test_hardening.py",
+   "lineRange": [
+    89,
+    100
+   ],
+   "summary": "Sınır üstü yüklemenin Türkçe metinle 413 aldığı doğrulanır.",
+   "tags": [
+    "test",
+    "yukleme",
+    "hata-yonetimi"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_hardening.py:test_a_chunked_upload_without_a_content_length_hits_the_same_cap",
+   "type": "function",
+   "name": "test_a_chunked_upload_without_a_content_length_hits_the_same_cap",
+   "filePath": "tests/test_hardening.py",
+   "lineRange": [
+    103,
+    119
+   ],
+   "summary": "Content-Length'suz parçalı yüklemenin de aynı sınıra çarptığı doğrulanır.",
+   "tags": [
+    "test",
+    "yukleme",
+    "middleware"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:tests/test_hardening.py:test_every_response_carries_the_security_headers",
+   "type": "function",
+   "name": "test_every_response_carries_the_security_headers",
+   "filePath": "tests/test_hardening.py",
+   "lineRange": [
+    167,
+    181
+   ],
+   "summary": "Her yanıtın güvenlik başlıklarını taşıdığı doğrulanır.",
+   "tags": [
+    "test",
+    "guvenlik",
+    "basliklar"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_hardening.py:test_a_crash_leaves_the_envelope_on_the_wire_and_the_trace_in_the_log",
+   "type": "function",
+   "name": "test_a_crash_leaves_the_envelope_on_the_wire_and_the_trace_in_the_log",
+   "filePath": "tests/test_hardening.py",
+   "lineRange": [
+    194,
+    211
+   ],
+   "summary": "Çökmede telle JSON zarfı, logda iz kaldığı doğrulanır.",
+   "tags": [
+    "test",
+    "hata-yonetimi",
+    "log"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:tests/test_hardening.py:test_uploads_and_polls_are_logged_with_their_job_id",
+   "type": "function",
+   "name": "test_uploads_and_polls_are_logged_with_their_job_id",
+   "filePath": "tests/test_hardening.py",
+   "lineRange": [
+    217,
+    228
+   ],
+   "summary": "Yükleme ve yoklama log satırlarının job id taşıdığı doğrulanır.",
+   "tags": [
+    "test",
+    "log",
+    "gozlemlenebilirlik"
+   ],
+   "complexity": "simple"
+  }
+ ],
+ "edges": [
+  {
+   "source": "file:tests/test_admin_list.py",
+   "target": "function:tests/test_admin_list.py:env",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_admin_list.py",
+   "target": "function:tests/test_admin_list.py:test_a_row_carries_exactly_the_table_columns",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_admin_list.py",
+   "target": "function:tests/test_admin_list.py:test_the_date_window_closes_around_the_day_the_row_shows",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_admin_list.py",
+   "target": "function:tests/test_admin_list.py:test_sorting_orders_the_column_and_sinks_the_rows_that_have_no_value",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_admin_list.py",
+   "target": "function:tests/test_admin_list.py:test_pages_repeat_and_skip_nothing",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_admin_list.py",
+   "target": "function:tests/test_admin_list.py:test_the_page_holds_the_list_controls",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_admin_list.py",
+   "target": "function:tests/test_admin_list.py:test_the_list_module_calls_the_admin_api",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_admin_list.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_admin_list.py",
+   "target": "file:app/auth.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_admin_list.py",
+   "target": "file:app/db.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_admin_list.py",
+   "target": "file:app/main.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_admin_list.py",
+   "target": "file:scripts/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_admin_list.py",
+   "target": "file:scripts/serve_demo.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/routes_admin.py",
+   "target": "file:tests/test_admin_list.py",
+   "type": "tested_by",
+   "direction": "forward",
+   "weight": 0.5
+  },
+  {
+   "source": "file:tests/test_admin_list.py",
+   "target": "function:app/main.py:create_app",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_admin_list.py",
+   "target": "function:scripts/serve_demo.py:seed_jobs",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_admin_sort_date.py",
+   "target": "function:tests/test_admin_sort_date.py:env",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_admin_sort_date.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_admin_sort_date.py",
+   "target": "file:app/auth.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_admin_sort_date.py",
+   "target": "file:app/db.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_admin_sort_date.py",
+   "target": "file:app/main.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/routes_admin.py",
+   "target": "file:tests/test_admin_sort_date.py",
+   "type": "tested_by",
+   "direction": "forward",
+   "weight": 0.5
+  },
+  {
+   "source": "file:tests/test_admin_sort_date.py",
+   "target": "function:app/main.py:create_app",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_admin_sort_date.py",
+   "target": "function:app/db.py:create_job",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_auth.py",
+   "target": "function:tests/test_auth.py:test_verify_compares_only_hashes",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_auth.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_auth.py",
+   "target": "file:app/auth.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_auth.py",
+   "target": "file:app/config.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_auth.py",
+   "target": "file:app/db.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/auth.py",
+   "target": "file:tests/test_auth.py",
+   "type": "tested_by",
+   "direction": "forward",
+   "weight": 0.5
+  },
+  {
+   "source": "file:tests/test_auth.py",
+   "target": "function:app/auth.py:verify",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_auth.py",
+   "target": "function:app/auth.py:create_key",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_captured_at_survives.py",
+   "target": "function:tests/test_captured_at_survives.py:env",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_captured_at_survives.py",
+   "target": "function:tests/test_captured_at_survives.py:test_captured_at_survives_the_worker_into_the_get",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_captured_at_survives.py",
+   "target": "function:tests/test_captured_at_survives.py:test_a_rerun_keeps_captured_at_and_refreshes_the_pipeline_meta",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_captured_at_survives.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_captured_at_survives.py",
+   "target": "file:app/auth.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_captured_at_survives.py",
+   "target": "file:app/config.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_captured_at_survives.py",
+   "target": "file:app/db.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_captured_at_survives.py",
+   "target": "file:app/main.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_captured_at_survives.py",
+   "target": "file:app/pipeline.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_captured_at_survives.py",
+   "target": "file:app/queue_worker.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/queue_worker.py",
+   "target": "file:tests/test_captured_at_survives.py",
+   "type": "tested_by",
+   "direction": "forward",
+   "weight": 0.5
+  },
+  {
+   "source": "file:tests/test_captured_at_survives.py",
+   "target": "class:app/queue_worker.py:QueueWorker",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_captured_at_survives.py",
+   "target": "function:app/main.py:create_app",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "function:tests/test_corrections.py:env",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "function:tests/test_corrections.py:bes_yuzey",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "function:tests/test_corrections.py:disa_aktarim_satiri",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "function:tests/test_corrections.py:test_one_correction_lands_on_all_five_surfaces_at_once",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "function:tests/test_corrections.py:test_the_corrected_envelope_is_still_contract_v1_on_every_door",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "function:tests/test_corrections.py:test_the_verdict_after_a_correction_is_the_verdict_of_the_new_numbers",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "function:tests/test_corrections.py:test_a_correction_touches_only_the_field_it_names",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "function:tests/test_corrections.py:test_the_corrected_product_name_is_what_the_list_searches_on",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "function:tests/test_corrections.py:test_the_export_row_every_format_is_built_from_carries_the_correction",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "function:tests/test_corrections.py:test_every_field_that_moved_is_recorded_with_who_and_when",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "function:tests/test_corrections.py:test_corrections_accumulate_so_the_history_reads_oldest_first",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "function:tests/test_corrections.py:test_a_field_that_cannot_be_read_leaves_the_job_exactly_as_it_was",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "function:tests/test_corrections.py:test_the_correction_door_is_the_admin_session_not_a_worker_key",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "function:tests/test_corrections.py:test_the_detail_page_hands_the_reviewer_a_save",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "file:app/auth.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "file:app/contract.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "file:app/db.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "file:app/main.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "file:scripts/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "file:scripts/serve_demo.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/routes_admin.py",
+   "target": "file:tests/test_corrections.py",
+   "type": "tested_by",
+   "direction": "forward",
+   "weight": 0.5
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "function:app/main.py:create_app",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_corrections.py",
+   "target": "function:scripts/serve_demo.py:seed_jobs",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_db.py",
+   "target": "function:tests/test_db.py:test_migrations_are_idempotent_across_reopens",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_db.py",
+   "target": "function:tests/test_db.py:test_create_job_defaults",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_db.py",
+   "target": "function:tests/test_db.py:test_client_ref_unique_per_key_nulls_free",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_db.py",
+   "target": "function:tests/test_db.py:test_transitions_stamp_timestamps",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_db.py",
+   "target": "function:tests/test_db.py:test_set_status_carries_updates_in_one_call",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_db.py",
+   "target": "function:tests/test_db.py:test_list_jobs_filters_and_orders_newest_first",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_db.py",
+   "target": "function:tests/test_db.py:test_corrections_row_roundtrip",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_db.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_db.py",
+   "target": "file:app/config.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_db.py",
+   "target": "file:app/db.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/db.py",
+   "target": "file:tests/test_db.py",
+   "type": "tested_by",
+   "direction": "forward",
+   "weight": 0.5
+  },
+  {
+   "source": "file:tests/test_db.py",
+   "target": "function:app/db.py:connect",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_db.py",
+   "target": "function:app/db.py:set_status",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_db.py",
+   "target": "function:app/db.py:list_jobs",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_exports.py",
+   "target": "function:tests/test_exports.py:env",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_exports.py",
+   "target": "function:tests/test_exports.py:test_json_answers_with_contract_v1_envelopes",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_exports.py",
+   "target": "function:tests/test_exports.py:test_a_receipt_lands_in_csv_exactly_as_the_contract_row_reads_it",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_exports.py",
+   "target": "function:tests/test_exports.py:test_xlsx_writes_amounts_as_real_numbers_under_a_bold_header",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_exports.py",
+   "target": "function:tests/test_exports.py:test_the_quality_mode_flag_reaches_all_three_formats",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_exports.py",
+   "target": "function:tests/test_exports.py:test_a_corrected_receipt_exports_corrected_in_every_format",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_exports.py",
+   "target": "function:tests/test_exports.py:test_worker_and_since_narrow_the_whole_set",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_exports.py",
+   "target": "function:tests/test_exports.py:test_each_format_arrives_as_a_named_download",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_exports.py",
+   "target": "function:tests/test_exports.py:test_the_export_door_is_the_admin_session",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_exports.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_exports.py",
+   "target": "file:app/auth.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_exports.py",
+   "target": "file:app/contract.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_exports.py",
+   "target": "file:app/db.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_exports.py",
+   "target": "file:app/exports.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_exports.py",
+   "target": "file:app/main.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_exports.py",
+   "target": "file:scripts/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_exports.py",
+   "target": "file:scripts/serve_demo.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/exports.py",
+   "target": "file:tests/test_exports.py",
+   "type": "tested_by",
+   "direction": "forward",
+   "weight": 0.5
+  },
+  {
+   "source": "file:tests/test_exports.py",
+   "target": "function:app/main.py:create_app",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_exports.py",
+   "target": "function:scripts/serve_demo.py:seed_jobs",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_exports.py",
+   "target": "function:app/exports.py:row",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:tests/test_hardening.py",
+   "target": "function:tests/test_hardening.py:env",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_hardening.py",
+   "target": "function:tests/test_hardening.py:test_an_oversize_upload_is_413_with_turkish_copy",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_hardening.py",
+   "target": "function:tests/test_hardening.py:test_a_chunked_upload_without_a_content_length_hits_the_same_cap",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_hardening.py",
+   "target": "function:tests/test_hardening.py:test_every_response_carries_the_security_headers",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_hardening.py",
+   "target": "function:tests/test_hardening.py:test_a_crash_leaves_the_envelope_on_the_wire_and_the_trace_in_the_log",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_hardening.py",
+   "target": "function:tests/test_hardening.py:test_uploads_and_polls_are_logged_with_their_job_id",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:tests/test_hardening.py",
+   "target": "file:app/__init__.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_hardening.py",
+   "target": "file:app/auth.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_hardening.py",
+   "target": "file:app/db.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_hardening.py",
+   "target": "file:app/main.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:app/main.py",
+   "target": "file:tests/test_hardening.py",
+   "type": "tested_by",
+   "direction": "forward",
+   "weight": 0.5
+  },
+  {
+   "source": "file:tests/test_hardening.py",
+   "target": "function:app/main.py:create_app",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  }
+ ]
+}

@@ -1,0 +1,120 @@
+{
+  "nodes": [
+    {
+      "id": "config:fixtures_hard/el_yazisi_liste.json",
+      "type": "config",
+      "name": "el_yazisi_liste.json",
+      "filePath": "fixtures_hard/el_yazisi_liste.json",
+      "summary": "El yazısıyla yazılmış alışveriş listesi görüntüsünün beklenen ground-truth çıktısı; yalnızca \"domates\", \"makarna\", \"s\", \"kayisi\", \"temizlik\" anahtar kelimelerinden oluşan bir liste taşır, kalem veya toplam içermez. Zor fixture setinde el yazısı kelime hatırlama (recall) performansını ölçmek için kullanılır.",
+      "tags": ["fixture", "ground-truth", "el-yazisi", "anahtar-kelime", "ocr"],
+      "complexity": "simple",
+      "languageNotes": "Tek anahtarlı (keywords) şema: fiş yapısı yerine serbest metin çıktısı temsil eder, bu yüzden contract.Result'ın kalem/toplam alanları boş kalır."
+    },
+    {
+      "id": "config:fixtures_hard/el_yazisi_not.json",
+      "type": "config",
+      "name": "el_yazisi_not.json",
+      "filePath": "fixtures_hard/el_yazisi_not.json",
+      "summary": "El yazısı toplantı notunun beklenen ground-truth çıktısı; \"Toplanti\", \"14:30\", \"satici\", \"rapor\", \"musteri\", \"imzalamayi\" ve \"Murat\" gibi yedi anahtar kelimeyi listeler. Yapılandırma aşamasının serbest yazıdan kritik bilgileri yakalayıp yakalamadığını değerlendirmek için kullanılır.",
+      "tags": ["fixture", "ground-truth", "el-yazisi", "anahtar-kelime", "ocr"],
+      "complexity": "simple",
+      "languageNotes": "Saat (\"14:30\") ve özel ad (\"Murat\") gibi fiş dışı varlıkları da hedefe alarak anahtar kelime hatırlamasını zorlaştırır."
+    },
+    {
+      "id": "config:fixtures_hard/fis_kotu_cekim.json",
+      "type": "config",
+      "name": "fis_kotu_cekim.json",
+      "filePath": "fixtures_hard/fis_kotu_cekim.json",
+      "summary": "Kötü çekilmiş fiş fotoğrafının beklenen ground-truth çıktısı: ara toplam 269,50 / KDV 53,90 / toplam 323,40, vergi no ve tarihe ek olarak kalemler yalnızca ham tutar sayıları olarak (120,0 / 85,5 / 64,0) durur. Bozuk görüntüde sayısal hatırlamayı ölçer; tutar-only kalem yapısı sözleşme biçiminden eski olduğu için demo hattında okunamayan (unreadable) durumu besler.",
+      "tags": ["fixture", "ground-truth", "fis", "sayisal-dogrulama", "ocr"],
+      "complexity": "simple",
+      "languageNotes": "items dizisi nesne değil düz sayı içerir; scripts/serve_demo.py bu yüzden contract.Result.parse'ta ValidationError alıp bilinçli olarak boş Result'a düşer. fake_models.py de aynı nedeni tek satırlık yorumla belgeler."
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "config:fixtures_hard/el_yazisi_liste.json",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "config:fixtures_hard/el_yazisi_liste.json",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:spike/bench_hard.py",
+      "target": "config:fixtures_hard/el_yazisi_liste.json",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:fixtures_hard/el_yazisi_liste.json",
+      "target": "file:spike/make_hard.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "config:fixtures_hard/el_yazisi_not.json",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "config:fixtures_hard/el_yazisi_not.json",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:spike/bench_hard.py",
+      "target": "config:fixtures_hard/el_yazisi_not.json",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:fixtures_hard/el_yazisi_not.json",
+      "target": "file:spike/make_hard.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:scripts/fake_models.py",
+      "target": "config:fixtures_hard/fis_kotu_cekim.json",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:scripts/serve_demo.py",
+      "target": "config:fixtures_hard/fis_kotu_cekim.json",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:spike/bench_hard.py",
+      "target": "config:fixtures_hard/fis_kotu_cekim.json",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:fixtures_hard/fis_kotu_cekim.json",
+      "target": "file:spike/make_hard.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

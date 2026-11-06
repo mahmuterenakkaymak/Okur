@@ -1,0 +1,1006 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/test_integration_m1.py",
+      "type": "file",
+      "name": "test_integration_m1.py",
+      "summary": "M1 entegrasyonu: gerçek fixture PNG'si gerçek uygulamaya yüklenir, auth gerçek anahtarı doğrular, gerçek worker SQLite kuyruğunu boşaltır ve validator aritmetiği yeniden hesaplar. Tek sahte, httpx transport düzeyindeki iki model yanıtıdır.",
+      "tags": [
+        "test",
+        "entegrasyon",
+        "pipeline"
+      ],
+      "complexity": "complex",
+      "filePath": "tests/test_integration_m1.py"
+    },
+    {
+      "id": "function:tests/test_integration_m1.py:env",
+      "type": "function",
+      "name": "env",
+      "summary": "tmp_path ve monkeypatch ile yalıtılmış bir uygulama+veritabanı ortamı kuran pytest fixture'ı.",
+      "tags": [
+        "fixture",
+        "test-altyapisi",
+        "entegrasyon"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_integration_m1.py",
+      "lineRange": [
+        75,
+        85
+      ]
+    },
+    {
+      "id": "function:tests/test_integration_m1.py:start_worker",
+      "type": "function",
+      "name": "start_worker",
+      "summary": "Sahte model yanıtlarıyla gerçek QueueWorker'ı başlatan yardımcı; KDV'yi tahrif etme seçeneği de var.",
+      "tags": [
+        "fixture",
+        "worker",
+        "test-altyapisi",
+        "entegrasyon"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_integration_m1.py",
+      "lineRange": [
+        88,
+        104
+      ]
+    },
+    {
+      "id": "function:tests/test_integration_m1.py:poll",
+      "type": "function",
+      "name": "poll",
+      "summary": "İş done/failed olana kadar API'den yoklayan zaman aşımlı yardımcı.",
+      "tags": [
+        "polling",
+        "test-altyapisi",
+        "entegrasyon"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_integration_m1.py",
+      "lineRange": [
+        116,
+        127
+      ]
+    },
+    {
+      "id": "function:tests/test_integration_m1.py:test_fixture_image_travels_the_whole_pipeline",
+      "type": "function",
+      "name": "test_fixture_image_travels_the_whole_pipeline",
+      "summary": "Fixture PNG'sinin yükleyip worker'dan geçtikten sonra ok verdict ve doğru toplamlarla döndüğünü sınar.",
+      "tags": [
+        "test",
+        "entegrasyon",
+        "pipeline",
+        "entegrasyon"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_integration_m1.py",
+      "lineRange": [
+        137,
+        160
+      ]
+    },
+    {
+      "id": "function:tests/test_integration_m1.py:test_tampered_kdv_from_the_model_yields_mismatch_naming_the_field",
+      "type": "function",
+      "name": "test_tampered_kdv_from_the_model_yields_mismatch_naming_the_field",
+      "summary": "Modelin tahrif edilmiş KDV'sinin mismatch verdict ve tam olarak totals.kdv alan adını ürettiğini doğrular.",
+      "tags": [
+        "test",
+        "entegrasyon",
+        "dogrulama",
+        "entegrasyon"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_integration_m1.py",
+      "lineRange": [
+        163,
+        179
+      ]
+    },
+    {
+      "id": "file:tests/test_ocr_client.py",
+      "type": "file",
+      "name": "test_ocr_client.py",
+      "summary": "Aşama 1 istemcisinin testi: istek gövdesinin chat/completions sözleşmesi, görüntünün base64 data URL olması, Paddle istemi ve max_tokens, kalite modunun aynı uç noktayı kullanması ve hata yollarının OcrError olması.",
+      "tags": [
+        "test",
+        "api-client",
+        "ocr"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_ocr_client.py"
+    },
+    {
+      "id": "file:tests/test_pipeline.py",
+      "type": "file",
+      "name": "test_pipeline.py",
+      "summary": "Üç aşamanın sırası ve sahipliğinin testi: OCR → yapılandırıcı → validator akışı, beklenen toplamların kalemlerden yeniden hesaplanması, model tutarlarının yalnızca gerçek tarafı olması ve modelin zarfa verdict/validation sızdıramaması.",
+      "tags": [
+        "test",
+        "pipeline",
+        "dogrulama"
+      ],
+      "complexity": "complex",
+      "filePath": "tests/test_pipeline.py"
+    },
+    {
+      "id": "class:tests/test_pipeline.py:UnreadableError",
+      "type": "class",
+      "name": "UnreadableError",
+      "summary": "Aşama 2'nin okunamayan hatasının testteki taklidi; pipeline'ın bu tipi yakaladığını tetiklemek için kullanılır.",
+      "tags": [
+        "test",
+        "exception",
+        "test-altyapisi"
+      ],
+      "complexity": "simple",
+      "filePath": "tests/test_pipeline.py",
+      "lineRange": [
+        14,
+        15
+      ]
+    },
+    {
+      "id": "class:tests/test_pipeline.py:FakeOcr",
+      "type": "class",
+      "name": "FakeOcr",
+      "summary": "Sabit metin/süre veya OcrError döndüren sahte OCR istemcisi; aşama 1'i enjekte ederek test eder.",
+      "tags": [
+        "mock",
+        "test-altyapisi",
+        "ocr"
+      ],
+      "complexity": "simple",
+      "filePath": "tests/test_pipeline.py",
+      "lineRange": [
+        22,
+        33
+      ]
+    },
+    {
+      "id": "class:tests/test_pipeline.py:FakeStructurer",
+      "type": "class",
+      "name": "FakeStructurer",
+      "summary": "Verilen sözlüğü, sahte anahtarları veya UnreadableError'ı döndüren yapılandırma taklidi; modelin zarfa sızdırma denemelerini buradan kurar.",
+      "tags": [
+        "mock",
+        "test-altyapisi",
+        "stage-2"
+      ],
+      "complexity": "simple",
+      "filePath": "tests/test_pipeline.py",
+      "lineRange": [
+        36,
+        48
+      ]
+    },
+    {
+      "id": "function:tests/test_pipeline.py:test_runs_stage1_then_stage2_then_stage3",
+      "type": "function",
+      "name": "test_runs_stage1_then_stage2_then_stage3",
+      "summary": "Üç aşamanın tam sırada ve OCR metninin yapılandırıcıya aktarılarak çalıştığını doğrular.",
+      "tags": [
+        "test",
+        "pipeline",
+        "dogrulama"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_pipeline.py",
+      "lineRange": [
+        60,
+        75
+      ]
+    },
+    {
+      "id": "function:tests/test_pipeline.py:test_ok_receipt_recomputes_the_expected_totals",
+      "type": "function",
+      "name": "test_ok_receipt_recomputes_the_expected_totals",
+      "summary": "Beklenen toplamların modelin rakamlarından değil kalemlerin yeniden toplamından geldiğini sınar.",
+      "tags": [
+        "test",
+        "pipeline",
+        "dogrulama"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_pipeline.py",
+      "lineRange": [
+        136,
+        146
+      ]
+    },
+    {
+      "id": "function:tests/test_pipeline.py:test_model_totals_are_only_the_actual_side_never_the_verdict",
+      "type": "function",
+      "name": "test_model_totals_are_only_the_actual_side_never_the_verdict",
+      "summary": "Modelin toplamlarının yalnızca gerçek tarafı olduğunu, verdict'i belirlemediğini doğrular.",
+      "tags": [
+        "test",
+        "pipeline",
+        "dogrulama"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_pipeline.py",
+      "lineRange": [
+        149,
+        159
+      ]
+    },
+    {
+      "id": "function:tests/test_pipeline.py:test_model_cannot_smuggle_a_verdict_or_validation_block",
+      "type": "function",
+      "name": "test_model_cannot_smuggle_a_verdict_or_validation_block",
+      "summary": "Model yüküne konan verdict/validation bloklarının contract süzgecinden geçemediğini sınar.",
+      "tags": [
+        "test",
+        "pipeline",
+        "dogrulama"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_pipeline.py",
+      "lineRange": [
+        162,
+        171
+      ]
+    },
+    {
+      "id": "function:tests/test_pipeline.py:test_stage1_failure_still_returns_a_whole_partial_result",
+      "type": "function",
+      "name": "test_stage1_failure_still_returns_a_whole_partial_result",
+      "summary": "OCR patladığında dönen demetin yine tam bir sonuç/validation/meta taşıdığını doğrular.",
+      "tags": [
+        "test",
+        "pipeline",
+        "dogrulama"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_pipeline.py",
+      "lineRange": [
+        196,
+        210
+      ]
+    },
+    {
+      "id": "file:tests/test_smoke_real_structurer.py",
+      "type": "file",
+      "name": "test_smoke_real_structurer.py",
+      "summary": "Kaynak kodu AST ile okuyan bekçı: scripts/smoke_e2e.py el yapımı bir aşama 2 isteği kurmak yerine gerçek app.structurer'ı kullanmalı; aksi hâlde servis edilen istemci bozulurken duman testi yeşil kalır.",
+      "tags": [
+        "test",
+        "bekci",
+        "ast",
+        "regresyon"
+      ],
+      "complexity": "simple",
+      "filePath": "tests/test_smoke_real_structurer.py",
+      "languageNotes": "Modülü çalıştırmadan AST ile içe aktarımları ve tanımlı isimleri sayar; bu, bir duman testinin kendi ikamesini yazması sınıfı hataya kalıcı olarak geçit vermez."
+    },
+    {
+      "id": "file:tests/test_structurer.py",
+      "type": "file",
+      "name": "test_structurer.py",
+      "summary": "Aşama 2 istemcisinin geniş testi: istek gövdesi ve yönlendirmesi (Strata/Unsloth), enable_thinking bayrağı, OCR metni ile görüntünün birlikte gitmesi, savunmacı JSON çıkarma ve okunamayan/hata ayrımı.",
+      "tags": [
+        "test",
+        "stage-2",
+        "api-client",
+        "llm"
+      ],
+      "complexity": "complex",
+      "filePath": "tests/test_structurer.py"
+    },
+    {
+      "id": "function:tests/test_structurer.py:test_absent_fields_come_back_as_house_defaults",
+      "type": "function",
+      "name": "test_absent_fields_come_back_as_house_defaults",
+      "summary": "Model eksik bıraktığında her alanın ev varsayılanıyla döndüğünü doğrular.",
+      "tags": [
+        "test",
+        "stage-2",
+        "api-client"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_structurer.py",
+      "lineRange": [
+        52,
+        64
+      ]
+    },
+    {
+      "id": "function:tests/test_structurer.py:test_posts_chat_completions_to_strata_port",
+      "type": "function",
+      "name": "test_posts_chat_completions_to_strata_port",
+      "summary": "İsteğin Strata portunda /v1/chat/completions'a gittiğini sınar.",
+      "tags": [
+        "test",
+        "stage-2",
+        "api-client"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_structurer.py",
+      "lineRange": [
+        90,
+        99
+      ]
+    },
+    {
+      "id": "function:tests/test_structurer.py:test_uses_strata_model_by_default",
+      "type": "function",
+      "name": "test_uses_strata_model_by_default",
+      "summary": "Varsayılan modelin config.strata_model() olduğunu doğrular.",
+      "tags": [
+        "test",
+        "stage-2",
+        "api-client"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_structurer.py",
+      "lineRange": [
+        102,
+        112
+      ]
+    },
+    {
+      "id": "function:tests/test_structurer.py:test_thinking_is_disabled_for_the_reasoning_model",
+      "type": "function",
+      "name": "test_thinking_is_disabled_for_the_reasoning_model",
+      "summary": "Gövdede enable_thinking=False bayrağının bulunduğunu sınar (T68 regresyonu).",
+      "tags": [
+        "test",
+        "stage-2",
+        "api-client"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_structurer.py",
+      "lineRange": [
+        115,
+        124
+      ]
+    },
+    {
+      "id": "function:tests/test_structurer.py:test_quality_mode_routes_to_unsloth",
+      "type": "function",
+      "name": "test_quality_mode_routes_to_unsloth",
+      "summary": "Kalite modunun isteği Unsloth Studio'ya yönlendirdiğini doğrular.",
+      "tags": [
+        "test",
+        "stage-2",
+        "api-client"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_structurer.py",
+      "lineRange": [
+        127,
+        138
+      ]
+    },
+    {
+      "id": "function:tests/test_structurer.py:test_sends_ocr_text_and_image_together",
+      "type": "function",
+      "name": "test_sends_ocr_text_and_image_together",
+      "summary": "OCR metni ile görüntünün tek mesajda birlikte gönderildiğini doğrular.",
+      "tags": [
+        "test",
+        "stage-2",
+        "api-client"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_structurer.py",
+      "lineRange": [
+        141,
+        154
+      ]
+    },
+    {
+      "id": "function:tests/test_structurer.py:test_empty_ocr_text_is_still_a_request",
+      "type": "function",
+      "name": "test_empty_ocr_text_is_still_a_request",
+      "summary": "Boş OCR metninin de geçerli bir istek olduğunu, istemin korunduğunu sınar.",
+      "tags": [
+        "test",
+        "stage-2",
+        "api-client"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_structurer.py",
+      "lineRange": [
+        211,
+        220
+      ]
+    },
+    {
+      "id": "function:tests/test_structurer.py:test_answer_of_only_thoughts_is_unreadable_not_a_crash",
+      "type": "function",
+      "name": "test_answer_of_only_thoughts_is_unreadable_not_a_crash",
+      "summary": "content=null + yalnızca reasoning içeren yanıtın çökme değil UnreadableError ürettiğini doğrular.",
+      "tags": [
+        "test",
+        "stage-2",
+        "api-client"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_structurer.py",
+      "lineRange": [
+        255,
+        264
+      ]
+    },
+    {
+      "id": "function:tests/test_structurer.py:test_explicit_base_url_model_and_timeout_override_routing",
+      "type": "function",
+      "name": "test_explicit_base_url_model_and_timeout_override_routing",
+      "summary": "Açık verilen base_url/model/timeout değerlerinin yönlendirmeyi ezdiğini sınar.",
+      "tags": [
+        "test",
+        "stage-2",
+        "api-client"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_structurer.py",
+      "lineRange": [
+        333,
+        343
+      ]
+    },
+    {
+      "id": "file:tests/test_tailscale.py",
+      "type": "file",
+      "name": "test_tailscale.py",
+      "summary": "scripts/tailscale_serve.ps1 betiğini çalıştırmadan ayrıştırır ve README'deki belgeleri ayrıştırma sonucuna karşı denetler; port, sertifika yolu ve geri alma komutu betikten ayrılamaz.",
+      "tags": [
+        "test",
+        "belge-uyumu",
+        "powershell",
+        "tailnet"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_tailscale.py"
+    },
+    {
+      "id": "function:tests/test_tailscale.py:tailscale_commands",
+      "type": "function",
+      "name": "tailscale_commands",
+      "summary": "Ayrıştırılan .ps1 betiğindeki komut ve bayrakları döndürür; README'nin betikle aynı şeyi söylediğini denetleyen testler bu yardımcıyı kullanır.",
+      "tags": [
+        "test-yardimci",
+        "powershell",
+        "belge-uyumu"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_tailscale.py",
+      "lineRange": [
+        33,
+        43
+      ]
+    },
+    {
+      "id": "file:tests/test_unreadable_survives.py",
+      "type": "file",
+      "name": "test_unreadable_survives.py",
+      "summary": "Okunamayan fişin bir verdict olduğunu uçtan uca savunur: aşama 2'nin UnreadableError'ı demetin error alanına dönüşürse worker işi failed yapar ve okunamayan verdict, yeniden çekim önerisi ile entegratör gerekçesi kaybolur.",
+      "tags": [
+        "test",
+        "regresyon",
+        "verdict",
+        "pipeline"
+      ],
+      "complexity": "moderate",
+      "filePath": "tests/test_unreadable_survives.py"
+    },
+    {
+      "id": "class:tests/test_unreadable_survives.py:FakeOcr",
+      "type": "class",
+      "name": "FakeOcr",
+      "summary": "Sabit metin döndüren en küçük OCR taklidi; okunamayan fiş senaryosunda aşama 1'i sabitler.",
+      "tags": [
+        "mock",
+        "test-altyapisi",
+        "ocr"
+      ],
+      "complexity": "simple",
+      "filePath": "tests/test_unreadable_survives.py",
+      "lineRange": [
+        22,
+        24
+      ]
+    },
+    {
+      "id": "class:tests/test_unreadable_survives.py:RaisingStructurer",
+      "type": "class",
+      "name": "RaisingStructurer",
+      "summary": "Her zaman UnreadableError fırlatan yapılandırma taklidi; okunamayan verdict'in worker'a kadar sağ ulaştığını bu tetikler.",
+      "tags": [
+        "mock",
+        "test-altyapisi",
+        "stage-2"
+      ],
+      "complexity": "simple",
+      "filePath": "tests/test_unreadable_survives.py",
+      "lineRange": [
+        27,
+        32
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/test_integration_m1.py",
+      "target": "function:tests/test_integration_m1.py:env",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_integration_m1.py",
+      "target": "function:tests/test_integration_m1.py:start_worker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_integration_m1.py",
+      "target": "function:tests/test_integration_m1.py:poll",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_integration_m1.py",
+      "target": "function:tests/test_integration_m1.py:test_fixture_image_travels_the_whole_pipeline",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_integration_m1.py",
+      "target": "function:tests/test_integration_m1.py:test_tampered_kdv_from_the_model_yields_mismatch_naming_the_field",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_integration_m1.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_integration_m1.py",
+      "target": "file:app/auth.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_integration_m1.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_integration_m1.py",
+      "target": "file:app/contract.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_integration_m1.py",
+      "target": "file:app/db.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_integration_m1.py",
+      "target": "file:app/main.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_integration_m1.py",
+      "target": "file:app/ocr_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_integration_m1.py",
+      "target": "file:app/pipeline.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_integration_m1.py",
+      "target": "file:app/queue_worker.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_integration_m1.py",
+      "target": "file:app/structurer.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_integration_m1.py",
+      "target": "file:scripts/fake_models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:tests/test_integration_m1.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tests/test_ocr_client.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_ocr_client.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_ocr_client.py",
+      "target": "file:app/ocr_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_pipeline.py",
+      "target": "class:tests/test_pipeline.py:UnreadableError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_pipeline.py",
+      "target": "class:tests/test_pipeline.py:FakeOcr",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_pipeline.py",
+      "target": "class:tests/test_pipeline.py:FakeStructurer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_pipeline.py",
+      "target": "function:tests/test_pipeline.py:test_runs_stage1_then_stage2_then_stage3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_pipeline.py",
+      "target": "function:tests/test_pipeline.py:test_ok_receipt_recomputes_the_expected_totals",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_pipeline.py",
+      "target": "function:tests/test_pipeline.py:test_model_totals_are_only_the_actual_side_never_the_verdict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_pipeline.py",
+      "target": "function:tests/test_pipeline.py:test_model_cannot_smuggle_a_verdict_or_validation_block",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_pipeline.py",
+      "target": "function:tests/test_pipeline.py:test_stage1_failure_still_returns_a_whole_partial_result",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_pipeline.py:FakeOcr",
+      "target": "class:app/ocr_client.py:OcrClient",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "class:tests/test_pipeline.py:FakeStructurer",
+      "target": "class:app/structurer.py:Structurer",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "class:tests/test_pipeline.py:UnreadableError",
+      "target": "class:app/structurer.py:UnreadableError",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tests/test_pipeline.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_pipeline.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_pipeline.py",
+      "target": "file:app/contract.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_pipeline.py",
+      "target": "file:app/ocr_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_pipeline.py",
+      "target": "file:app/pipeline.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_smoke_real_structurer.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_smoke_real_structurer.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_smoke_real_structurer.py",
+      "target": "file:scripts/smoke_e2e.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:tests/test_smoke_real_structurer.py",
+      "target": "class:app/structurer.py:Structurer",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tests/test_structurer.py",
+      "target": "function:tests/test_structurer.py:test_absent_fields_come_back_as_house_defaults",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_structurer.py",
+      "target": "function:tests/test_structurer.py:test_posts_chat_completions_to_strata_port",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_structurer.py",
+      "target": "function:tests/test_structurer.py:test_uses_strata_model_by_default",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_structurer.py",
+      "target": "function:tests/test_structurer.py:test_thinking_is_disabled_for_the_reasoning_model",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_structurer.py",
+      "target": "function:tests/test_structurer.py:test_quality_mode_routes_to_unsloth",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_structurer.py",
+      "target": "function:tests/test_structurer.py:test_sends_ocr_text_and_image_together",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_structurer.py",
+      "target": "function:tests/test_structurer.py:test_empty_ocr_text_is_still_a_request",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_structurer.py",
+      "target": "function:tests/test_structurer.py:test_answer_of_only_thoughts_is_unreadable_not_a_crash",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_structurer.py",
+      "target": "function:tests/test_structurer.py:test_explicit_base_url_model_and_timeout_override_routing",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_structurer.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_structurer.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_structurer.py",
+      "target": "file:app/structurer.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_tailscale.py",
+      "target": "function:tests/test_tailscale.py:tailscale_commands",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_tailscale.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_tailscale.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_tailscale.py",
+      "target": "file:scripts/tailscale_serve.ps1",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:tests/test_tailscale.py",
+      "target": "document:README.md",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:tests/test_unreadable_survives.py",
+      "target": "class:tests/test_unreadable_survives.py:FakeOcr",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_unreadable_survives.py",
+      "target": "class:tests/test_unreadable_survives.py:RaisingStructurer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_unreadable_survives.py:FakeOcr",
+      "target": "class:app/ocr_client.py:OcrClient",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "class:tests/test_unreadable_survives.py:RaisingStructurer",
+      "target": "class:app/structurer.py:Structurer",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tests/test_unreadable_survives.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_unreadable_survives.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_unreadable_survives.py",
+      "target": "file:app/contract.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_unreadable_survives.py",
+      "target": "file:app/db.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_unreadable_survives.py",
+      "target": "file:app/pipeline.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_unreadable_survives.py",
+      "target": "file:app/queue_worker.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_unreadable_survives.py",
+      "target": "file:app/structurer.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}
