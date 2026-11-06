@@ -227,6 +227,82 @@ def test_stage2_keys_fall_back_on_junk_values(monkeypatch):
     assert config.structurer_include_image() is True
 
 
+def install_small_brain(root: pathlib.Path, *, skip: str = "") -> pathlib.Path:
+    """Create the three installed files, leaving out the one named in `skip`
+    ("server", "model" or "mmproj")."""
+    paths = {
+        "server": root / "llama" / "llama-server.exe",
+        "model": root / "models" / config.DEFAULT_SMALL_BRAIN_MODEL_FILE,
+        "mmproj": root / "models" / config.DEFAULT_SMALL_BRAIN_MMPROJ_FILE,
+    }
+    for name, path in paths.items():
+        if name != skip:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(b"x")
+    return root
+
+
+def test_small_brain_dir_defaults_under_localappdata(monkeypatch, tmp_path):
+    set_env(monkeypatch, LOCALAPPDATA=tmp_path)
+    brain = tmp_path / "ocr-small-brain"
+    assert config.small_brain_dir() == brain
+    assert config.small_brain_server_path() == brain / "llama" / "llama-server.exe"
+    model = config.small_brain_model_path()
+    mmproj = config.small_brain_mmproj_path()
+    assert model.parent == brain / "models" and model.suffix == ".gguf"
+    assert mmproj.parent == brain / "models" and mmproj.suffix == ".gguf"
+
+
+def test_small_brain_dir_env_override_moves_every_file(monkeypatch, tmp_path):
+    set_env(monkeypatch, LOCALAPPDATA=tmp_path / "ignored", OCR_SMALL_BRAIN_DIR=tmp_path / "brain")
+    assert config.small_brain_dir() == tmp_path / "brain"
+    assert config.small_brain_server_path() == tmp_path / "brain" / "llama" / "llama-server.exe"
+    assert (tmp_path / "brain" / "models").name in config.small_brain_model_path().parts
+    assert config.small_brain_mmproj_path().parent == tmp_path / "brain" / "models"
+
+
+def test_small_brain_file_env_overrides(monkeypatch, tmp_path):
+    brain = install_small_brain(tmp_path / "brain")
+    set_env(
+        monkeypatch,
+        OCR_SMALL_BRAIN_DIR=brain,
+        SMALL_BRAIN_SERVER=tmp_path / "elsewhere" / "llama-server.exe",
+        SMALL_BRAIN_MODEL_FILE=brain / "models" / "other-quant.gguf",
+        SMALL_BRAIN_MMPROJ=brain / "models" / "other-mmproj.gguf",
+    )
+    assert config.small_brain_server_path() == tmp_path / "elsewhere" / "llama-server.exe"
+    assert config.small_brain_model_path() == brain / "models" / "other-quant.gguf"
+    assert config.small_brain_mmproj_path() == brain / "models" / "other-mmproj.gguf"
+
+
+def test_small_brain_ready_needs_all_three_files(monkeypatch, tmp_path):
+    set_env(monkeypatch, OCR_SMALL_BRAIN_DIR=tmp_path / "brain")
+    assert config.small_brain_ready() is False
+    install_small_brain(tmp_path / "brain")
+    assert config.small_brain_ready() is True
+
+
+@pytest.mark.parametrize("missing", ["server", "model", "mmproj"])
+def test_small_brain_ready_false_when_one_file_is_missing(monkeypatch, tmp_path, missing):
+    install_small_brain(tmp_path / "brain", skip=missing)
+    set_env(monkeypatch, OCR_SMALL_BRAIN_DIR=tmp_path / "brain")
+    assert config.small_brain_ready() is False
+    missing_path = {
+        "server": config.small_brain_server_path,
+        "model": config.small_brain_model_path,
+        "mmproj": config.small_brain_mmproj_path,
+    }[missing]()
+    assert missing_path.is_file() is False
+
+
+def test_small_brain_ready_false_when_a_path_is_a_directory(monkeypatch, tmp_path):
+    install_small_brain(tmp_path / "brain")
+    set_env(monkeypatch, OCR_SMALL_BRAIN_DIR=tmp_path / "brain")
+    config.small_brain_model_path().unlink()
+    config.small_brain_model_path().mkdir()
+    assert config.small_brain_ready() is False
+
+
 def test_key_prefix_shape():
     assert re.fullmatch(r"ocrk_[0-9a-f]{40}", f"{config.KEY_PREFIX}{'0' * 40}")
     assert config.KEY_BYTES * 2 == 40

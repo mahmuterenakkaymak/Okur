@@ -201,6 +201,46 @@ def small_brain_model() -> str:
     return env_str("SMALL_BRAIN_MODEL", "Qwen3-VL-4B-Instruct")
 
 
+# where scripts/install_small_brain.ps1 installs to (R7: never into the repo)
+DEFAULT_SMALL_BRAIN_DIR_NAME = "ocr-small-brain"
+# ASSUMPTION: file names follow the unsloth HF repo layout (UD-IQ4_XS quant plus
+# its F16 mmproj); the manifest (T80) and the env vars below can point elsewhere.
+DEFAULT_SMALL_BRAIN_MODEL_FILE = "Qwen3-VL-4B-Instruct-UD-IQ4_XS.gguf"
+DEFAULT_SMALL_BRAIN_MMPROJ_FILE = "mmproj-F16.gguf"
+
+
+def small_brain_dir() -> pathlib.Path:
+    """Install dir of the small brain: %LOCALAPPDATA%\\ocr-small-brain on
+    Windows, the user's data dir elsewhere; OCR_SMALL_BRAIN_DIR overrides."""
+    local = env_str("LOCALAPPDATA") or pathlib.Path.home() / ".local" / "share"
+    return env_path("OCR_SMALL_BRAIN_DIR", pathlib.Path(local) / DEFAULT_SMALL_BRAIN_DIR_NAME)
+
+
+def small_brain_server_path() -> pathlib.Path:
+    return env_path("SMALL_BRAIN_SERVER", small_brain_dir() / "llama" / "llama-server.exe")
+
+
+def small_brain_model_path() -> pathlib.Path:
+    return env_path(
+        "SMALL_BRAIN_MODEL_FILE", small_brain_dir() / "models" / DEFAULT_SMALL_BRAIN_MODEL_FILE
+    )
+
+
+def small_brain_mmproj_path() -> pathlib.Path:
+    return env_path(
+        "SMALL_BRAIN_MMPROJ", small_brain_dir() / "models" / DEFAULT_SMALL_BRAIN_MMPROJ_FILE
+    )
+
+
+def small_brain_ready() -> bool:
+    """All three installed files present. False paints the launcher line red
+    and turns a stage-2 connection error into "not installed"."""
+    return all(
+        path.is_file()
+        for path in (small_brain_server_path(), small_brain_model_path(), small_brain_mmproj_path())
+    )
+
+
 def structurer_include_image() -> bool:
     """Send the receipt image to stage 2 too. Only the small backend asks."""
     return env_bool("STRUCTURER_INCLUDE_IMAGE", True)
