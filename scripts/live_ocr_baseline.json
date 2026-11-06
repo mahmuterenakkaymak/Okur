@@ -1,0 +1,14 @@
+{
+ "gercek_market_1": {
+  "verdict": "ok",
+  "total_ms": 17868
+ },
+ "gercek_bim_2": {
+  "verdict": "mismatch",
+  "total_ms": 14512
+ },
+ "gercek_elyazisi_3_kirp": {
+  "verdict": "unreadable",
+  "total_ms": 7336
+ }
+}
