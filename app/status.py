@@ -3,6 +3,8 @@
 The three model servers are the only things here that can be down, so each
 probe is one cheap GET with a short timeout and a verdict that never raises:
 the status page has to answer even when every server it reports on is off.
+The stage-2 probe follows the configured brain, so a CPU-only box shows its
+small brain rather than a permanent red Strata.
 VRAM comes from nvidia-smi when the tool exists and reads as unavailable
 when it does not — a CPU-only box has nothing to show, and that is not an
 error.
@@ -38,6 +40,18 @@ def probe_service(
     return {"ok": ok, "latency_ms": ms if ok else None}
 
 
+def stage2_base_url() -> str:
+    """Base url of the stage-2 brain that is configured.
+
+    Contract 9 froze the payload's key names, so the "strata" key reports
+    whichever brain stage 2 actually runs: the small brain on :8100 when
+    STRUCTURER_BACKEND=small, Strata otherwise (PLAN.md run-2 R4).
+    """
+    if config.structurer_backend() == "small":
+        return config.small_brain_base_url()
+    return config.strata_base_url()
+
+
 def vram_info() -> dict:
     """Used/total MB from nvidia-smi (first GPU); no tool is not an error."""
     try:
@@ -62,7 +76,7 @@ def probe_all(conn, transport: httpx.BaseTransport | None = None) -> dict:
     """The status payload (PLAN.md contract 9) for this very moment."""
     return {
         "ocr": probe_service(config.ocr_base_url(), transport),
-        "strata": probe_service(config.strata_base_url(), transport),
+        "strata": probe_service(stage2_base_url(), transport),
         "unsloth": probe_service(config.unsloth_base_url(), transport),
         "vram": vram_info(),
         "queue": db.queue_depth(conn),

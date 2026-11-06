@@ -190,3 +190,66 @@ def test_the_status_module_calls_the_admin_api(env):
     assert js.status_code == 200
     assert 'API = "/admin/api"' in js.text
     assert "/status" in js.text
+
+
+# --- the stage-2 probe follows the configured backend (T85) ---
+
+
+def adres_tutan(
+    acik_portlar: set[int],
+) -> tuple[httpx.MockTransport, list[str]]:
+    """Like tasima, but also records every full url the probes asked for."""
+    gorulen: list[str] = []
+
+    def elde(request: httpx.Request) -> httpx.Response:
+        gorulen.append(str(request.url))
+        if request.url.port in acik_portlar:
+            return httpx.Response(200, json={"data": []})
+        raise httpx.ConnectError("connection refused")
+
+    return httpx.MockTransport(elde), gorulen
+
+
+def anlik_govde(tmp_path, monkeypatch, tasima) -> dict:
+    monkeypatch.setattr(status, "vram_info", lambda: YOK_VRAM)
+    conn = db.connect(tmp_path / "ocr.db")
+    govde = status.probe_all(conn, transport=tasima)
+    conn.close()
+    return govde
+
+
+def test_the_small_backend_probes_the_small_brain_on_8100(tmp_path, monkeypatch):
+    """STRUCTURER_BACKEND=small: contract 9's "strata" key is the small brain."""
+    monkeypatch.setenv("STRUCTURER_BACKEND", "small")
+    tasima, gorulen = adres_tutan({8081, 8100})
+    govde = anlik_govde(tmp_path, monkeypatch, tasima)
+    assert "http://127.0.0.1:8100/v1/models" in gorulen
+    assert "http://127.0.0.1:8080/v1/models" not in gorulen
+    assert govde["strata"]["ok"] is True  # the CPU-only box's green stage-2 chip
+
+
+def test_the_strata_backend_still_probes_strata(tmp_path, monkeypatch):
+    monkeypatch.delenv("STRUCTURER_BACKEND", raising=False)
+    tasima, gorulen = adres_tutan({8081, 8080})
+    govde = anlik_govde(tmp_path, monkeypatch, tasima)
+    assert "http://127.0.0.1:8080/v1/models" in gorulen
+    assert "http://127.0.0.1:8100/v1/models" not in gorulen
+    assert govde["strata"]["ok"] is True
+
+
+def test_stage2_base_url_names_the_configured_brain(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "small")
+    assert status.stage2_base_url() == "http://127.0.0.1:8100"
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
+    assert status.stage2_base_url() == "http://127.0.0.1:8080"
+
+
+@pytest.mark.parametrize("backend", ["small", "strata"])
+def test_the_payload_keys_did_not_change(backend, tmp_path, monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", backend)
+    govde = anlik_govde(tmp_path, monkeypatch, adres_tutan(set())[0])
+    assert list(govde) == ["ocr", "strata", "unsloth", "vram", "queue"]
+    for servis in ("ocr", "strata", "unsloth"):
+        assert govde[servis] == {"ok": False, "latency_ms": None}
+    assert govde["vram"] == YOK_VRAM
+    assert govde["queue"] == {"queued": 0, "running": 0, "failed": 0}
