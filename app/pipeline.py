@@ -43,7 +43,7 @@ def run(
     try:
         seen = ocr.transcribe(image_bytes, quality_mode=quality_mode)
     except OcrError as exc:
-        return _bundle(worker, 0, started, quality_mode, f"stage 1: {exc}")
+        return _bundle(worker, 0, started, quality_mode, _line(1, exc))
     ocr_ms = _ms(seen.get("ms"))
 
     # ASSUMPTION: UnreadableError is the model's own verdict on the receipt, so
@@ -62,7 +62,7 @@ def run(
             contract.Result(okunamayan=[_reason(exc)]),
         )
     except Exception as exc:
-        return _bundle(worker, ocr_ms, started, quality_mode, f"stage 2: {exc}")
+        return _bundle(worker, ocr_ms, started, quality_mode, _line(2, exc))
 
     # Parsing through the contract is what keeps arithmetic out of the model's
     # hands: it keeps only result fields, so a smuggled validation block or
@@ -104,8 +104,18 @@ def _bundle(
     }
 
 
-def _reason(exc: BaseException) -> str:
-    """One short line for the result's okunamayan list from a model's complaint."""
+def _line(stage: int, exc: BaseException) -> str:
+    """One stage's failure line for the queue row's error column.
+
+    Bounded like every other reason: the worker's detail route hands this
+    column straight to the phone, so a pydantic dump of the model's whole
+    payload or a WinError's text never runs past the warning line.
+    """
+    return _reason(f"stage {stage}: {exc}")
+
+
+def _reason(exc: BaseException | str) -> str:
+    """One short line for a screen from a model's or a stage's complaint."""
     text = " ".join(str(exc).split())
     return text if len(text) <= REASON_MAX_CHARS else text[: REASON_MAX_CHARS - 1].rstrip() + "…"
 

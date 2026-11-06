@@ -65,10 +65,20 @@ function positive(value) {
   return Number.isFinite(number) && number > 0 ? number : 0;
 }
 
-// The job's own one-line reason ("small brain not installed — …"); only a
-// failed job carries it, every other envelope simply has no such field.
+// The one failure the worker can act on by name: the server has no stage-2
+// model installed, and its sentence names the command to run. Every other
+// internal reason (a timeout, a WinError, the model's own malformed output)
+// stays on the server — the phone shows the Turkish hint, retake included.
+//
+// ASSUMPTION: that sentence is recognized by its own marker (the installer's
+// name), so the admin detail keeps reading the full error line as it always did.
+const KURULUM_SEBEBI = /small brain not installed|install_small_brain/i;
+
+// The job's own one-line reason; only a failed job carries one, every other
+// envelope simply has no such field.
 function sebep(job) {
-  return typeof job.error === "string" ? job.error.trim() : "";
+  const error = typeof job.error === "string" ? job.error.trim() : "";
+  return KURULUM_SEBEBI.test(error) ? error : "";
 }
 
 /** Which stage a job is in; running advances with the time it has been live. */

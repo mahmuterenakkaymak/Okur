@@ -86,6 +86,34 @@ test("a failed job is a finished state, not a spinner", () => {
   assert.equal(view.progress, 1);
 });
 
+// --- what a dead job tells the worker ---
+
+test("the missing-brain sentence is the one reason the phone repeats", () => {
+  const sebep =
+    "stage 2: small brain not installed — çalıştırmak için scripts\\install_small_brain.ps1";
+  const view = statusOf(envelope("failed", { error: sebep }), { elapsedMs: 5000 });
+
+  assert.equal(view.reason, sebep);
+  assert.equal(view.hint, sebep, "the worker reads the command to run");
+});
+
+test("every other internal reason stays off the phone", () => {
+  const ic =
+    'stage 2: 2 validation errors for Result\nitems\n  Input should be a valid list [input_value={"ad":"KOLE"}]\n[WinError 1225] sunucu yanıt vermiyor';
+  const view = statusOf(envelope("failed", { error: ic }), { elapsedMs: 5000 });
+
+  assert.equal(view.reason, "");
+  assert.equal(view.hint, "Bu fiş işlenemedi, tekrar deneyebilirsin.");
+  assert.doesNotMatch(view.hint, /WinError|validation error|Result/);
+});
+
+test("a job that carries no reason at all keeps the Turkish hint", () => {
+  assert.equal(
+    statusOf(envelope("failed", { error: "   " })).hint,
+    "Bu fiş işlenemedi, tekrar deneyebilirsin.",
+  );
+});
+
 // --- stale ---
 
 test("a job that stops moving goes stale after a minute", () => {
