@@ -96,7 +96,7 @@
 - [x] T72 | M5 | app/pipeline.py stops hardcoding config.strata_model() into meta.model (pipeline.py:96) and takes config.stage2_model(quality_mode) instead, so a receipt names the brain that actually ran; tests/test_pipeline.py pins the small, strata and quality-mode names | accept: .venv\Scripts\python -m pytest tests/test_pipeline.py -q
 - [x] T73 | M5 | M5 integration with real producers into real consumers: with STRUCTURER_BACKEND=small and SMALL_BRAIN_BASE_URL aimed at a real-socket fake model server (scripts/fake_models.py's structurer role reports the resolved backend's model id), run the real app, auth, SQLite queue, pipeline and validator and assert a done job whose meta.model is the small-brain id and whose envelope passes contract/contract_v1.schema.json with verdict ok — no hand-rolled structurer fake anywhere | accept: .venv\Scripts\python -m pytest tests/test_small_brain_backend.py -q
 - [x] T74 | M5 | tests/test_launcher_rollcall.py::test_check_marks_are_green_on_a_console_and_plain_when_redirected fails whenever the shell sets NO_COLOR (verified: 'OCR ✓' against the green sequence) — pin the environment on both sides (delenv NO_COLOR for the console case, set it for the redirected case) so the test measures _green() and not the terminal | accept: .venv\Scripts\python -m pytest tests/test_launcher_rollcall.py -q
-- [ ] T75 | M5 | M5 gate: everything green with the default still strata | accept: .venv\Scripts\python -m pytest tests -q && node --test "tests/js/*.test.js"
+- [x] T75 | M5 | M5 gate: everything green with the default still strata | accept: .venv\Scripts\python -m pytest tests -q && node --test "tests/js/*.test.js"
 
 ## M6 — Small brain: process ownership and installer
 
