@@ -17,14 +17,19 @@ the queue forever.
 
 Child PIDs go to data/<name>.pid and their output to data/logs/<name>.log, so
 --stop works from another terminal and a failed start names the log to read.
+A small brain that cannot be started is the one deliberate exception: no files
+or a busy port is a red ✗ line naming the installer to run or the process to
+stop, and the app comes up without it.
 """
 from __future__ import annotations
 
 import argparse
 import ctypes
+import errno
 import os
 import pathlib
 import signal
+import socket
 import subprocess
 import sys
 import time
@@ -41,6 +46,9 @@ from app.queue_worker import QueueWorker
 # ASSUMPTION: fixed rather than env-configurable — unlike OCR, it has one job.
 SMALL_BRAIN_CTX = "8192"
 SMALL_BRAIN_IMAGE_TOKENS = "1024"
+
+# what to tell an operator whose box has no small brain yet (T80 lands the script)
+INSTALL_SCRIPT = "scripts\\install_small_brain.ps1"
 
 HEALTH_PATH = "/health"
 POLL_S = 0.25
@@ -124,6 +132,98 @@ def small_brain_command(port: int | None = None) -> list[str]:
         "--temp", "0",
         "--no-webui",
     ]
+
+
+def _port_free(host: str, port: int) -> bool:
+    """True when this box can still take host:port.
+
+    A bind is the only probe every OS answers without an administrative tool,
+    and SO_REUSEADDR stays off because on Windows it lets a busy port bind
+    anyway. Any error that is not "already in use" — a base url naming another
+    machine, say — reads as free, leaving the health gate to explain that.
+    """
+    try:
+        with socket.socket() as probe:
+            probe.bind((host, port))
+    except OSError as exc:
+        return exc.errno != errno.EADDRINUSE
+    return True
+
+
+def _listener_pids(port: int) -> list[int]:
+    """PIDs listening on the port, from the OS's own tool; empty when there is
+    no tool to ask. Never raises — a launcher that cannot name the holder still
+    names the port and starts the app."""
+    if os.name == "nt":
+        cmd = ["netstat", "-ano"]
+    else:
+        cmd = ["lsof", "-nP", "-t", f"-iTCP:{port}", "-sTCP:LISTEN"]
+    try:
+        out = subprocess.run(cmd, capture_output=True, text=True, timeout=5.0).stdout
+    except (OSError, subprocess.SubprocessError):
+        return []
+    pids = set()
+    for line in out.splitlines():
+        parts = line.split()
+        if os.name == "nt":
+            #   TCP    127.0.0.1:8100    0.0.0.0:0              LISTENING    4321
+            if len(parts) != 5 or parts[3] != "LISTENING":
+                continue
+            if parts[1].rpartition(":")[2] != str(port):
+                continue
+        try:
+            pids.add(int(parts[-1]))
+        except ValueError:
+            continue
+    return sorted(pids)
+
+
+def _process_name(pid: int) -> str:
+    """Image name of a pid; "" when the OS will not say."""
+    cmd = (
+        ["tasklist", "/FI", f"PID eq {pid}", "/NH", "/FO", "CSV"]
+        if os.name == "nt"
+        else ["ps", "-p", str(pid), "-o", "comm="]
+    )
+    try:
+        out = subprocess.run(cmd, capture_output=True, text=True, timeout=5.0).stdout
+    except (OSError, subprocess.SubprocessError):
+        return ""
+    rows = [line for line in out.strip().splitlines() if line]
+    if not rows or "No Mapping" in rows[0] or "no such process" in rows[0].lower():
+        return ""
+    return rows[0].split(",")[0].strip('"')
+
+
+def _port_holder(port: int) -> str:
+    """Who to blame for a busy port: "pid 4321 (llama-server.exe)"."""
+    pids = _listener_pids(port)
+    if not pids:
+        return "bilinmeyen bir süreç"
+    return ", ".join(f"pid {pid} ({_process_name(pid) or 'bilinmiyor'})" for pid in pids[:3])
+
+
+def small_brain_block() -> tuple[str, list[tuple[str, str]]] | None:
+    """(reason, help lines) when the small brain must not be spawned; None to
+    start it normally.
+
+    Both reads happen before the spawn, and that is the whole point: a missing
+    GGUF leaves a child dying on startup and a busy port loses the race, so the
+    ✗ would name nothing. Neither is fatal — stage 1, the queue and the admin UI
+    work without stage 2.
+    """
+    if not config.small_brain_ready():
+        return (
+            "model dosyaları yok",
+            [("kurulum", INSTALL_SCRIPT), ("dizin", str(config.small_brain_dir()))],
+        )
+    port = config.small_brain_port()
+    if not _port_free(small_brain_host(), port):
+        return (
+            f"port {port} dolu",
+            [("işgalci", _port_holder(port)), ("durdur", "python run.py --stop")],
+        )
+    return None
 
 
 def app_command(app_port: int | None = None) -> list[str]:
@@ -308,10 +408,16 @@ def start(ocr_port: int, app_port: int, browser: bool) -> int:
         "app": app_command(app_port),
         "small-brain": small_brain_command(),
     }
+    blocked = small_brain_block()
     children: dict[str, subprocess.Popen] = {}
     worker = None
     try:
         for name in SERVICES:
+            if name == "small-brain" and blocked is not None:
+                # no child, so no pid file either — --stop must not kill a
+                # process this launcher never started.
+                pid_path(name).unlink(missing_ok=True)
+                continue
             child = _spawn(name, commands[name])
             children[name] = child
             pid_path(name).write_text(str(child.pid), encoding="utf-8")
@@ -322,6 +428,12 @@ def start(ocr_port: int, app_port: int, browser: bool) -> int:
         worker.start()
         deadline = time.monotonic() + config.startup_wait_s()
         for name, base, path in roll_call():
+            if name == "small-brain" and blocked is not None:
+                reason, help_lines = blocked
+                _say(LABELS[name], f"✗ {reason}")
+                for step, detail in help_lines:
+                    _say(step, detail)
+                continue
             if name not in children:
                 _say(LABELS[name], f"bekleniyor… ({base})")
             left = max(0.0, deadline - time.monotonic())
@@ -339,7 +451,9 @@ def start(ocr_port: int, app_port: int, browser: bool) -> int:
         # ASSUMPTION: the launcher stays in the foreground as the supervisor;
         # Ctrl+C here or --stop from another terminal is what ends the stack.
         _wait_for_children(children)
-        return 0
+        # ASSUMPTION: "does not claim success" means the ✗ line plus a nonzero
+        # exit once the stack ends — the app served receipts the whole time.
+        return 1 if blocked else 0
     except KeyboardInterrupt:
         return 0
     finally:

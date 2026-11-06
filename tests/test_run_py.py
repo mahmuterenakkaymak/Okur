@@ -29,6 +29,11 @@ def isolated_data(monkeypatch, tmp_path):
     for name in [n for n in os.environ if n.startswith(OWN_PREFIXES)]:
         monkeypatch.delenv(name, raising=False)
     monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
+    # T78 preflights the small brain before spawning it; these tests describe an
+    # installed box with a free 8100 (tests/test_launcher_small_brain.py covers
+    # the two red lines).
+    monkeypatch.setattr(config, "small_brain_ready", lambda: True)
+    monkeypatch.setattr(run, "_port_free", lambda host, port: True)
 
 
 def flag_value(command: list[str], flag: str) -> str:
