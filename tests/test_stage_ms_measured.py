@@ -122,10 +122,13 @@ def test_the_success_path_keeps_the_structurers_own_report():
 def test_a_stage_that_never_ran_is_still_the_contracts_zero():
     bundle = run(ocr=FakeOcr(error=OcrError("ocr server unreachable")))
 
-    # Nothing past stage 1 ran, so the breakdown stays three zeros: the fix is
-    # for stages that ran, not a blanket "always at least one".
+    # Nothing past stage 1 ran, so those two stay the contract's 0: the fix is
+    # for stages that ran, not a blanket "always at least one". Stage 1 ran, and
+    # tests/test_stage_ms_stage1.py pins the wait it reports.
     assert bundle["error"].startswith("stage 1:")
-    assert bundle["meta"]["stage_ms"] == {"ocr": 0, "structure": 0, "validate": 0}
+    stages = bundle["meta"]["stage_ms"]
+    assert stages["structure"] == 0
+    assert stages["validate"] == 0
 
 
 # --- so the stored row and the screen underneath it say the same thing -------

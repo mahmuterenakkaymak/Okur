@@ -186,7 +186,11 @@ def test_total_ms_stays_the_whole_run():
 def test_a_stage_that_never_ran_reads_zero():
     bundle = pipeline.run(IMAGE, ocr=FakeOcr(error=True), structurer=FakeStructurer())
     assert bundle["error"].startswith("stage 1:")
-    assert bundle["meta"]["stage_ms"] == {"ocr": 0, "structure": 0, "validate": 0}
+    # Nothing past stage 1 ran, so those two stay the contract's 0. Stage 1's own
+    # wait is measured (tests/test_stage_ms_stage1.py).
+    stages = bundle["meta"]["stage_ms"]
+    assert stages["structure"] == 0
+    assert stages["validate"] == 0
 
 
 def test_a_stage_two_outage_reports_the_measured_wait():

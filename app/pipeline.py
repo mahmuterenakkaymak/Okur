@@ -45,12 +45,22 @@ def run(
     # because the contract reads a 0 as "this stage never ran". total_ms stays
     # the whole-run number either way.
     stages = {"ocr": 0, "structure": 0, "validate": 0}
-
+    # meta.ocr_ms stays the client's own report — one a stage that never answered
+    # does not have — while the breakdown asks a different question: did it run?
+    ocr_ms = 0
+    stage_started = time.perf_counter()
     try:
         seen = ocr.transcribe(image_bytes, quality_mode=quality_mode)
     except OcrError as exc:
-        return _bundle(worker, stages, started, quality_mode, _line(1, exc))
-    stages["ocr"] = _ms(seen.get("ms"))
+        # A stage 1 that raised has no self-report, and its wait is the whole
+        # OCR_TIMEOUT_S: timing it here is what stops "Okuma —" — contract 13's
+        # "this stage never ran" — from painting the failed row an operator opens
+        # to find out what died as a job that never started.
+        stages["ocr"] = _wait_ms(stage_started)
+        return _bundle(
+            worker, stages, started, quality_mode, _line(1, exc), ocr_ms=ocr_ms
+        )
+    stages["ocr"] = ocr_ms = _ms(seen.get("ms"))
 
     # ASSUMPTION: UnreadableError is the model's own verdict on the receipt, so
     # the job completes done with that verdict and the reason in okunamayan;
@@ -72,10 +82,13 @@ def run(
             quality_mode,
             "",
             contract.Result(okunamayan=[_reason(exc)]),
+            ocr_ms=ocr_ms,
         )
     except Exception as exc:
         stages["structure"] = _wait_ms(stage_started)
-        return _bundle(worker, stages, started, quality_mode, _line(2, exc))
+        return _bundle(
+            worker, stages, started, quality_mode, _line(2, exc), ocr_ms=ocr_ms
+        )
     # An answered stage 2 keeps its own report — the HTTP call is the stage, and
     # that clock saw the network the pipeline's never saw.
     stages["structure"] = _ms(
@@ -86,7 +99,7 @@ def run(
     # hands: it keeps only result fields, so a smuggled validation block or
     # verdict in the model payload never reaches the job.
     result = contract.Result.parse(structured if isinstance(structured, dict) else {})
-    return _bundle(worker, stages, started, quality_mode, "", result)
+    return _bundle(worker, stages, started, quality_mode, "", result, ocr_ms=ocr_ms)
 
 
 def _default_structurer(quality_mode: bool) -> Any:
@@ -105,6 +118,7 @@ def _bundle(
     quality_mode: bool,
     error: str,
     result: contract.Result | None = None,
+    ocr_ms: int = 0,
 ) -> dict[str, Any]:
     result = contract.Result() if result is None else result
     clock = time.perf_counter()
@@ -119,7 +133,7 @@ def _bundle(
         stages["validate"] = _wait_ms(clock)
     meta = contract.JobMeta(
         worker=worker,
-        ocr_ms=stages["ocr"],
+        ocr_ms=ocr_ms,
         total_ms=int((time.perf_counter() - started) * 1000),
         model=config.stage2_model(quality_mode),
         quality_mode=quality_mode,
