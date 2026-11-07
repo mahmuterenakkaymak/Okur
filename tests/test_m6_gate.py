@@ -10,8 +10,10 @@ side, so this file walks the whole of each:
   * the install command a red launcher line and a dead job print is a script
     that actually ships;
   * --stop reaps the brain, so nothing is left holding its port;
-  * and none of it moved the shipping default: a box with a brain installed
-    *and* listening still sends stage 2 to Strata until M8 flips the backend.
+  * and none of it let the brain override the backend in play: on the
+    STRUCTURER_BACKEND=strata rollback a box with a brain installed *and*
+    listening still sends stage 2 to Strata (M8, T91, moved the default itself
+    to the small brain).
 
 Receipts run through the real app, the SQLite queue and a real worker over real
 sockets. The project's own env is cleared first (T74's rule) and %LOCALAPPDATA%
@@ -157,12 +159,13 @@ def test_a_stop_leaves_nothing_holding_the_brains_port():
 
 @pytest.fixture
 def make_box(monkeypatch, tmp_path):
-    """Build a box: which stage-2 backend is configured, whether the brain is
-    installed, and which of the two stage-2 servers actually answers."""
+    """Build a box: which stage-2 backend is configured (every test pins its own),
+    whether the brain is installed, and which of the two stage-2 servers actually
+    answers."""
     workers: list[QueueWorker] = []
     models: list = []
 
-    def make(*, backend: str | None, installed: bool, strata_live: bool, brain_live: bool):
+    def make(*, backend: str, installed: bool, strata_live: bool, brain_live: bool):
         auth._buckets.clear()
         stubs = start_fake_models()
         models.append(stubs)
@@ -170,10 +173,7 @@ def make_box(monkeypatch, tmp_path):
         monkeypatch.setenv("OCR_PORT", str(stubs.ocr.port))
         monkeypatch.setenv("STRATA_MODEL", STRATA_ID)
         monkeypatch.setenv("SMALL_BRAIN_MODEL", BRAIN_ID)
-        if backend is None:
-            monkeypatch.delenv("STRUCTURER_BACKEND", raising=False)
-        else:
-            monkeypatch.setenv("STRUCTURER_BACKEND", backend)
+        monkeypatch.setenv("STRUCTURER_BACKEND", backend)
         strata_url = (
             stubs.structurer.base_url
             if strata_live
@@ -234,7 +234,10 @@ def submit_and_poll(box) -> tuple[str, dict]:
 
 
 def test_an_installed_and_listening_brain_does_not_move_the_default(make_box):
-    box = make_box(backend=None, installed=True, strata_live=True, brain_live=True)
+    """A brain that exists and answers never overrides the configured backend:
+    on the strata rollback stage 2 still runs on Strata. The default itself is
+    config's to say (small since M8), so it is never pinned to a word here."""
+    box = make_box(backend="strata", installed=True, strata_live=True, brain_live=True)
     assert config.structurer_backend() == "strata"
 
     _, body = submit_and_poll(box)

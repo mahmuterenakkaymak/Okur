@@ -1,10 +1,12 @@
-"""M5 gate: with nothing configured, stage 2 is still Strata — all the way down.
+"""M5 gate: on a Strata box, stage 2 is Strata — all the way down.
 
-The milestone added a second stage-2 brain without moving anyone's default, so
-the exit state of the box is: an empty environment sends a receipt to Strata
-:8080, ``meta.model`` names the Strata id, and every small-brain env key sits
-inert until the M8 cutover flips ``config.DEFAULT_STRUCTURER_BACKEND``. This
-file walks one receipt through that default along real sockets.
+The milestone added a second stage-2 brain without moving anyone's default; M8
+(T91) later flipped ``config.DEFAULT_STRUCTURER_BACKEND`` to the small brain.
+So every env block here pins ``STRUCTURER_BACKEND=strata`` — the rollback path —
+and the default itself is pinned only to ``config.DEFAULT_STRUCTURER_BACKEND`` /
+``config.structurer_backend()``, never to the word "strata". On that box a
+receipt goes to Strata :8080, ``meta.model`` names the Strata id, and every
+small-brain env key stays inert.
 
 The project's own env vars are cleared first (same rule as T74's NO_COLOR
 pin): the gate measures what the code defaults to, not what the developer's
@@ -90,14 +92,16 @@ def stage2_request():
 
 @pytest.fixture
 def default_env(tmp_path, monkeypatch):
-    """Real app, queue and worker; stage 2's stub on a real socket, env untouched.
+    """Real app, queue and worker; stage 2's stub on a real socket, env pinned.
 
     The only things pointed anywhere are the data dir and the two model-server
-    ports. ``STRUCTURER_BACKEND`` is never set, and the small brain's own URL is
-    a closed port: whichever brain the job reaches, the envelope will tell.
+    ports. ``STRUCTURER_BACKEND`` is pinned to strata — the box this file
+    describes — and the small brain's own URL is a closed port: if the job ever
+    wandered to the other brain, the envelope would say so.
     """
     auth._buckets.clear()
     models = start_fake_models()
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
     monkeypatch.setenv("OCR_HOST", str(httpx.URL(models.ocr.base_url).host))
     monkeypatch.setenv("OCR_PORT", str(models.ocr.port))
@@ -134,27 +138,32 @@ def poll(client, plaintext, job_id):
         time.sleep(0.05)
 
 
-# --- the default, layer by layer ---
+# --- the strata box, layer by layer ---
 
 
-def test_no_env_names_a_backend_and_it_is_strata():
-    assert config.DEFAULT_STRUCTURER_BACKEND == "strata"
+def test_no_env_names_a_backend_and_it_is_strata(monkeypatch):
+    # the default is whatever config says (small since M8); strata is the rollback
+    assert config.structurer_backend() == config.DEFAULT_STRUCTURER_BACKEND
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     assert config.structurer_backend() == "strata"
 
 
-def test_default_client_points_at_strata():
+def test_default_client_points_at_strata(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     structurer = Structurer()
     assert structurer.backend == "strata"
     assert structurer.base_url == config.strata_base_url() == "http://127.0.0.1:8080"
     assert structurer.model == config.strata_model()
 
 
-def test_default_stage2_model_is_the_strata_id():
+def test_default_stage2_model_is_the_strata_id(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     assert config.stage2_model(False) == config.strata_model() == "strata"
     assert config.stage2_model(True) == config.unsloth_model()
 
 
 def test_stage2_env_overrides_still_come_from_config(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     monkeypatch.setenv("STRATA_MODEL", STRATA_ID)
     assert config.stage2_model(False) == STRATA_ID
     monkeypatch.setenv("STRATA_MODEL", "  " + STRATA_ID + " ")
@@ -165,6 +174,7 @@ def test_stage2_env_overrides_still_come_from_config(monkeypatch):
 
 
 def test_small_brain_knobs_are_inert_until_the_backend_is_small(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     monkeypatch.setenv("SMALL_BRAIN_BASE_URL", f"http://127.0.0.1:{closed_port()}")
     monkeypatch.setenv("SMALL_BRAIN_MODEL", "Qwen3-VL-4B-Small-Test")
     monkeypatch.setenv("STRUCTURER_INCLUDE_IMAGE", "0")  # small backend only (M7)
@@ -180,7 +190,7 @@ def test_any_other_backend_value_reads_as_the_default(value, monkeypatch):
     assert config.structurer_backend() == config.DEFAULT_STRUCTURER_BACKEND
 
 
-# --- and the default carries a real receipt to done ---
+# --- and that box carries a real receipt to done ---
 
 
 def test_default_runs_a_receipt_to_strata_end_to_end(default_env):

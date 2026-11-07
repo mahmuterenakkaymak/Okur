@@ -40,6 +40,9 @@ def isolated_data(monkeypatch, tmp_path):
         monkeypatch.delenv(name, raising=False)
     monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
     # today's documented box: Strata runs stage 2 and the installer never ran.
+    # Since M8 the default is the small brain, so the box this file is about is
+    # pinned here; the tests that describe the brain as stage 2 set it themselves.
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     monkeypatch.setenv("OCR_SMALL_BRAIN_DIR", str(tmp_path / "ocr-small-brain"))
 
 

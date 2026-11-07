@@ -288,8 +288,10 @@ def test_start_tracks_pids_starts_the_worker_and_reports_the_admin_url(launcher,
     }
     assert (FakeWorker.started, FakeWorker.stopped) == (1, 1)
     out = capsys.readouterr().out
-    # D7 roll-call: OCR, Strata, Small brain and Uygulama, though only three are children
-    assert out.count("✓") == 4
+    # D7 roll-call: OCR, Small brain and Uygulama. Strata joins the roll-call only
+    # when it is the stage-2 backend, so the fourth check mark belongs to
+    # STRUCTURER_BACKEND=strata (tests/test_launcher_rollcall.py).
+    assert out.count("✓") == 3
     assert "http://127.0.0.1:8090/admin" in out
     assert launcher.opened == ["http://127.0.0.1:8090/admin"]
     assert sorted(launcher.killed) == sorted(launcher.children.values())
