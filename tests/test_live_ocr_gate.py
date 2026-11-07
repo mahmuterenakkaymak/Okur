@@ -429,6 +429,20 @@ def test_a_dead_stage_one_fails_the_run(stack, tmp_path, monkeypatch):
     assert rig.brain_seen == []
 
 
+def test_a_down_brain_fails_the_flagless_run(stack, tmp_path, monkeypatch):
+    """Without the flag a server down is a failed run: the --if-installed SKIP
+    spares a box without the stack, it never spares the gate from failing."""
+    rig = stack()
+    use_baseline(tmp_path, monkeypatch, BASELINE)
+    brain_installed(tmp_path, monkeypatch, ready=True)
+    rig.brain.shutdown()
+    code, out = run_gate()
+    assert code != 0, out
+    assert "LIVE OCR GATE FAILED" in out
+    assert "SKIP" not in out
+    assert row_of(out, "gercek_market_1")[0] == "error"
+
+
 # --- SKIP: no receipts, no brain ---------------------------------------------
 
 
@@ -477,6 +491,40 @@ def test_if_installed_never_skips_a_box_it_cannot_install(stack, tmp_path, monke
     assert code == 0, out
     assert "SKIP" not in out
     assert "LIVE OCR GATE OK" in out
+
+
+def test_if_installed_skips_a_stopped_ocr(stack, tmp_path, monkeypatch):
+    """Installed files say the box can run the gate; a stage 1 nobody started is
+    not a brief 9.2 regression — SKIP names the server and the launcher, and no
+    receipt is posted to either socket."""
+    rig = stack()
+    use_baseline(tmp_path, monkeypatch, BASELINE)
+    brain_installed(tmp_path, monkeypatch, ready=True)
+    rig.stop_ocr()
+    code, out = run_gate("--if-installed")
+    assert code == 0, out
+    assert out.startswith("SKIP")
+    assert "stage 1 OCR" in out
+    assert "python run.py" in out
+    assert "LIVE OCR GATE" not in out
+    assert rig.ocr_seen == []
+    assert rig.brain_seen == []
+
+
+def test_if_installed_skips_a_down_brain(stack, tmp_path, monkeypatch):
+    """An installed brain that is not answering is the same absent stack."""
+    rig = stack()
+    use_baseline(tmp_path, monkeypatch, BASELINE)
+    brain_installed(tmp_path, monkeypatch, ready=True)
+    rig.brain.shutdown()
+    code, out = run_gate("--if-installed")
+    assert code == 0, out
+    assert out.startswith("SKIP")
+    assert "stage 2" in out
+    assert "python run.py" in out
+    assert "LIVE OCR GATE" not in out
+    assert rig.ocr_seen == []
+    assert rig.brain_seen == []
 
 
 # --- --check: the baseline file and the fixture inventory --------------------

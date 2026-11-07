@@ -14,11 +14,15 @@ worse than its recorded verdict.
     .venv/Scripts/python scripts/live_ocr_gate.py --check          # baseline + inventory
     .venv/Scripts/python scripts/live_ocr_gate.py --record         # re-record the baseline
 
-``--if-installed`` is the form .hybrid/checks.json runs: without the receipts or
-the small brain it prints SKIP and exits 0 (PLAN run-2 R10/R11), so the gate sits
-in the smoke list next to the checks that always run. Both model servers are
-config's — ``OCR_HOST``/``OCR_PORT`` and ``SMALL_BRAIN_BASE_URL`` move them — so
-the gate has no address flag of its own (PLAN run-2 R1).
+``--if-installed`` is the form .hybrid/checks.json runs: without the receipts, the
+small brain's files or the two model servers it is about to measure, it prints SKIP
+and exits 0 (PLAN run-2 R10/R11), so the gate sits in the smoke list next to the
+checks that always run — stage 1 is a third-party llama-server this app never
+installs, so a stack that is simply not running is not a brief 9.2 regression.
+Under that flag only, both servers are probed first at the very urls this run would
+use. Both model servers are config's — ``OCR_HOST``/``OCR_PORT`` and
+``SMALL_BRAIN_BASE_URL`` move them — so the gate has no address flag of its own
+(PLAN run-2 R1).
 """
 from __future__ import annotations
 
@@ -29,16 +33,22 @@ import sys
 import time
 from typing import Any
 
+import httpx
+
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:  # direct `python scripts/live_ocr_gate.py`
     sys.path.insert(0, str(ROOT))
 
-from app import config, pipeline, validator  # noqa: E402
+from app import config, pipeline, status, validator  # noqa: E402
 
 RECEIPT_DIR = config.ROOT / "fixtures_real"
 BASELINE_PATH = config.ROOT / "scripts" / "live_ocr_baseline.json"
 LIVE_RUN = config.ROOT / "spike" / "live_real.json"
 INSTALLER = "scripts\\install_small_brain.ps1"
+STARTER = "python run.py"
+# The endpoints of the run about to happen: stage 1's health and the configured
+# stage-2 brain's model listing — the same pair run.py's roll-call waits on.
+HEALTH_PATH = "/health"
 WORKER = "live-ocr-gate"
 # Brief 9.2, verbatim: these two reach verdict ok — gercek_bim_2 included, which
 # the Strata baseline recorded as a mismatch, so the bar there is an improvement.
@@ -184,6 +194,35 @@ def skip_reason(if_installed: bool) -> str | None:
     return None
 
 
+def probe(url: str) -> bool:
+    """Whether a server answers at url at all: one try, config's probe timeout."""
+    try:
+        with httpx.Client(timeout=config.probe_timeout()) as client:
+            client.get(url)
+    except httpx.HTTPError:
+        return False
+    return True
+
+
+def server_skip() -> str | None:
+    """Which of the servers this run is about to measure is not running; None if both are.
+
+    ASSUMPTION: only a socket that refuses or times out counts as down — a server
+    that answers and errs (HTTP 500) belongs in a verdict-less row, never in a
+    SKIP. What is missing here is the stack, and what starts it is the launcher;
+    a brain whose files are absent is named by skip_reason, with the installer.
+    """
+    targets = (
+        ("stage 1 OCR", f"{config.ocr_base_url()}{HEALTH_PATH}"),
+        (f"stage 2 ({config.structurer_backend()})",
+         f"{status.stage2_base_url()}{status.PROBE_PATH}"),
+    )
+    down = [f"{label} at {url}" for label, url in targets if not probe(url)]
+    if not down:
+        return None
+    return f"{', '.join(down)} not running; start it with {STARTER}"
+
+
 def _row(name: str, verdict: str, baseline: str, detail: str) -> dict:
     _log(f"{name:<22} {verdict:<11} {baseline:<11} {_brief(detail)}")
     return {"fixture": name, "verdict": verdict, "baseline": baseline}
@@ -259,6 +298,8 @@ def main(argv=None) -> int:
         if args.check:
             return check_baseline(baseline, BASELINE_PATH)
         skip = skip_reason(args.if_installed)
+        if skip is None and args.if_installed:
+            skip = server_skip()
         if skip:
             _log(f"SKIP — {skip}")
             return 0
