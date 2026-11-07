@@ -14,8 +14,10 @@ line, and the one receipt whose own printed totals are shuffled.
     .venv/Scripts/python scripts/small_brain_gate.py --if-installed
 
 ``--if-installed`` is the form .hybrid/checks.json runs: a clone without the
-2.1 GB model prints SKIP and exits 0 (PLAN run-2 R10), so the gate sits in the
-smoke list next to the checks that always run. The brain's address is config's,
+2.1 GB model — or with it installed but the brain not running — prints SKIP and
+exits 0 (PLAN run-2 R10), so the gate sits in the smoke list next to the checks
+that always run. Flagless keeps every error row: that is the form an operator
+runs knowing the brain is up. The brain's address is config's,
 so ``SMALL_BRAIN_BASE_URL`` points the gate at any port — no flag of its own,
 and one resolver for the backend (PLAN run-2 R1).
 """
@@ -28,16 +30,19 @@ import pathlib
 import sys
 import time
 
+import httpx
+
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:  # direct `python scripts/small_brain_gate.py`
     sys.path.insert(0, str(ROOT))
 
-from app import config, validator  # noqa: E402
+from app import config, status, validator  # noqa: E402
 from app.structurer import Structurer, StructurerError, UnreadableError  # noqa: E402
 
 STAGE1_LOG = config.ROOT / "spike" / "bench_paddle.json"
 FIXTURE_DIR = config.ROOT / "fixtures"
 INSTALLER = "scripts\\install_small_brain.ps1"
+LAUNCHER = "python run.py"
 # Brief 9.1 / 9.3, verbatim: 6/6 schema-valid, 5/6 validator-ok, and the only
 # miss is the photographed fuel receipt.
 NEED_SCHEMA = 6
@@ -110,6 +115,29 @@ def _ask(arm: str, brain: Structurer, fixture: str, texts: dict[str, str]) -> di
 def _row(arm: str, fixture: str, schema_ok: bool, verdict: str, detail: str) -> dict:
     _log(f"{arm:<10} {fixture:<20} {'yes' if schema_ok else 'no':<6} {verdict:<11} {detail}")
     return {"arm": arm, "fixture": fixture, "schema": schema_ok, "verdict": verdict}
+
+
+def skip_reason() -> str:
+    """Why ``--if-installed`` must not score; "" when the gate should run.
+
+    The files are the first read: no 2.1 GB model, no probe to wait on. With the
+    files there, the brain's own model listing says whether anything answers —
+    a clone that is not running ``python run.py`` this second has "no brain",
+    which PLAN run-2 R10 makes a SKIP, not a regression. Any reply scores, even
+    an error status: a server that answers is a server to measure.
+    """
+    if not config.small_brain_ready():
+        return (
+            f"small brain not installed ({_name(config.small_brain_dir())} has no "
+            f"model files); kurmak için {INSTALLER}"
+        )
+    url = config.small_brain_base_url()
+    try:
+        with httpx.Client(timeout=config.probe_timeout()) as client:
+            client.get(f"{url}{status.PROBE_PATH}")
+    except httpx.HTTPError as exc:
+        return f"{url} cevap vermedi ({_brief(exc)}); başlatmak için {LAUNCHER}"
+    return ""
 
 
 def run_arm(arm: str, names: list[str], texts: dict[str, str]) -> list[dict]:
@@ -185,16 +213,15 @@ def main(argv=None) -> int:
     parser.add_argument(
         "--if-installed",
         action="store_true",
-        help="print SKIP and exit 0 when the small brain's files are not installed",
+        help="print SKIP and exit 0 when the small brain is not installed or not running",
     )
     args = parser.parse_args(argv)
     arms = [arm for arm, on in zip(ARMS, (args.with_image, args.no_image)) if on] or list(ARMS)
-    if args.if_installed and not config.small_brain_ready():
-        _log(
-            f"SKIP — small brain not installed ({_name(config.small_brain_dir())} has no "
-            f"model files); kurmak için {INSTALLER}"
-        )
-        return 0
+    if args.if_installed:
+        reason = skip_reason()
+        if reason:
+            _log(f"SKIP — {reason}")
+            return 0
     started = time.perf_counter()
     _log(
         f"small brain gate — {config.small_brain_base_url()} "

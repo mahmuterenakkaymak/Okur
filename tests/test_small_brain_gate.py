@@ -310,6 +310,41 @@ def test_if_installed_skips_without_the_model(brain, tmp_path):
     assert brain.requests == []
 
 
+def test_if_installed_skips_a_brain_that_is_not_running(brain, tmp_path):
+    """Files installed, llama-server not started: "no brain", not a regression.
+
+    This is every box that is not running ``python run.py`` this second — and
+    the smoke list runs unattended, so the gate has to tell a brain that is not
+    there from a brain that reads badly (PLAN run-2 R10).
+    """
+    port = closed_port()
+    run = run_gate(
+        f"http://127.0.0.1:{port}", "--if-installed",
+        brain_dir=install_dir(tmp_path, ready=True),
+    )
+    out = run.stdout + run.stderr
+    assert run.returncode == 0, out
+    assert run.stdout.startswith("SKIP")
+    assert f"http://127.0.0.1:{port}" in run.stdout
+    assert "python run.py" in run.stdout
+    assert "SMALL BRAIN GATE" not in out
+    assert brain.requests == []
+
+
+def test_flagless_still_fails_a_brain_that_is_not_running(tmp_path):
+    """The flag is the whole difference: flagless is what an operator runs
+    knowing the brain is up, so a refused port keeps its rows and its exit 1."""
+    port = closed_port()
+    run = run_gate(
+        f"http://127.0.0.1:{port}", "--with-image",
+        brain_dir=install_dir(tmp_path, ready=True),
+    )
+    out = run.stdout + run.stderr
+    assert run.returncode != 0, out
+    assert "SKIP" not in out
+    assert row_of(out, "with-image", "fis_market_clean")[:2] == ("no", "error")
+
+
 def test_if_installed_scores_when_the_model_is_there(brain, tmp_path):
     run = run_gate(
         brain.base_url, "--if-installed", brain_dir=install_dir(tmp_path, ready=True)
