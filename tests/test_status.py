@@ -105,6 +105,7 @@ def test_queue_depth_of_an_empty_queue_is_three_zeros(tmp_path):
 
 
 def test_probe_all_holds_the_contract_payload(tmp_path, monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     monkeypatch.setattr(status, "vram_info", lambda: VRAM)
     conn = db.connect(tmp_path / "ocr.db")
     db.set_status(conn, db.create_job(conn)["id"], "failed")
@@ -229,7 +230,7 @@ def test_the_small_backend_probes_the_small_brain_on_8100(tmp_path, monkeypatch)
 
 
 def test_the_strata_backend_still_probes_strata(tmp_path, monkeypatch):
-    monkeypatch.delenv("STRUCTURER_BACKEND", raising=False)
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     tasima, gorulen = adres_tutan({8081, 8080})
     govde = anlik_govde(tmp_path, monkeypatch, tasima)
     assert "http://127.0.0.1:8080/v1/models" in gorulen

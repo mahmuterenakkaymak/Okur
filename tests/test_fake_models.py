@@ -88,7 +88,9 @@ def test_chat_reply_is_openai_shaped(models):
     assert set(reply["usage"]) == {"prompt_tokens", "completion_tokens", "total_tokens"}
 
 
-def test_models_endpoint_lists_the_role_model(models):
+def test_models_endpoint_lists_the_role_model(models, monkeypatch):
+    """Each role reports the id it answers as; strata is the rollback backend."""
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     for server, model in (
         (models.ocr, config.ocr_model_name()),
         (models.structurer, config.strata_model()),

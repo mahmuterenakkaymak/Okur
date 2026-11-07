@@ -114,6 +114,7 @@ def test_both_gate_arms_run_in_one_process(monkeypatch):
 
 def test_sends_image_follows_the_resolved_backend(monkeypatch):
     monkeypatch.setenv("STRUCTURER_INCLUDE_IMAGE", "0")
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     assert Structurer(backend="small").sends_image is False
     assert Structurer(backend="small", quality_mode=True).sends_image is True
     assert Structurer().sends_image is True
@@ -126,7 +127,6 @@ def test_sends_image_follows_the_resolved_backend(monkeypatch):
 @pytest.mark.parametrize(
     "kwargs",
     [
-        {},
         {"backend": "strata"},
         {"backend": "q8"},
         {"backend": "small", "quality_mode": True},

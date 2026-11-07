@@ -87,7 +87,8 @@ def test_validation_block_in_the_model_output_never_survives():
 # --- request shape and routing ---
 
 
-def test_posts_chat_completions_to_strata_port():
+def test_posts_chat_completions_to_strata_port(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     assert config.strata_port() == 8080
     seen = []
 
@@ -99,7 +100,8 @@ def test_posts_chat_completions_to_strata_port():
     assert seen == [f"{config.strata_base_url()}/v1/chat/completions"]
 
 
-def test_uses_strata_model_by_default():
+def test_uses_strata_model_by_default(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     seen = []
 
     def handler(request):
@@ -320,7 +322,8 @@ def test_timeout_defaults_to_config():
     assert make().timeout == config.structurer_timeout()
 
 
-def test_default_server_is_strata():
+def test_default_server_is_strata(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     client = make()
     assert client.base_url == config.strata_base_url()
     assert client.model == config.strata_model()
@@ -366,10 +369,10 @@ def route(**kwargs):
 
 
 def test_backend_defaults_to_config_structurer_backend(monkeypatch):
-    monkeypatch.setenv("STRUCTURER_BACKEND", "small")
-    assert make().backend == config.structurer_backend() == "small"
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
+    assert make().backend == config.structurer_backend() == "strata"
     monkeypatch.setenv("STRUCTURER_BACKEND", "q8")
-    assert make().backend == config.DEFAULT_STRUCTURER_BACKEND == "strata"
+    assert make().backend == config.DEFAULT_STRUCTURER_BACKEND == config.structurer_backend()
 
 
 def test_config_can_select_the_small_backend(monkeypatch):
@@ -395,7 +398,8 @@ def test_small_backend_follows_its_own_env(monkeypatch):
     )
 
 
-def test_strata_backend_is_the_default_route():
+def test_strata_backend_is_the_default_route(monkeypatch):
+    monkeypatch.setenv("STRUCTURER_BACKEND", "strata")
     assert route(backend="strata") == route()
     assert route(backend="strata")[0] == f"{config.strata_base_url()}/v1/chat/completions"
     assert route(backend="strata")[1]["model"] == config.strata_model()
@@ -506,7 +510,7 @@ def test_include_image_off_changes_nothing_else_in_the_small_request(monkeypatch
 
 @pytest.mark.parametrize(
     "kwargs",
-    [{}, {"backend": "strata"}, {"quality_mode": True}, {"backend": "small", "quality_mode": True}],
+    [{"backend": "strata"}, {"quality_mode": True}, {"backend": "small", "quality_mode": True}],
 )
 def test_include_image_off_never_touches_strata_or_quality_mode(monkeypatch, kwargs):
     """Flag off, request unchanged: Strata and Unsloth still read the receipt."""

@@ -157,9 +157,11 @@ def test_model_paths_point_at_the_spike_ggufs():
     assert config.llama_server_path() == config.ROOT / "vendor" / "llama" / "llama-server.exe"
 
 
-def test_stage2_backend_defaults_to_strata():
+def test_stage2_backend_defaults_to_strata(monkeypatch):
+    """M8 (T91) cut the default over to the small brain; strata is the rollback."""
+    assert config.structurer_backend() == config.DEFAULT_STRUCTURER_BACKEND == "small"
+    set_env(monkeypatch, STRUCTURER_BACKEND="strata")
     assert config.structurer_backend() == "strata"
-    assert config.DEFAULT_STRUCTURER_BACKEND == "strata"
 
 
 def test_small_brain_defaults():
@@ -171,6 +173,7 @@ def test_small_brain_defaults():
 
 
 def test_stage2_model_names_the_running_brain(monkeypatch):
+    set_env(monkeypatch, STRUCTURER_BACKEND="strata")
     assert config.stage2_model(False) == config.strata_model() == "strata"
     assert config.stage2_model(True) == config.unsloth_model() == "Qwen3.8-27B"
     set_env(monkeypatch, STRUCTURER_BACKEND="small")
@@ -180,6 +183,7 @@ def test_stage2_model_names_the_running_brain(monkeypatch):
 
 
 def test_stage2_model_follows_model_env_overrides(monkeypatch):
+    set_env(monkeypatch, STRUCTURER_BACKEND="strata")
     set_env(monkeypatch, STRATA_MODEL="strata-80b", UNSLOTH_MODEL="qwen-27b")
     assert config.stage2_model(False) == "strata-80b"
     assert config.stage2_model(True) == "qwen-27b"
