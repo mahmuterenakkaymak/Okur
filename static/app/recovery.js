@@ -33,6 +33,12 @@ export const RECOVERIES = {
     message:
       "Bu görüntü sunucuya uymadı. Fişi daha küçük kırpmayı ya da yeniden çekmeyi dene.",
   },
+  // The server took the receipt and has not finished it: nothing to resend,
+  // nothing to re-shoot. The worker waits, and reads that from the status card.
+  queue: {
+    action: "wait",
+    message: "Fiş sunucuya ulaştı, kuyruk yoğun olabilir. Birazdan tekrar bak.",
+  },
 };
 
 // Kinds whose own ApiError copy already explains the situation in Turkish.
@@ -44,9 +50,20 @@ const OWN_COPY = new Set([
   "rejected",
 ]);
 
-/** Any send-path failure -> { action, message } the UI branches on. */
-export function recoveryFor(error) {
+/**
+ * Any send-path failure -> { action, message } the UI branches on.
+ *
+ * `queued` is what the caller knows and the error cannot say: the accept
+ * already came back, so the receipt sits in the server's queue. That turns a
+ * timeout from "the send never landed, resend it" into "it is being worked on,
+ * wait" — and the poll's own sentence (api.js COPY.timeout) is the one that
+ * says so, kept verbatim instead of the retry copy.
+ */
+export function recoveryFor(error, { queued = false } = {}) {
   const kind = error && error.name === "ApiError" ? error.kind : "";
+  if (kind === "timeout" && queued) {
+    return { ...RECOVERIES.queue, message: error.message || RECOVERIES.queue.message };
+  }
   const base =
     kind === "key_invalid"
       ? RECOVERIES.key

@@ -7,12 +7,24 @@
 // job POST) and polls its own key-scoped view under /api/me, which answers
 // the same envelope plus image_url.
 
+import { STALE_AFTER_MS } from "./status.js";
+
 export const STORAGE_KEY = "ocr.api_key";
 
 // Live status wants an early first answer (OCR runs in 1-5 s) and then a
 // gentle tail; the ceiling is where a stuck queue stops being the worker's
-// problem and becomes a message.
-export const POLL = { initialMs: 1200, maxMs: 15000, factor: 2, ceilingMs: 180000 };
+// problem and becomes a message. It is named from the stale window: a live job
+// only starts saying "kuyruk yoğun olabilir" past STALE_AFTER_MS, so tracking
+// that stopped before that point would sell a healthy queue as a dead send.
+// ASSUMPTION: one grace minute past the stale window, so the worker reads the
+// stale note while the poll is still alive.
+const QUEUE_GRACE_MS = 60000;
+export const POLL = {
+  initialMs: 1200,
+  maxMs: 15000,
+  factor: 2,
+  ceilingMs: STALE_AFTER_MS + QUEUE_GRACE_MS,
+};
 
 const COPY = {
   key_invalid:

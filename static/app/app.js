@@ -135,13 +135,23 @@ function cizDurum() {
 // One failure, one way out: the key screen for a dead key, the crop card
 // with a retry (the crop is still loaded) for a failed upload, the same card
 // without one when the server refused this image — then only a tighter crop
-// or a new shot helps — and for a history read the status card turned into
+// or a new shot helps — a receipt the server already took stays on the status
+// card with the queue note, and for a history read the status card turned into
 // the error note with re-shoot.
-function hataGoster(err, { onCrop = false } = {}) {
-  const r = recoveryFor(err);
+function hataGoster(err, { onCrop = false, queued = false } = {}) {
+  const r = recoveryFor(err, { queued });
   if (r.action === "key") {
     show("anahtar");
     ADIMLAR.anahtar.scrollIntoView({ block: "start", behavior: "smooth" });
+    return;
+  }
+  if (r.action === "wait") {
+    // The fiş is on the server and still in the queue: no resend of a send that
+    // landed, no "yüklenemedi". The card keeps the stage and the bar it had
+    // reached and only says, correctly, that the queue is busy.
+    show("durum");
+    durumIpucu.textContent = r.message;
+    yenidenCek.hidden = false;
     return;
   }
   if (onCrop && sonCrop) {
@@ -188,7 +198,9 @@ async function gonder(crop) {
     history.refresh();
   } catch (err) {
     if (!akis.canli(tur)) return;
-    hataGoster(err, { onCrop: true });
+    // guncel carries an envelope only once the server accepted this fiş, so it
+    // is exactly the line between "resend it" and "it is in the queue".
+    hataGoster(err, { onCrop: true, queued: !!guncel });
   } finally {
     akis.kapat(tur);
   }
@@ -223,7 +235,8 @@ async function detayAc(job) {
     history.refresh();
   } catch (err) {
     if (!akis.canli(tur)) return;
-    hataGoster(err);
+    // Every history job exists on the server already.
+    hataGoster(err, { queued: true });
   } finally {
     akis.kapat(tur);
   }
