@@ -151,7 +151,7 @@ Provenance and timings.
 
 ## `meta.stage_ms`
 
-Milliseconds per stage; a stage that never ran reads 0. `total_ms` is the whole run, so it is never the sum of these three.
+Milliseconds per stage; a stage that never ran reads 0. `total_ms` is the whole run, so it is never the sum of these three. On a `failed` job the stage that died reports the wait it waited and every stage past it is 0 — the breakdown names the stage that died.
 
 | Field | Type | Default |
 | --- | --- | --- |

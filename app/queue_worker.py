@@ -156,7 +156,18 @@ class QueueWorker:
         if stages:
             meta["stage_ms"] = stages
         if bundle.get("error"):
-            db.set_status(conn, job["id"], "failed", error=str(bundle["error"]))
+            # T108: a failed row stores that meta too. It is the row an
+            # operator opens to find out what died, and with no meta_json the
+            # detail read "Aşama süreleri —" for a run that spent the whole
+            # OCR_TIMEOUT_S. The failure branch still writes no result_json
+            # and no validation_json: contract 1 keeps both null until done.
+            db.set_status(
+                conn,
+                job["id"],
+                "failed",
+                error=str(bundle["error"]),
+                meta_json=meta,
+            )
         else:
             db.set_status(
                 conn,
