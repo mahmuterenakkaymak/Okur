@@ -10,7 +10,7 @@ import sys
 import time
 import urllib.request
 
-ROOT = r'C:\Users\PC\Documents\GitHub\ocr-app'
+ROOT = r'C:\Users\PC\Documents\GitHub\Okur'
 FIX = os.path.join(ROOT, 'fixtures_real')
 
 PROMPTS = {

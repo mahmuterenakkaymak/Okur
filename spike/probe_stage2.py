@@ -3,10 +3,10 @@ import sys
 sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 import base64  # noqa: E402
 
-sys.path.insert(0, r'C:\Users\PC\Documents\GitHub\ocr-app')
+sys.path.insert(0, r'C:\Users\PC\Documents\GitHub\Okur')
 from app import config, ocr_client, structurer  # noqa: E402
 
-img = open(r'C:\Users\PC\Documents\GitHub\ocr-app\fixtures_real\gercek_market_1.png', 'rb').read()
+img = open(r'C:\Users\PC\Documents\GitHub\Okur\fixtures_real\gercek_market_1.png', 'rb').read()
 
 ocr = ocr_client.OcrClient()
 t = ocr.transcribe(img, quality_mode=False)

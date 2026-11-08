@@ -3,7 +3,7 @@
 // ASSUMPTION: bumping CACHE is what evicts a cache the app cannot outdate by
 // itself — activate deletes every other key. Everything a release changes
 // (code and the shell document) is network-first, so fixes land without one.
-const CACHE = "fis-cek-shell-v2";
+const CACHE = "okur-shell-v3";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "icon.svg"];
 const LIVE_PREFIXES = ["/v1", "/api", "/demo"];
 // Everything index.html executes or styles: a phone must pick up a shipped

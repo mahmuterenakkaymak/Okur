@@ -1,11 +1,11 @@
 import sys
 sys.stdout.reconfigure(encoding='utf-8', errors='replace')
-sys.path.insert(0, r'C:\Users\PC\Documents\GitHub\ocr-app')
+sys.path.insert(0, r'C:\Users\PC\Documents\GitHub\Okur')
 import base64
 import httpx
 from app import config, structurer
 
-img = open(r'C:\Users\PC\Documents\GitHub\ocr-app\fixtures_real\gercek_market_1.png', 'rb').read()
+img = open(r'C:\Users\PC\Documents\GitHub\Okur\fixtures_real\gercek_market_1.png', 'rb').read()
 data_url = 'data:image/jpeg;base64,' + base64.b64encode(img).decode()
 ocr_text = "30.01.2022 SAAT 12:31:05 FişNo 0004 BİRŞAH 500G %08 9,90 KRUVASAN 3,50 MILKTEN 15,90 TOPLAM 82,55 KDV 6,11"
 

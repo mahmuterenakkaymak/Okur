@@ -1,4 +1,4 @@
-# PLAN — OCR API (Field-Capture Receipt OCR, Contract v1)
+# PLAN — Okur (field-capture receipt OCR, contract v1)
 
 Local-first receipt OCR: phone PWA → FastAPI :8090 → PaddleOCR-VL-1.6 (llama.cpp :8081)
 → Strata :8080 structuring → deterministic validator → frozen JSON contract v1.

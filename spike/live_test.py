@@ -10,7 +10,7 @@ import time
 import urllib.request
 import uuid
 
-ROOT = r'C:\Users\PC\Documents\GitHub\ocr-app'
+ROOT = r'C:\Users\PC\Documents\GitHub\Okur'
 BASE = 'http://127.0.0.1:8090'
 
 # 1) worker key via CLI (plaintext printed once)

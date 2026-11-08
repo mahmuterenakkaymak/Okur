@@ -1,4 +1,4 @@
-# ocr-app Run 2 — Small Brain: CPU structurer on Qwen3-VL-4B
+# Okur Run 2 — Small Brain: CPU structurer on Qwen3-VL-4B
 
 ## 1. Goal
 Remove the stage-2 structurer's dependency on the 80B Strata model: run extraction of the

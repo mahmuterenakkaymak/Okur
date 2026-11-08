@@ -1,5 +1,5 @@
 ﻿<#
-tailscale_serve.ps1 - HTTPS for the receipt OCR app, tailnet only.
+tailscale_serve.ps1 - HTTPS for Okur, tailnet only.
 
     .\scripts\tailscale_serve.ps1              enable on the app port
     .\scripts\tailscale_serve.ps1 -Status      what tailscale serves right now

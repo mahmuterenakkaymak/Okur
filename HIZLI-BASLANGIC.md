@@ -11,7 +11,7 @@ Demo sunucu gerçek uygulamayı sahte model sunucularıyla ayağa kaldırır,
 `fixtures/` görselleriyle hazır verili gelir:
 
 ```powershell
-cd C:\Users\PC\Documents\GitHub\ocr-app
+cd C:\Users\PC\Documents\GitHub\Okur
 .venv\Scripts\python scripts\serve_demo.py
 ```
 
@@ -85,7 +85,7 @@ kendi başlatmaz. Tek satırlık geri dönüş dahil hepsi `OPERATIONS.md` → S
 
 1. Tailscale ayağa kalkmalı (PC'de): `scripts\tailscale_serve.ps1` → `https://<ad>.ts.net`
 2. Telefondan `https://<ad>.ts.net/app` aç → Android: menü → *Uygulamayı yükle*; iOS: Paylaş → *Ana Ekrana Ekle*
-3. Uygulama "Fiş Çek" olarak açılır; **API anahtarı** alanına çalışanın anahtarını yapıştır
+3. Uygulama "Okur" olarak açılır; **API anahtarı** alanına çalışanın anahtarını yapıştır
 4. Kameraya izin ver → çek → kırp → gönder; aşamalar Türkçe akar, yeşil tik = doğrulandı
 
 Anahtarı kaybeden/çıkan çalışan için: admin → Anahtarlar → iptal (veya `keys_cli revoke <id>`).

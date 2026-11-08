@@ -72,10 +72,10 @@ def create_app(
     shape (image bytes + quality_mode/worker -> bundle); None is pipeline.run.
     """
     app = FastAPI(
-        title="OCR API — contract v1",
+        title="Okur API — contract v1",
         version="v1",
         description=(
-            "Field-capture receipt OCR. Send `X-API-Key` with every /v1 "
+            "Okur: field-capture receipt OCR. Send `X-API-Key` with every /v1 "
             "call; job envelopes follow contract v1 (JobEnvelope below, "
             "CONTRACT.md for integrators)."
         ),

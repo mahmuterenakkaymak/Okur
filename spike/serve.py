@@ -5,7 +5,7 @@ import sys
 import time
 import urllib.request
 
-ROOT = r'C:\Users\PC\Documents\GitHub\ocr-app'
+ROOT = r'C:\Users\PC\Documents\GitHub\Okur'
 LLAMA = os.path.join(ROOT, 'vendor', 'llama', 'llama-server.exe')
 
 MODELS = {

@@ -55,7 +55,7 @@ TASKS.md'ye **T68** eklendi (structurer.py + birim testi). Uygulama için:
 
 ## Nasıl tekrarlanır
 ```powershell
-cd C:\Users\PC\Documents\GitHub\ocr-app
+cd C:\Users\PC\Documents\GitHub\Okur
 $env:STARTUP_WAIT_S='240'; .venv\Scripts\python run.py --no-browser   # ayrı terminal
 .venv\Scripts\python spike\live_test.py                               # 3 gerçek örnek
 ```

@@ -1,10 +1,10 @@
-# Detached restart of the ocr-app stack (run.py supervises OCR + app + worker).
+# Detached restart of the Okur stack (run.py supervises OCR + app + worker).
 # STARTUP_WAIT_S=240 so the OCR model server has room to load on CPU.
-Set-Location 'C:\Users\PC\Documents\GitHub\ocr-app'
+Set-Location 'C:\Users\PC\Documents\GitHub\Okur'
 $env:STARTUP_WAIT_S = '240'
 Start-Process -FilePath '.venv\Scripts\python.exe' `
     -ArgumentList 'run.py', '--no-browser' `
-    -WorkingDirectory 'C:\Users\PC\Documents\GitHub\ocr-app' `
+    -WorkingDirectory 'C:\Users\PC\Documents\GitHub\Okur' `
     -WindowStyle Hidden `
     -RedirectStandardOutput 'data\run_detached.out' `
     -RedirectStandardError 'data\run_detached.err'

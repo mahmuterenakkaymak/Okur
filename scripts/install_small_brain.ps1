@@ -64,7 +64,7 @@ function Get-DestPath {
 function Invoke-DownloadTry {
     param([string]$Url, [string]$OutFile)
     try {
-        Invoke-WebRequest -Uri $Url -OutFile $OutFile -UseBasicParsing -UserAgent "ocr-app install_small_brain"
+        Invoke-WebRequest -Uri $Url -OutFile $OutFile -UseBasicParsing -UserAgent "okur install_small_brain"
         return $true
     } catch {
         Write-Host "  uyarı: indirilemedi: $Url"

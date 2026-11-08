@@ -6,7 +6,7 @@ import sys
 import time
 import urllib.request
 
-ROOT = r'C:\Users\PC\Documents\GitHub\ocr-app'
+ROOT = r'C:\Users\PC\Documents\GitHub\Okur'
 
 
 def data_url(path):

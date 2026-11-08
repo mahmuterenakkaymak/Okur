@@ -1,4 +1,4 @@
-# OCR API — Field-Capture Receipt OCR with Stable JSON Contract
+# Okur — Field-Capture Receipt OCR with Stable JSON Contract
 
 Local-first OCR **server + client** system. Field workers photograph Turkish receipts with
 their phones; a local server (RTX 5090) runs PaddleOCR-VL-1.6 (0.9B) + Strata + a

@@ -1,6 +1,6 @@
 {
-  "name": "Fiş Çek — Fiş OCR",
-  "short_name": "Fiş Çek",
+  "name": "Okur — Fiş okuyucu",
+  "short_name": "Okur",
   "description": "Market fişlerini telefonla çek; ürünler, toplamlar ve KDV saniyeler içinde yapılandırılmış veriye dönüşsün.",
   "start_url": "./",
   "scope": "./",

@@ -1,6 +1,6 @@
 import sys
 sys.stdout.reconfigure(encoding='utf-8', errors='replace')
-sys.path.insert(0, r'C:\Users\PC\Documents\GitHub\ocr-app')
+sys.path.insert(0, r'C:\Users\PC\Documents\GitHub\Okur')
 import httpx
 from app import config
 

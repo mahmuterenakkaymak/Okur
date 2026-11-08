@@ -2,7 +2,7 @@
 import os
 from PIL import Image
 
-ROOT = r'C:\Users\PC\Documents\GitHub\ocr-app'
+ROOT = r'C:\Users\PC\Documents\GitHub\Okur'
 src = os.path.join(ROOT, 'fixtures_real', 'gercek_elyazisi_3.png')
 img = Image.open(src)
 w, h = img.size

@@ -27,7 +27,7 @@ def test_shell_is_reachable_without_a_key(client):
 def test_page_is_turkish(client):
     html = client.get("/app/").text
     assert 'lang="tr"' in html
-    for metin in ("Fiş Çek", "Hoş geldin", "Çevrimiçi", "Ana Ekrana Ekle"):
+    for metin in ("Okur", "Hoş geldin", "Çevrimiçi", "Ana Ekrana Ekle"):
         assert metin in html
 
 
