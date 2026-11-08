@@ -1,11 +1,248 @@
-# OCR API — Field-Capture Receipt OCR
+<div align="center">
 
-Local-first receipt OCR: a worker photographs a receipt on a phone, the pipeline
-returns contract v1 JSON — 1–5 s of OCR plus a ~30–45 s structuring pass on a
-cpu-only box, seconds when stage 2 runs on a GPU. `PLAN.md` holds the architecture,
-`CONTRACT.md` the integrator contract, `PROJECT_BRIEF.md` the requirements.
+# 🧾 Okur
+
+**Local-first receipt OCR: a worker photographs a receipt, your own PC returns verified JSON.**
+
+*Okur means "reader" in Turkish — and "it reads". It reads the receipt; the numbers are checked by code.*
+
+![License: proprietary](https://img.shields.io/badge/license-proprietary-lightgrey)
+![Platform: Windows 11](https://img.shields.io/badge/platform-Windows%2011-0078D6)
+![Runs on: CPU only](https://img.shields.io/badge/runs%20on-CPU%20only-76B900)
+![OCR: PaddleOCR-VL 1.6](https://img.shields.io/badge/OCR-PaddleOCR--VL%201.6-7B61FF)
+![Stage 2: Qwen3-VL-4B · Strata](https://img.shields.io/badge/stage%202-Qwen3--VL--4B%20%C2%B7%20Strata-7B61FF)
+![Contract: v1 frozen](https://img.shields.io/badge/contract-v1%20frozen-orange)
+![Tests: 1,261 green](https://img.shields.io/badge/tests-1%2C261%20green-success)
+![Data: stays home](https://img.shields.io/badge/data-stays%20home-success)
+
+</div>
+
+> **🇹🇷 Türkçe özet:** Okur, saha çalışanının telefonla çektiği market / akaryakıt / restoran fişini tek bir
+> bilgisayarda, buluta hiçbir şey göndermeden yapılandırılmış JSON'a çeviren bir sistemdir. Telefon tarafı kurulabilir
+> bir PWA (kamera → kırp/döndür → gönder → canlı aşamalar → geçmiş); PC tarafı üç aşamalı bir hat: PaddleOCR-VL fişi
+> okur, küçük bir Qwen3-VL-4B (CPU, sıfır VRAM) ya da Strata metni sözleşme v1 alanlarına döker, saf Python
+> doğrulayıcı her satır toplamını, ara toplamı, iskontoyu ve KDV'yi **yeniden hesaplar** — model hiçbir sayının sahibi
+> değildir; tutmayan fiş `mismatch` olarak işaretlenir, gizlenmez. Entegratörler için dondurulmuş bir `/v1` API'si,
+> yönetici için inceleme / düzeltme / JSON-CSV-XLSX dışa aktarım paneli vardır. Fiş görselleri kişisel veridir (KVKK):
+> `data/` altında kalır, makineden çıkmaz; erişim yalnızca Tailscale üzerinden. Kurulum ve günlük kullanım, Türkçe:
+> [HIZLI-BASLANGIC.md](HIZLI-BASLANGIC.md).
+
+---
 
 ## What it is
+
+- **A receipt reader that lives on your PC.** The worker opens the Okur app on their phone, shoots the receipt,
+  crops it and sends it. Seconds of OCR later, a ~30–45 s structuring pass on a CPU-only box (seconds on a GPU)
+  returns the shop, date, line items, totals and KDV as one frozen JSON envelope.
+- **Numbers you can trust.** The model reads and structures; it never owns a number. A pure-Python validator
+  recomputes every line total, ara toplam, iskonto and KDV from the items and compares them with what was printed.
+  The verdict is `ok`, `mismatch` (naming the exact fields) or `unreadable` — a mismatch is shown, never forced.
+- **CPU-only out of the box.** Stage 1 (PaddleOCR-VL 1.6) and stage 2 (Qwen3-VL-4B, 2.1 GB) both run on the CPU with
+  zero VRAM — it fits a customer's office PC. Strata on the GPU is an optional upgrade behind one env line, and
+  quality mode routes a hard receipt to a 27B in Unsloth Studio.
+- **A contract integrators can build on.** `/v1` is frozen: fields are added, never renamed or removed. Idempotent
+  `client_ref`, per-key rate limits, one error shape, a JSON Schema and a live OpenAPI UI generated from the same
+  models — the shape an ERP push (Logo Netsis via NetOpenX) can rely on.
+- **Built for a field team.** One API key per worker, revocable the day a phone is lost; an admin panel for review,
+  corrections (which re-run the validator), exports and live status; a phone app that never loses a photo when the
+  network or the key fails.
+- **Honest about itself.** Every stage reports its own timing; gates against real receipts fail loudly when quality
+  drops — including the small brain's own regression on real receipts ([Results](#results)).
+
+## What you need
+
+| | |
+|---|---|
+| **PC** | Windows 11, any modern CPU, **~4 GB free RAM** for both models, ~6 GB disk. **No GPU needed.** |
+| **Optional GPU** | for Strata as stage 2 (Qwen3.8-Flash-Next on an RTX 5090 32 GB in the tested setup) or Unsloth Studio for quality mode |
+| **Software** | Python 3.12 + [uv](https://docs.astral.sh/uv/), the llama.cpp `llama-server` binary, the PaddleOCR-VL 1.6 GGUF ([OPERATIONS.md](OPERATIONS.md) → Model paths) |
+| **Phones** | Android (Chrome) or iOS (Safari) with [Tailscale](https://tailscale.com) — the tailnet is the only way in |
+
+## Install
+
+### Let your AI set it up
+
+Using an AI coding assistant (Claude Code, Cursor, Codex, GitHub Copilot, ...)? Paste this into it:
+
+```text
+Set up Okur on this PC for me: https://github.com/mahmuterenakkaymak/Okur — follow the Quickstart in its README, run the demo and the test suite before connecting real models, and ask me before anything that downloads models or exposes a port beyond the tailnet.
+```
+
+### Or do it yourself
+
+PowerShell, from the repository root. The full walk-through, with every env name, is in [Quickstart](#quickstart).
+
+```powershell
+# 1. Python env (the venv has no pip of its own)
+uv venv .venv --python 3.12
+# 2. stage 2, once: Qwen3-VL-4B + vision projector, sha256-checked
+.\scripts\install_small_brain.ps1
+# 3. a key for the first worker, printed exactly once
+.venv/Scripts/python -m app.keys_cli add ayse
+# 4. start OCR + stage 2 + app + queue worker; the admin UI opens when everything is green
+.venv/Scripts/python run.py
+# 5. phones: HTTPS on the tailnet only
+.\scripts\tailscale_serve.ps1
+```
+
+No models yet? `.venv/Scripts/python scripts/serve_demo.py` runs the real app, auth, queue and validator against stub
+model servers, seeded with the committed synthetic fixtures.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    subgraph field[Field]
+        P[Phone PWA<br/>camera · crop · history<br/>Turkish, installable]
+    end
+    subgraph pc[Windows PC - loopback + tailnet only]
+        A[FastAPI :8090<br/>/app · /admin · /v1 · /docs]
+        Q[(SQLite queue<br/>+ images in data/)]
+        W[Queue worker]
+        O[Stage 1 · OCR<br/>PaddleOCR-VL 1.6<br/>llama-server :8081, CPU]
+        S[Stage 2 · structure<br/>Qwen3-VL-4B :8100, CPU<br/>or Strata :8080, GPU]
+        U[Quality mode<br/>Unsloth Studio 27B :8888]
+        V[Stage 3 · validate<br/>pure Python]
+    end
+    I[Integrator / ERP<br/>X-API-Key]
+    ADM[Admin<br/>review · correct · export]
+    P -->|Tailscale HTTPS| A
+    I -->|/v1| A
+    ADM --> A
+    A --> Q --> W
+    W --> O --> S --> V --> Q
+    S -.->|mode: quality| U
+```
+
+Everything binds to `127.0.0.1`; Tailscale's `serve` is the only door from a phone, and `funnel` is never used. There
+are no cloud calls in the pipeline at all.
+
+## How a receipt is read
+
+```mermaid
+flowchart TD
+    C[Worker shoots + crops the receipt] --> J["POST /v1/jobs → 202 queued<br/>client_ref makes a retry idempotent"]
+    J --> O[Stage 1: OCR text + table cells]
+    O -->|server down / timeout| F[failed, with the stage that died and its timing]
+    O --> S[Stage 2: model fills contract v1<br/>header · meta · items · totals]
+    S -->|no schema-valid JSON| UR[verdict: unreadable<br/>phone asks for a re-shoot]
+    S --> V{Validator: line totals, ara toplam,<br/>iskonto, KDV recomputed from items}
+    V -->|all within tolerance| OK[verdict: ok]
+    V -->|a printed number disagrees| MM[verdict: mismatch<br/>fields names every offending path]
+    MM --> R[Admin corrects a field or reruns in quality mode<br/>→ validator runs again]
+    UR --> R
+```
+
+The loop around the models is plain Python: the queue, retries, timeouts, the schema, the arithmetic and the verdict
+are code. The models are the reading layer.
+
+## Results
+
+**Synthetic fixtures** (6 receipts: fuel, market, restaurant; clean scan and phone photo each), stage 2 bake-off,
+PASS = schema + totals within 0.01 + item count + validator `ok` ([details](spike/SMALL_BRAIN_BAKEOFF.md)):
+
+| Stage 2 | Hardware | PASS | s / receipt |
+|---|---|---:|---:|
+| Strata, Qwen3.8-Flash-Next (~80B MoE) | GPU | 5 / 6 | 6.5 |
+| **Qwen3-VL-4B IQ4_XS, image + OCR text** (default) | CPU, 0 VRAM | **5 / 6** | 30.6 |
+| Qwen3-VL-4B IQ4_XS, OCR text only | CPU | 5 / 6 | 22.5 |
+| Qwen3-4B-Instruct-2507 IQ4_XS, text only | CPU | 5 / 6 | 15.8 |
+| Qwen3-VL-2B IQ4_XS, image + OCR text | CPU | 4 / 6 | 21.6 |
+
+The one miss is the same photographed fuel receipt for every model — a quality-mode case, not a small-model gap.
+
+**Real receipts** (3, kept off the repo: a market receipt, a wrinkled BİM receipt shot at an angle, a handwritten
+list), full stack, live OCR gate:
+
+| Receipt | Strata baseline | Small brain |
+|---|---|---|
+| Clean thermal market receipt | `ok` | `mismatch` — split 9 items into 10; totals identical, the validator caught it |
+| BİM, angled, wrinkled | `mismatch` (savings row) | `mismatch` |
+| Handwritten list | `unreadable` | `unreadable` |
+
+- **Synthetic parity overstated real parity.** On real receipts the 4B segments line items worse than the 80B. The
+  failure is item counting, not transcription — and the validator flagged it instead of passing a wrong total. Next:
+  few-shot line-item prompting and 8–10 more real receipts before the small brain is trusted as the default.
+- **Stage 1 is the easy part.** PaddleOCR-VL reads real receipts in 5–7 s on the CPU with clean table output.
+- **The first live run found what 679 unit tests could not:** Strata is a reasoning model and spent its whole token
+  budget thinking, returning `content: null`. Fixed with `enable_thinking: false` ([report](spike/CANLI_TEST_RAPORU.md),
+  Turkish).
+
+**Tested setup**
+
+| Part | Version / value |
+|---|---|
+| OS | Windows 11 Pro 26200 |
+| Hardware | Ryzen 9 9950X3D · 96 GB DDR5 · RTX 5090 32 GB (only for the Strata / quality arms) |
+| Stage 1 | PaddleOCR-VL 1.6 GGUF + mmproj, llama.cpp `llama-server`, CPU (`OCR_NGL=0`) |
+| Stage 2 | Qwen3-VL-4B-Instruct IQ4_XS + F16 mmproj, llama.cpp CPU · Strata, Qwen3.8-Flash-Next UD-IQ4_XS |
+| Python / Node | 3.12 (uv) / 24 for the JS tests |
+| Tests | 1,026 Python + 235 JavaScript, all green |
+
+## Daily use
+
+| | |
+|---|---|
+| **`run.py`** | starts OCR, stage 2, the app and the queue worker; prints a roll-call (OCR ✓ · Small brain ✓ · Uygulama ✓) and opens the admin UI; `--stop` takes it all down |
+| **Phone app** (`/app`) | camera → crop/rotate → send → live stages → history; result card with totals and the verdict; offline shell |
+| **Admin** (`/admin`) | job list with filters, detail with stage timings, field corrections, quality-mode rerun, JSON/CSV/XLSX export, worker keys, live status |
+| **Integrators** (`/v1`, `/docs`) | `POST /v1/jobs`, poll `GET /v1/jobs/{id}`; OpenAPI UI with try-it-out |
+| **`app.keys_cli`** | `add <name>`, `list`, `revoke <id>` for worker keys |
+| **Gates** | `pytest`, `scripts/smoke_e2e.py`, `scripts/acceptance.py --demo`, and the real-receipt gates `scripts/live_ocr_gate.py` / `scripts/small_brain_gate.py` |
+
+## Safety rules the code enforces
+
+1. **Receipts never leave the PC** — images and the database live under `data/`, which is gitignored; no cloud OCR
+   or LLM anywhere in the path; EXIF is stripped on upload.
+2. **No public internet** — the app listens on loopback; Tailscale `serve` is the only ingress, `funnel` is never
+   run, no router port is forwarded.
+3. **The model never owns a number** — every total is recomputed by the validator; a disagreement is a `mismatch`
+   with the offending fields, never a silent fix.
+4. **One key per worker** — keys are stored hashed and shown once; revoking one answers `401` on the next call.
+5. **The admin panel has no default door** — with `ADMIN_TOKEN` unset there is no admin login at all.
+6. **Secrets in `.env` only** — gitignored, never logged, never committed.
+7. **v1 never breaks** — a breaking change opens `/v2` and leaves `/v1` answering.
+
+## Repository
+
+| Path | |
+|---|---|
+| [`app/`](app/) | FastAPI app, routes, queue worker, pipeline, OCR client, structurer, validator, contract, keys, config |
+| [`static/app/`](static/app/) | the phone PWA (Turkish) and its service worker |
+| [`static/admin/`](static/admin/) | the admin panel |
+| [`contract/`](contract/) · [`CONTRACT.md`](CONTRACT.md) | contract v1 JSON Schema and the integrator contract |
+| [`run.py`](run.py) | the launcher and its roll-call |
+| [`scripts/`](scripts/) | small-brain installer, Tailscale, demo, smoke, acceptance and real-receipt gates |
+| [`fixtures/`](fixtures/) · [`fixtures_hard/`](fixtures_hard/) | synthetic receipts with their expected JSON (real receipts stay local) |
+| [`tests/`](tests/) | 1,026 Python tests; 235 JS tests via `node --test tests/js/*.test.js` |
+| [`spike/`](spike/) | the model bake-offs and the live test reports behind the decisions |
+| docs | [quick start, Turkish](HIZLI-BASLANGIC.md) · [operations](OPERATIONS.md) · [plan](PLAN.md) · [brief](PROJECT_BRIEF.md) |
+
+Built with the [MERGEN](https://github.com/mahmuterenakkaymak/mergen) hybrid pipeline: a cloud model wrote the plan
+and reviewed each milestone, a local Qwen model wrote every task and its tests, and a deterministic orchestrator ran
+the acceptance checks. 8 milestones, 110+ tasks.
+
+## Built on
+
+[PaddleOCR-VL](https://github.com/PaddlePaddle/PaddleOCR) (Apache 2.0) · [llama.cpp](https://github.com/ggml-org/llama.cpp)
+(MIT) · [Qwen3-VL](https://huggingface.co/Qwen) by the Qwen team (Apache 2.0), GGUF by Unsloth ·
+[Strata](https://github.com/Niko1221/Strata) (MIT) · [FastAPI](https://fastapi.tiangolo.com) (MIT) ·
+[Pydantic](https://docs.pydantic.dev) (MIT) · [openpyxl](https://openpyxl.readthedocs.io) (MIT) ·
+[Pillow](https://python-pillow.org) (MIT-CMU) · [Tailscale](https://tailscale.com). None of them is redistributed here;
+check each model's license before a commercial deployment.
+
+## License
+
+Copyright © 2026 Mahmut Eren Akkaymak. All rights reserved — no license is granted yet.
+
+---
+
+# Reference
+
+The operator and integrator manual: every command, env name and failure mode. This text is also a test contract —
+`tests/test_docs.py` and `tests/test_tailscale.py` hold it to the code.
+
+## What it is — the three stages
 
 One machine, no cloud. The phone PWA posts a photo to FastAPI on `:8090`; a queue
 worker runs three stages and answers with one frozen JSON envelope:
@@ -142,7 +379,7 @@ works for local testing, but a browser will not offer to install it).
 1. Open `https://<tailnet-host>.ts.net/app` in the phone's browser — Chrome on
    Android, Safari on iOS.
 2. Install it: Android → the browser menu → **Uygulamayı yükle**; iOS → Share →
-   **Ana Ekrana Ekle**. It launches standalone, in Turkish, as "Fiş Çek".
+   **Ana Ekrana Ekle**. It launches standalone, in Turkish, as "Okur".
 3. Paste the worker's own API key into **API anahtarı** (admin → Anahtarlar, or
    `python -m app.keys_cli add <name>`). Keys are shown once; the phone keeps it.
 4. Allow the camera when asked. Where `getUserMedia` is unavailable the form
