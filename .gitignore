@@ -17,3 +17,12 @@ vendor/
 # Local env / editor
 .env
 .hybrid/
+
+# OCR/LLM dumps of real receipts (personal + card payment data, KVKK) — never commit
+spike/real_*.json
+spike/live_real*.json
+spike/live_run*.log
+
+# understand-anything caches (generated)
+.ua/
+.ua-run*/
