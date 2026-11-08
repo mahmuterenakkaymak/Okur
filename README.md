@@ -6,7 +6,7 @@
 
 *Okur means "reader" in Turkish — and "it reads". It reads the receipt; the numbers are checked by code.*
 
-![License: proprietary](https://img.shields.io/badge/license-proprietary-lightgrey)
+![License: MIT](https://img.shields.io/badge/license-MIT-blue)
 ![Platform: Windows 11](https://img.shields.io/badge/platform-Windows%2011-0078D6)
 ![Runs on: CPU only](https://img.shields.io/badge/runs%20on-CPU%20only-76B900)
 ![OCR: PaddleOCR-VL 1.6](https://img.shields.io/badge/OCR-PaddleOCR--VL%201.6-7B61FF)
@@ -233,7 +233,8 @@ check each model's license before a commercial deployment.
 
 ## License
 
-Copyright © 2026 Mahmut Eren Akkaymak. All rights reserved — no license is granted yet.
+[MIT](LICENSE) © 2026 Mahmut Eren Akkaymak. The models are not part of this repository and keep their own
+licenses (PaddleOCR-VL and Qwen3-VL: Apache 2.0).
 
 ---
 
