@@ -50,3 +50,16 @@ the current 80B — it is a quality-mode escalation case, not a small-model regr
 Artifacts: `D:\small-bench\results-<arm>.json` (full raw model outputs per fixture),
 `D:\small-bench\bake.py`, llama.cpp CPU b12177. Models: unsloth Qwen3-VL-2B/4B-Instruct IQ4_XS
 + mmproj-F16, Qwen3-4B-Instruct-2507 IQ4_XS (hf-mirror.com worked when HF's Xet CDN stalled).
+
+## Follow-up (2026-11-07 05:50) — full-stack live OCR gate: PARITY DID NOT HOLD on real receipts
+
+With the installed model (llama.cpp CPU, port 8100) and live PaddleOCR-VL :8081 over
+`fixtures_real`: gercek_market_1 `mismatch` (totals byte-identical to the 80B baseline — the
+model splits 10 line items where there are 9, and the arithmetic validator correctly rejects
+items-sum != header); gercek_bim_2 `mismatch` (baseline also mismatched — savings/discount row);
+gercek_elyazisi_3_kirp `unreadable` (same as 80B — honest fail, quality mode is the escape hatch).
+Verdict: synthetic-fixture parity OVERSTATED real-world parity; the synthetic set is OCR-friendly.
+Recommendation: hold `STRUCTURER_BACKEND=small` off the default (revert the T91 cutover), keep it
+behind the env flag, and rebuild parity evidence on 8-10 real receipts before flipping. Item
+segmentation (not transcription) is the failure mode — prompt-level few-shot for line-item
+counting is the first fix to try.
