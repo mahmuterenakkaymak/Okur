@@ -4,7 +4,7 @@ The machine the app runs on *is* the deployment: one launcher, one SQLite file,
 one folder of images, two model servers it calls over HTTP. Everything an
 operator has to know is here; what the API promises its callers is
 [`CONTRACT.md`](CONTRACT.md), how to install and drive it is
-[`README.md`](README.md).
+[`docs/REFERENCE.md`](docs/REFERENCE.md).
 
 ## Backup — data/
 

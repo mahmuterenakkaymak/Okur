@@ -13,7 +13,7 @@ from app import config
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "tailscale_serve.ps1"
-README = ROOT / "README.md"
+README = ROOT / "docs" / "REFERENCE.md"  # the manual that documents the script
 
 # utf-8-sig: the script carries a BOM so PowerShell 5.1 reads its Turkish text.
 script_text = SCRIPT.read_text(encoding="utf-8-sig")

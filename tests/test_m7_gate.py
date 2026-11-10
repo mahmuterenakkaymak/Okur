@@ -437,6 +437,6 @@ def demo_tokens(name: str) -> set[str]:
 
 def test_the_demo_admin_token_the_docs_promise_is_the_one_the_demo_pins():
     promised = set()
-    for name in ("README.md", "HIZLI-BASLANGIC.md", "OPERATIONS.md"):
+    for name in ("README.md", "docs/REFERENCE.md", "HIZLI-BASLANGIC.md", "OPERATIONS.md"):
         promised |= demo_tokens(name)
     assert promised == {serve_demo.ADMIN_TOKEN}

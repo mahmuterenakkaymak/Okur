@@ -20,9 +20,11 @@ from app import config
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 README = (ROOT / "README.md").read_text(encoding="utf-8")
+# The operator manual moved out of the README; it is the text these tests hold to the code.
+REFERENCE = (ROOT / "docs" / "REFERENCE.md").read_text(encoding="utf-8")
 OPERATIONS = (ROOT / "OPERATIONS.md").read_text(encoding="utf-8")
 CONFIG_SOURCE = (ROOT / "app" / "config.py").read_text(encoding="utf-8")
-DOCS = {"README.md": README, "OPERATIONS.md": OPERATIONS}
+DOCS = {"README.md": README, "docs/REFERENCE.md": REFERENCE, "OPERATIONS.md": OPERATIONS}
 
 _FENCE = re.compile(r"^```(\w*)\n(.*?)^```", re.S | re.M)
 _TRAILING_COMMENT = re.compile(r"\s+#.*$")
@@ -107,7 +109,7 @@ def env_names() -> list[str]:
      "Troubleshooting", "Operations"],
 )
 def test_readme_has_every_required_section(title: str):
-    assert any(h.lower().startswith(title.lower()) for h in headings(README))
+    assert any(h.lower().startswith(title.lower()) for h in headings(REFERENCE))
 
 
 @pytest.mark.parametrize(
@@ -118,26 +120,26 @@ def test_operations_has_every_required_section(title: str):
 
 
 def test_what_it_is_names_the_stages_and_who_owns_the_arithmetic():
-    body = section(README, "What it is")
+    body = section(REFERENCE, "What it is")
     for detail in ["PaddleOCR", "Strata", "validator", "verdict"]:
         assert detail in body
 
 
 def test_integrator_guide_points_at_contract_md_and_the_openapi_ui():
-    body = section(README, "Integrator guide")
+    body = section(REFERENCE, "Integrator guide")
     assert "CONTRACT.md" in body
     assert "/docs" in body
     assert "X-API-Key" in body
 
 
 def test_pwa_install_section_installs_from_the_app_url_and_sets_the_key():
-    body = section(README, "PWA install")
+    body = section(REFERENCE, "PWA install")
     for detail in ["/app", "API anahtarı", "HTTPS"]:
         assert detail in body
 
 
 def test_troubleshooting_answers_the_status_codes_the_app_gives_out():
-    body = section(README, "Troubleshooting")
+    body = section(REFERENCE, "Troubleshooting")
     for detail in ["401", "429", "413", "queued", "data/logs"]:
         assert detail in body
 
@@ -260,7 +262,7 @@ def test_every_backticked_env_name_in_the_docs_is_one_config_reads():
 
 def test_readme_small_brain_section_installs_the_brain_and_checks_it(monkeypatch):
     monkeypatch.delenv("SMALL_BRAIN_BASE_URL", raising=False)
-    body = section(README, "Small brain")
+    body = section(REFERENCE, "Small brain")
     for detail in [
         "install_small_brain.ps1",
         "STRUCTURER_BACKEND",
@@ -344,7 +346,7 @@ _BACKEND_DEFAULT = re.compile(r"`STRUCTURER_BACKEND` defaults to `(\w+)`")
 
 
 @pytest.mark.parametrize(
-    "doc, prefix", [("README.md", "Quickstart"), ("OPERATIONS.md", "Small brain")]
+    "doc, prefix", [("docs/REFERENCE.md", "Quickstart"), ("OPERATIONS.md", "Small brain")]
 )
 def test_the_default_backend_the_docs_quote_is_configs_default(doc, prefix, monkeypatch):
     monkeypatch.delenv("STRUCTURER_BACKEND", raising=False)
@@ -354,7 +356,7 @@ def test_the_default_backend_the_docs_quote_is_configs_default(doc, prefix, monk
 
 def test_readme_quickstart_makes_the_cpu_brain_the_thing_you_install_first(monkeypatch):
     monkeypatch.delenv("STRUCTURER_BACKEND", raising=False)
-    body = section(README, "Quickstart")
+    body = section(REFERENCE, "Quickstart")
     for detail in [
         "CPU",
         "install_small_brain.ps1",
@@ -369,7 +371,7 @@ def test_readme_quickstart_makes_the_cpu_brain_the_thing_you_install_first(monke
 
 def test_readme_troubleshooting_names_both_small_brain_cross_lines(monkeypatch):
     monkeypatch.delenv("SMALL_BRAIN_BASE_URL", raising=False)
-    body = section(README, "Troubleshooting")
+    body = section(REFERENCE, "Troubleshooting")
     for detail in [
         "Small brain \u2717 model dosyalar\u0131 yok",
         f"Small brain \u2717 port {config.small_brain_port()} dolu",
