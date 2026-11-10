@@ -98,6 +98,28 @@
       "title": "JobMeta",
       "type": "object"
     },
+    "KdvSatiri": {
+      "description": "One printed per-rate KDV line (\"%1  matrah 52,00  KDV 0,52\").\n\nmatrah is whatever base the receipt printed next to the rate — net of the\ntax or gross with it; the validator accepts either. 0.0 means the receipt\nprinted only the tax amount for that rate.",
+      "properties": {
+        "kdv": {
+          "default": 0.0,
+          "title": "Kdv",
+          "type": "number"
+        },
+        "matrah": {
+          "default": 0.0,
+          "title": "Matrah",
+          "type": "number"
+        },
+        "oran": {
+          "default": 0.0,
+          "title": "Oran",
+          "type": "number"
+        }
+      },
+      "title": "KdvSatiri",
+      "type": "object"
+    },
     "ReceiptMeta": {
       "properties": {
         "no": {
@@ -202,6 +224,13 @@
           "title": "Kdv Orani",
           "type": "number"
         },
+        "kdv_satirlari": {
+          "items": {
+            "$ref": "#/$defs/KdvSatiri"
+          },
+          "title": "Kdv Satirlari",
+          "type": "array"
+        },
         "toplam": {
           "default": 0.0,
           "title": "Toplam",
@@ -251,6 +280,13 @@
             "type": "string"
           },
           "title": "Fields",
+          "type": "array"
+        },
+        "unverified": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Unverified",
           "type": "array"
         },
         "verdict": {

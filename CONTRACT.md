@@ -111,6 +111,17 @@ Amounts as the model read them; the validator recomputes them, never the other w
 | `kdv` | `float` | `0.0` |
 | `kdv_orani` | `float` | `0.0` |
 | `toplam` | `float` | `0.0` |
+| `kdv_satirlari` | `KdvSatiri[]` | `[]` |
+
+## `result.totals.kdv_satirlari[]`
+
+One printed per-rate KDV line. `matrah` is the base printed next to the rate, net or gross of the tax; `0.0` when only the tax was printed.
+
+| Field | Type | Default |
+| --- | --- | --- |
+| `oran` | `float` | `0.0` |
+| `matrah` | `float` | `0.0` |
+| `kdv` | `float` | `0.0` |
 
 ## `validation`
 
@@ -122,6 +133,7 @@ Deterministic verdict block; see Verdicts below.
 | `expected` | `TotalsBlock` | `{}` |
 | `actual` | `TotalsBlock` | `{}` |
 | `fields` | `str[]` | `[]` |
+| `unverified` | `str[]` | `[]` |
 
 ## `validation.expected` / `validation.actual`
 
@@ -165,9 +177,18 @@ Milliseconds per stage; a stage that never ran reads 0. `total_ms` is the whole 
 
 | Verdict | Meaning |
 | --- | --- |
-| `ok` | The validator recomputed the totals from `items[]` and they match the model output within 0.01; `fields` is `[]`. |
-| `mismatch` | At least one amount disagrees; `fields` lists the dotted paths of the offenders (`items[2].toplam`, `totals.kdv`). |
-| `unreadable` | The model could not produce schema-valid JSON; `result` may be partial and `okunamayan` lists the fragments it could not read. |
+| `ok` | Every amount the validator could recompute from `items[]` matches the model output within 0.01; `fields` is `[]`. Paths in `unverified` were not recomputed and are not vouched for. |
+| `mismatch` | At least one amount disagrees; `fields` lists the dotted paths of the offenders (`items[2].toplam`, `totals.kdv`, `totals.kdv_satirlari[1].kdv`). |
+| `unreadable` | The model could not produce schema-valid JSON, or its items carry no amount at all; `result` may be partial and `okunamayan` lists the fragments it could not read. |
+
+`unverified` lists amounts taken as printed because the receipt gives nothing
+to recompute them from: a receipt-level `totals.iskonto`, a mixed-rate
+`totals.kdv` read without `kdv_satirlari`, a per-rate line with no `matrah`.
+A mixed-rate receipt (`kdv_orani` 0) is checked through `kdv_satirlari`: each
+line's tax is recomputed from its `matrah` (printed net or gross of the tax),
+the lines add up to `totals.kdv` and tie back to the item sum. An
+`ara_toplam` or `kdv` of `0.0` means "not printed" and is not flagged; the
+genel `toplam` is always checked.
 
 The LLM never owns a number: `validation.expected` is always recomputed from
 `items[]` by the validator, `actual` is what the model printed. Corrections

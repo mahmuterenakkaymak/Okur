@@ -170,3 +170,20 @@ test("the timings line wraps on a phone instead of overflowing it", () => {
   assert.match(kisik, /\.detay-ust \{ flex-wrap: wrap/);
   assert.match(kisik, /\.detay-kimlik \{ flex: 1 1 100%/);
 });
+
+test("amounts the validator took as printed are listed, even on an ok verdict", () => {
+  const model = uyusmazlikModeli({
+    verdict: "ok",
+    expected: {},
+    actual: {},
+    fields: [],
+    unverified: ["totals.iskonto", "totals.kdv", 7, ""],
+  });
+  assert.equal(model.verdict, "ok");
+  assert.deepEqual(model.dogrulanamayan, ["totals.iskonto", "totals.kdv"]);
+});
+
+test("a validation block from before unverified existed lists nothing", () => {
+  const model = uyusmazlikModeli({ verdict: "ok", fields: [] });
+  assert.deepEqual(model.dogrulanamayan, []);
+});

@@ -3,7 +3,7 @@
 Bu proje ne yapıyor: saha çalışanı telefonu ile fiş çekiyor, PC'deki hat
 (okuma → yapılandırma → doğrulama) sözleşme v1 JSON üretiyor — okuma 1–5 saniye,
 yapılandırma CPU'da ~30–45 saniye. Hepsi bu makinede; bulut yok. İngilizce tam
-doküman: `README.md`, entegrasyon: `CONTRACT.md`, bakım: `OPERATIONS.md`.
+doküman: `README.md` → `docs/REFERENCE.md`, entegrasyon: `CONTRACT.md`, bakım: `OPERATIONS.md`.
 
 ## 5 dakikada dene (model indirmeden)
 

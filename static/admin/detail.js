@@ -83,7 +83,12 @@ export function uyusmazlikModeli(validation) {
     const satir = /^items\[(\d+)\]\.(.+)$/.exec(alan);
     if (satir) urunler.push({ sira: Number(satir[1]) + 1, alan: satir[2] });
   }
-  return { verdict: validation?.verdict || "unreadable", satirlar, urunler };
+  // Amounts the validator took as printed: an ok verdict does not cover them,
+  // so the reviewer is told to check them on the image.
+  const dogrulanamayan = Array.isArray(validation?.unverified)
+    ? validation.unverified.filter((yol) => typeof yol === "string" && yol)
+    : [];
+  return { verdict: validation?.verdict || "unreadable", satirlar, urunler, dogrulanamayan };
 }
 
 function metin(deger) {
@@ -371,6 +376,12 @@ export function createFisDetay({ onDuzeltme = () => {} } = {}) {
       not.textContent = `Uyuşmayan satırlar: ${model.urunler
         .map((urun) => `Ürün ${urun.sira} · ${URUN_ALAN[urun.alan] || urun.alan}`)
         .join(", ")}`;
+      karsilik.appendChild(not);
+    }
+    if (model.dogrulanamayan.length) {
+      const not = document.createElement("p");
+      not.className = "uyusmazlik-not";
+      not.textContent = `Doğrulanamadı (fişten kontrol edin): ${model.dogrulanamayan.join(", ")}`;
       karsilik.appendChild(not);
     }
   }

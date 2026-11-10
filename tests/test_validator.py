@@ -86,7 +86,8 @@ def test_missing_totals_fall_back_to_house_defaults():
     partial = {"items": [{"ad": "Su", "miktar": 2, "birim_fiyat": 15.0, "toplam": 30.0}]}
     report = validator.validate(partial)
     assert report["verdict"] == "mismatch"
-    assert report["fields"] == ["totals.ara_toplam", "totals.toplam"]
+    # No printed ara toplam is "not on the receipt"; the genel toplam still is.
+    assert report["fields"] == ["totals.toplam"]
 
 
 def test_input_is_not_mutated(market):
