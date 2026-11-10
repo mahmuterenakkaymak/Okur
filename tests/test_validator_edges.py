@@ -129,7 +129,8 @@ def test_missing_iskonto_defaults_to_zero():
 def test_missing_totals_block_is_mismatch_not_crash():
     report = validator.validate({"items": [line_item()]})
     assert report["verdict"] == "mismatch"
-    assert report["fields"] == ["totals.ara_toplam", "totals.toplam"]
+    # No printed ara toplam is "not on the receipt"; the genel toplam still is.
+    assert report["fields"] == ["totals.toplam"]
 
 
 def test_empty_items_is_unreadable_not_vacuous_ok():

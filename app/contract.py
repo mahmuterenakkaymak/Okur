@@ -106,12 +106,28 @@ class Item(_Model):
     toplam: Amount = 0.0
 
 
+class KdvSatiri(_Model):
+    """One printed per-rate KDV line ("%1  matrah 52,00  KDV 0,52").
+
+    matrah is whatever base the receipt printed next to the rate — net of the
+    tax or gross with it; the validator accepts either. 0.0 means the receipt
+    printed only the tax amount for that rate.
+    """
+
+    oran: Rate = 0.0
+    matrah: Amount = 0.0
+    kdv: Amount = 0.0
+
+
 class Totals(_Model):
     ara_toplam: Amount = 0.0
     iskonto: Amount = 0.0
     kdv: Amount = 0.0
     kdv_orani: Rate = 0.0
     toplam: Amount = 0.0
+    # Additive (v1-safe): the per-rate breakdown a mixed-rate receipt prints,
+    # so its KDV can be recomputed instead of trusted.
+    kdv_satirlari: list[KdvSatiri] = Field(default_factory=list)
 
 
 class Result(_Model):
@@ -138,6 +154,11 @@ class Validation(_Model):
     expected: TotalsBlock = Field(default_factory=TotalsBlock)
     actual: TotalsBlock = Field(default_factory=TotalsBlock)
     fields: list[Text] = Field(default_factory=list)
+    # Additive (v1-safe): amounts the validator had to take as printed because
+    # nothing on the receipt lets it recompute them (a receipt-level iskonto, a
+    # mixed-rate kdv without its per-rate lines). An ok verdict says nothing
+    # about these paths; a reviewer has to look at them on the image.
+    unverified: list[Text] = Field(default_factory=list)
 
 
 # The contract's own noun for stage 3 is "validate", which shadows pydantic's

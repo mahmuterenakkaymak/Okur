@@ -53,7 +53,8 @@
   "iskonto": 52.32,
   "kdv": 198.82,
   "kdv_orani": 0.2,
-  "toplam": 1192.9
+  "toplam": 1192.9,
+  "kdv_satirlari": []
  },
  "para_birimi": "TRY"
 }

@@ -2,7 +2,8 @@
  "totals": {
   "ara_toplam": 269.5,
   "kdv": 53.9,
-  "toplam": 323.4
+  "toplam": 323.4,
+  "kdv_satirlari": []
  },
  "vergi_no": "5556667778",
  "tarih": "02.11.2026",

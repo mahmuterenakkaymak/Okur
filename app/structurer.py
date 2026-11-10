@@ -28,7 +28,8 @@ PROMPT = """Bir fişin görselini ve o görselden çıkarılmış OCR metnini a�
 {"header":{"isim":"","vergi_dairesi":"","vergi_no":""},\
 "meta":{"tarih":"dd.MM.yyyy","saat":"HH:mm","no":"","tip":""},\
 "items":[{"ad":"","miktar":0.0,"birim_fiyat":0.0,"toplam":0.0}],\
-"totals":{"ara_toplam":0.0,"iskonto":0.0,"kdv":0.0,"kdv_orani":0.0,"toplam":0.0},\
+"totals":{"ara_toplam":0.0,"iskonto":0.0,"kdv":0.0,"kdv_orani":0.0,"toplam":0.0,\
+"kdv_satirlari":[{"oran":0.0,"matrah":0.0,"kdv":0.0}]},\
 "para_birimi":"TRY","okunamayan":[]}
 
 Kurallar:
@@ -36,6 +37,8 @@ Kurallar:
 - Alan adlarını ve sırasını bozma. Okuyamadığın alanı uydurma; varsayılanında bırak: metin "", sayı 0.0, liste [].
 - Tutarları fişin yazdığı değeriyle ver, toplama/çıkarma yapma: "1.046,40" -> 1046.40, "149,00-" -> -149.00.
 - kdv_orani kesir olarak verilir: %20 -> 0.2, %8,5 -> 0.085.
+- Fişte birden fazla KDV oranı varsa kdv_orani 0.0 olsun; her oran için fişte basılı satırı kdv_satirlari listesine yaz (oran, o oranın basılı matrahı/tutarı, o oranın KDV'si). Matrah basılı değilse 0.0 bırak. Tek oranlı fişte de basılıysa yaz; yoksa liste [] kalsın.
+- ara_toplam veya kdv fişte basılı değilse 0.0 bırak; kalemleri kendin toplama.
 - miktar kilogram ise 3 ondalık basamakla yaz: 1,033Kg -> 1.033.
 - Fişteki iskonto satırı negatif de basılmış olabilir; iskonto alanına mutlak değerini yaz.
 - Hiç okuyamadığın parçaları okunamayan listesine aynen yaz.

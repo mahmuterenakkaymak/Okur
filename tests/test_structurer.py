@@ -58,6 +58,7 @@ def test_absent_fields_come_back_as_house_defaults():
         "kdv": 0.0,
         "kdv_orani": 0.0,
         "toplam": 0.0,
+        "kdv_satirlari": [],
     }
     assert result["para_birimi"] == "TRY"
     assert result["okunamayan"] == []

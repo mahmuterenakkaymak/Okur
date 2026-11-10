@@ -205,6 +205,7 @@ def test_stage1_failure_still_returns_a_whole_partial_result(monkeypatch):
         "kdv": 0.0,
         "kdv_orani": 0.0,
         "toplam": 0.0,
+        "kdv_satirlari": [],
     }
     assert bundle["result"]["para_birimi"] == "TRY"
     assert bundle["meta"]["ocr_ms"] == 0
